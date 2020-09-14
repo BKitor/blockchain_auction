@@ -1,2 +1,2 @@
-# blockchain_auction
+# Blockchain Auction
 Capstone project
