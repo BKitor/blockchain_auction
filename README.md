@@ -9,7 +9,16 @@ Capstone project
 Before we can get started, you need to make sure both Node.js and Python work
 
 ## Installing Node
-On Ubuntu, start by installing nvm (Node Version Manager)
+
+Before installing new components, we should make sure that existing components are up to date. Run:
+
+`sudo apt update'
+
+'sudo apt upgrade'
+
+And say yes when prompted to. 
+
+Next, start by installing nvm (Node Version Manager)
 
 `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash`
 
@@ -74,7 +83,7 @@ In the first terminal, were gonna run the frontend Vue.js Server:
 
 Leave the first window open and in the second Terminal, set up and run the Python Django server:
 
-`python -m venv venv` //This creates the virtual environment and stores it in a file called `venv`
+`python3 -m venv venv` //This creates the virtual environment and stores it in a file called `venv`
 
 `source venv/bin/activate` // This activates the virtualenvironment
 
