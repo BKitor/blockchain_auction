@@ -12,9 +12,9 @@ Before we can get started, you need to make sure both Node.js and Python work
 
 Before installing new components, we should make sure that existing components are up to date. Run:
 
-`sudo apt update'
+`sudo apt update`
 
-'sudo apt upgrade'
+`sudo apt upgrade`
 
 And say yes when prompted to. 
 
