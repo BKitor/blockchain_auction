@@ -1,9 +1,18 @@
-language: python
-python:
-  "3.8"
-install:
-  - pip install -r requirements.txt
-script:
-  - cd bca_django
-  - flake8 --ignore=E501,F401
-  # - python manage.py test
+jobs:
+  include:
+    - language: python
+      python: "3.8"
+      install:
+        - pip install -r requirements.txt
+      script:
+        - cd bca_django 
+        - flake8 --ignore=E501,F401
+        - python manage.py test
+    - language: node_js
+      node_js: 
+        - 14
+      install: 
+        - cd bca_vue && npm install
+      script:
+        - npm run lint
+        - npm run test:unit
