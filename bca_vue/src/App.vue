@@ -1,61 +1,33 @@
 <template>
-  <div>
-    <button
-      class="btn btn-primary btn-margin"
-      @click="publicMessage()">
-      Call Public
-    </button>
-
-    <button
-      class="btn btn-primary btn-margin"
-      @click="privateMessage()">
-      Call Private
-    </button>
-
-    <br>
-    <h1>{{ message }}</h1>
+  <div id="app">
+    <div id="nav">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/test_bca">BCA Test</router-link>
+    </div>
+    <router-view/>
   </div>
 </template>
 
-<script>
-import axios from 'axios'
-
-const API_URL = 'http://127.0.0.1:8000'
-
-export default {
-  name: 'app',
-  data () {
-    return {
-      message: ''
-    }
-  },
-  methods: {
-    // this method calls the AuthService login() method
-    publicMessage () {
-      const url = `${API_URL}/api/public/`
-      return axios.get(url).then((response) => {
-        console.log(response.data)
-        this.message = response.data || ''
-      })
-    },
-    privateMessage () {
-      const url = `${API_URL}/api/private/`
-      return axios.get(url).then((response) => {
-        console.log(response.data)
-        this.message = response.data || ''
-      })
-    }
-  }
-}
-</script>
-
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
