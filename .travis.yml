@@ -4,6 +4,5 @@ python:
 install:
   - pip install -r requirements.txt
 script:
-  - cd bca_django
-  - flake8 --ignore=E501,F401
+  - cd bca_django && flake8 --ignore=E501,F401
   # - python manage.py test
