@@ -128,7 +128,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-
 CORS_ORIGIN_WHITELIST = (
     'http://192.168.2.115:8080',
     'https://192.168.2.115:8080',
