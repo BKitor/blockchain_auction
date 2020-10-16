@@ -2,13 +2,14 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from rest_framework.decorators import api_view
-
+from test_app.models import Profile
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
 #from tutorial.quickstart.serializers import UserSerializer, GroupSerializer
-from test_app.serializer import UserSerializer, GroupSerializer
+from test_app.serializer import UserSerializer, GroupSerializer, ProfileSerializer
 # Create your views here.
+
 
 
 @api_view(['GET'])
@@ -37,3 +38,13 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+

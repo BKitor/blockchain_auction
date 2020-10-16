@@ -4,16 +4,19 @@ from requests.auth import HTTPBasicAuth
 # Create your tests here.
 
 
-class UserTests(APITestCase):
+class ProfileTests(APITestCase):
 
     fixtures = ['user_fixture']
 
-    def test_user_get(self):
-        url = '/users/1/'
+    def test_profile_get(self):
+        url = '/profile/1/'
         self.client.login(username='admin', password='Passw0rd')
-        response = self.client.get(url)
-        print(response)
-        print(response.data)
-        self.assertEqual(response.data['username'], 'admin')
-        self.assertEqual(response.data['username'], 'notadmin')
+        response = self.client.get(url) 
+        self.assertEqual(response.data['wallet'], 'dkrigjdk')
+        response_2 = self.client.get(response.data['user'])
+        self.assertEqual(response_2.data['username'], 'admin')
 
+    def test_profile_post(self):
+        url = '/profile/'
+        self.client.login(username='admin', password='Passw0rd')
+        response = self.client.post()
