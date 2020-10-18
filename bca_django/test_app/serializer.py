@@ -17,6 +17,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
+    user_id = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     username = serializers.CharField(source='user.username')
     email = serializers.CharField(source='user.email')
     first_name = serializers.CharField(source='user.first_name')
@@ -24,7 +25,7 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['username', 'email', 'first_name',
+        fields = ['url', 'user_id', 'username', 'email', 'first_name',
                   'last_name', 'wallet', 'birthday', 'publicProfile']
 
     def update(self, instance, validated_data):
@@ -32,6 +33,7 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
         user_data = validated_data.pop('user', {})
         for attr, value in user_data.items():
             setattr(instance.user, attr, value)
+        instance.user.save()
         # Then, update UserProfile
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
