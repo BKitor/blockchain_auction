@@ -2,14 +2,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from rest_framework.decorators import api_view
-from test_app.models import Profile
-from django.contrib.auth.models import User, Group
+from test_app.models import Profile, User
+from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
-#from tutorial.quickstart.serializers import UserSerializer, GroupSerializer
 from test_app.serializer import UserSerializer, GroupSerializer, ProfileSerializer
+from rest_framework.decorators import action
 # Create your views here.
-
 
 
 @api_view(['GET'])
@@ -47,4 +46,3 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
-
