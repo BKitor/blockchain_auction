@@ -28,7 +28,7 @@ export default function Signin() {
     const [signinOpen, setSigninOpen] = useState(false);
     const [signupOpen, setSignupOpen] = useState(false);
 
-    const [selectedValue, setSelectedValue] = React.useState(emails[0]);
+    const [selectedValue] = React.useState(emails[0]);
 
     const handleSignInClick = () => {
         setSigninOpen(true);
@@ -100,18 +100,11 @@ function SigninPopUp(props) {
 
 
 function SignupPopUp(props) {
-    const classes = useStyles();
     const { onClose, selectedValue, open } = props;
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+
 
     const handleClose = () => {
         onClose(selectedValue);
-    };
-
-    const handleListItemClick = (value) => {
-        onClose(value);
     };
 
     const handleSignUp = (value) => {
