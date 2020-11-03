@@ -19,18 +19,7 @@
       "publicProfile": false
     }
   },
-  {
-    "model": "test_app.SealedBid",
-    "pk": 1,
-    "fields": {
-      "user": 2,
-      "owner": 1,
-      "end time": "2002-08-02",
-      "auction id": "sdfkj3",
-      "minimum bid": "5",
-      "item description": "this is an item test"
-    }
-  },
+
   {
     "model": "test_app.User",
     "pk": 1,
@@ -51,6 +40,17 @@
       "email": "John@Lennon.com",
       "first_name": "John",
       "last_name": "Lennon"
+    }
+  },
+  {
+    "model": "test_app.SealedBid",
+    "pk": 1,
+    "fields": {
+      "owner": 1,
+      "end_time": "2002-08-02",
+      "auction_id": "sdfkj3",
+      "min_bid": 5,
+      "item_description": "this is an item test"
     }
   }
 ]

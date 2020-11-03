@@ -11,15 +11,6 @@ from rest_framework.decorators import action
 # Create your views here.
 
 
-@api_view(['GET'])
-def public(request):
-    return HttpResponse("You pressed the public Button")
-
-
-@api_view(['GET'])
-def private(request):
-    return HttpResponse("You pressed the private Button")
-
 
 class UserViewSet(viewsets.ModelViewSet):
     """

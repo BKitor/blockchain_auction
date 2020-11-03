@@ -53,16 +53,12 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
 class SealedBidSerializer(serializers.HyperlinkedModelSerializer):
 
-    user_id = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
-    username = serializers.CharField(source='user.username')
-    email = serializers.CharField(source='user.email')
-    first_name = serializers.CharField(source='user.first_name')
-    last_name = serializers.CharField(source='user.last_name')
-
+    owner = serializers.PrimaryKeyRelatedField(many=False, queryset = Profile.objects.all())
+    wallet = serializers.CharField(source='owner.wallet', read_only= True)
     class Meta:
         model = SealedBid
-        fields = ['url', 'user_id', 'username', 'email', 'first_name',
-                  'last_name', 'owner', 'end_time', 'auction_id', 'min_bid', 'item_description']
+        fields = ['url','owner', 'wallet', 'end_time', 
+        'auction_id', 'min_bid', 'item_description']
 
     def update(self, instance, validated_data):
         # First, update the User
@@ -77,16 +73,16 @@ class SealedBidSerializer(serializers.HyperlinkedModelSerializer):
         return instance
 
     def create(self, validated_data):
-        user_data = validated_data.pop('user')
-        user = User.objects.create(**user_data)
-        sealedBid, _ = SealedBid.objects.get_or_create(user=user)
-        profile_data = validated_data.pop('profile')
-        profile = Profile.objects.create(**profile_data)
-        sealedBid, _ = SealedBid.objects.get_or_create(profile=profile)
+      
+        # user_data = validated_data.pop('owner')
+        # user = User.objects.create(**user_data)
+        #sealedBid, _ = SealedBid.(owner=owner_data)
+        sealed_bid = SealedBid()
+        sealed_bid.owner = validated_data['owner']
         #sealedBid.wallet = validated_data['wallet']
-        sealedBid.end_time = validated_data['end_time']
-        sealedBid.auction_id = validated_data['auction_id']
-        sealedBid.min_bid = validated_data['min_bid']
-        sealedBid.item_description = validated_data['item_description']
-        sealedBid.save()
-        return sealedBid
+        sealed_bid.end_time = validated_data['end_time']
+        sealed_bid.auction_id = validated_data['auction_id']
+        sealed_bid.min_bid = validated_data['min_bid']
+        sealed_bid.item_description = validated_data['item_description']
+        sealed_bid.save()
+        return sealed_bid
