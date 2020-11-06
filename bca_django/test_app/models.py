@@ -27,3 +27,22 @@ class Profile(models.Model):
         if instance:
             profile = Profile.objects.get(user=instance)
             profile.delete()
+
+
+class SealedBid(models.Model):
+    owner = models.ForeignKey(
+        Profile, on_delete=models.SET_NULL, null=True, default=1)
+
+    end_time = models.DateTimeField(null=True, blank=True)
+
+    min_bid = models.IntegerField()
+    auction_id = models.CharField(max_length=30, blank=True)
+    item_description = models.CharField(max_length=400)
+
+    # AUCTION_TYPE = (
+    #   ('D', 'Dutch'),
+    #  ('E', 'English'),
+    # ('S', 'SealedBid'),
+    # ('C', 'Channel'),
+    # )
+    # auction_type = models.CharField(max_length=1, choices=AUCTION_TYPE)

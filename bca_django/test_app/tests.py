@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase
 from django.contrib.auth import hashers
-from test_app.models import Profile
+from test_app.models import Profile, SealedBid
 # Create your tests here.
 
 
@@ -45,3 +45,51 @@ class ProfileTests(APITestCase):
         p_o = Profile.objects.get(user=p['user_id'])
         self.assertEqual(p['wallet'], p_o.wallet)
         self.assertEqual(p['first_name'], p_o.user.first_name)
+
+
+# Sealed bid tests
+class SealedBidTests(APITestCase):
+
+    fixtures = ['user_fixture']
+
+    def test_sealedBid_get(self):
+        url = '/auction/1/'
+        self.client.login(username='admin', password='Passw0rd')
+        response = self.client.get(url)
+        self.assertEqual(response.data['auction_id'], 'sdfkj3')
+
+    def test_sealedBid_post(self):
+        url = '/auction/'
+        self.client.login(username='admin', password='Passw0rd')
+
+        new_p_data = {
+            'owner': 1,
+            'end_time': '6566-06-06T08:15-05:00',
+            'auction_id': '49849837',
+            'min_bid': 3,
+            'item_description': 'this is a test item 2',
+        }
+
+        response = self.client.post(url, data=new_p_data)
+        self.assertEqual(response.data['auction_id'], new_p_data['auction_id'])
+
+    def test_sealedBid_put(self):
+        url = '/auction/'
+        self.client.login(username='admin', password='Passw0rd')
+
+        new_p_data = {
+            'owner': 1,
+            'end_time': '',
+            'auction_id': '',
+            'min_bid': 3,
+            'item_description': 'this is a test item 2',
+        }
+
+        response = self.client.post(url, data=new_p_data)
+        self.assertEqual(response.data['auction_id'], '')
+
+        new_p_data['auction_id'] = 'lksdfjdflk'
+        new_p_data['end_time'] = '7566-07-06T08:15-05:00'
+        response = self.client.put(response.data['url'], data=new_p_data)
+        self.assertEqual(response.data['auction_id'], 'lksdfjdflk')
+        self.assertEqual(response.data['end_time'], '7566-07-06T13:15:00Z')
