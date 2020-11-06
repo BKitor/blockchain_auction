@@ -31,28 +31,18 @@ class Profile(models.Model):
 
 class SealedBid(models.Model):
     owner = models.ForeignKey(
-        Profile, on_delete=models.SET_NULL, null = True, default = 1)
-    #wallet = models.CharField(max_length=30)
-    end_time = models.DateField(default=timezone.now)
-    #publicProfile = models.BooleanField(default=False)
-    min_bid = models.IntegerField()
-    auction_id = models.CharField(max_length=30)
-    item_description = models.CharField(max_length=400)
-    #owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    #AUCTION_TYPE = (
-     #   ('D', 'Dutch'),
-      #  ('E', 'English'),
-       # ('S', 'SealedBid'),
-       # ('C', 'Channel'),
-    #)
-    #auction_type = models.CharField(max_length=1, choices=AUCTION_TYPE)
-    # @receiver(post_save, sender=User)
-    # def create_sealedBid_for_user(sender, instance=None, created=False, **kwargs):
-    #     if created:
-    #         SealedBid.objects.get_or_create(user=instance)
+        Profile, on_delete=models.SET_NULL, null=True, default=1)
 
-    # @receiver(pre_delete, sender=User)
-    # def delete_sealedBid_for_user(sender, instance=None, **kwargs):
-    #     if instance:
-    #         sealed_bid = SealedBid.objects.get(user=instance)
-    #         sealed_bid.delete()
+    end_time = models.DateTimeField(null=True, blank=True)
+
+    min_bid = models.IntegerField()
+    auction_id = models.CharField(max_length=30, blank=True)
+    item_description = models.CharField(max_length=400)
+
+    # AUCTION_TYPE = (
+    #   ('D', 'Dutch'),
+    #  ('E', 'English'),
+    # ('S', 'SealedBid'),
+    # ('C', 'Channel'),
+    # )
+    # auction_type = models.CharField(max_length=1, choices=AUCTION_TYPE)

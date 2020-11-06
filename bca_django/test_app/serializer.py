@@ -53,35 +53,21 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
 class SealedBidSerializer(serializers.HyperlinkedModelSerializer):
 
-    owner = serializers.PrimaryKeyRelatedField(many=False, queryset = Profile.objects.all())
-    wallet = serializers.CharField(source='owner.wallet', read_only= True)
+    owner = serializers.PrimaryKeyRelatedField(
+        many=False, queryset=Profile.objects.all())
+    auction_id = serializers.CharField(allow_blank=True)
+    end_time = serializers.DateTimeField(allow_null=True)
+
     class Meta:
         model = SealedBid
-        fields = ['url','owner', 'wallet', 'end_time', 
-        'auction_id', 'min_bid', 'item_description']
-
-    def update(self, instance, validated_data):
-        # First, update the User
-        user_data = validated_data.pop('user', {})
-        for attr, value in user_data.items():
-            setattr(instance.user, attr, value)
-        instance.user.save()
-        # Then, update UserProfile
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        return instance
+        fields = ['url', 'owner', 'end_time',
+                  'auction_id', 'min_bid', 'item_description']
 
     def create(self, validated_data):
-      
-        # user_data = validated_data.pop('owner')
-        # user = User.objects.create(**user_data)
-        #sealedBid, _ = SealedBid.(owner=owner_data)
         sealed_bid = SealedBid()
         sealed_bid.owner = validated_data['owner']
-        #sealedBid.wallet = validated_data['wallet']
-        sealed_bid.end_time = validated_data['end_time']
-        sealed_bid.auction_id = validated_data['auction_id']
+        sealed_bid.end_time = validated_data.get('end_time')
+        sealed_bid.auction_id = validated_data.get('auction_id')
         sealed_bid.min_bid = validated_data['min_bid']
         sealed_bid.item_description = validated_data['item_description']
         sealed_bid.save()
