@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-    Link
-  } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -15,8 +13,10 @@ import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import Fade from '@material-ui/core/Fade';
 
-import '../styles/nav.css';
+import '../../styles/nav.css';
+import { Button } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -83,89 +83,66 @@ const useStyles = makeStyles((theme) => ({
 
 export default function NavBar() {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [setQuery] = React.useState('');
+  const [anchorAuctions, setAnchorAuctions] = React.useState(null);
+  const [anchorProfile, setAnchorProfile] = React.useState(null);
+  const openAuctions = Boolean(anchorAuctions);
+  const openProfile = Boolean(anchorProfile);
 
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  /* Nav Bar Callbacks */
+  const openAuctionMenu = (event) => {
+    setAnchorAuctions(event.currentTarget);
   };
 
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
+  const openProfileMenu = (event) => {
+    setAnchorProfile(event.currentTarget);
+  }
+
+  const handleCloseProfile = () => {
+    setAnchorProfile(null);
+  }
+
+  const handleEditProfile = () => {
+    setAnchorProfile(null);
+    window.location = '/profile'
+  }
+
+  const handleAuth = () => {
+    setAnchorProfile(null);
+    window.location = '/signin'
+  }
+
+  const handleSealed = () => {
+    setAnchorAuctions(null);
+    window.location = '/sealed-bid'
+  }
+
+  const handleEnglish = () => {
+    setAnchorAuctions(null);
+    window.location = '/english-bid'
+  }
+
+  const handleCloseAuctions = () => {
+    setAnchorAuctions(null);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
+  /* Search Callbacks */
+  const handleSearch = (e) => {
+    setQuery(e.target.value);
+  }
 
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
+  const handleSubmit = () => {
+    alert('YEET');
+  }
 
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem>
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="secondary">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton aria-label="show 11 new notifications" color="inherit">
-          <Badge badgeContent={11} color="secondary">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
-    </Menu>
-  );
 
   return (
     <div className={classes.grow}>
       <AppBar position="static">
         <Toolbar>
-          
           <Typography className={classes.title} variant="h6" noWrap>
-            BlockChain Auctions
+            <Link to='/'>BlockChain Auctions</Link>
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -177,22 +154,53 @@ export default function NavBar() {
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
+              onChange={handleSearch}
+
+              onSubmit={() => { handleSubmit() }}
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-        <div className="container">
-            <Link to="/">Home</Link>
-            <Link to="/profile">Profile</Link>
-            <Link to="/signin">Sign In</Link>
-            <Link to="/auctions">Auctions</Link>
-        </div>
+            <div className="container">
+              {/* Profile Dropdown */}
+              <Button variant='text' onClick={openProfileMenu}>
+                <div>Profile</div>
+              </Button>
+              <Menu
+                id="fade-menu"
+                anchorEl={anchorProfile}
+                keepMounted
+                open={openProfile}
+                onClose={handleCloseProfile}
+                TransitionComponent={Fade}
+              >
+                <MenuItem onClick={handleEditProfile}>Edit Profile</MenuItem>
+                <MenuItem onClick={handleAuth}>
+                  Sign In
+                </MenuItem>
+              </Menu>
+
+              {/* Auctions Dropdown */}
+              <Button variant='text' onClick={openAuctionMenu}>
+                <div>Auctions</div>
+              </Button>
+              <Menu
+                id="fade-menu"
+                anchorEl={anchorAuctions}
+                keepMounted
+                open={openAuctions}
+                onClose={handleCloseAuctions}
+                TransitionComponent={Fade}
+              >
+                <MenuItem onClick={handleSealed}>Sealed Bid</MenuItem>
+                <MenuItem onClick={handleEnglish}>English Bid</MenuItem>
+                <MenuItem onClick={handleCloseAuctions}>Other</MenuItem>
+              </Menu>
+            </div>
           </div>
         </Toolbar>
       </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
     </div>
   );
 }
