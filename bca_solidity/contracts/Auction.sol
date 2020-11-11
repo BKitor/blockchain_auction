@@ -5,12 +5,12 @@ contract Auction{                       //defines a contract with name Auction
     address payable internal auction_owner;     //Auction owner's address, where winning bid will be sent
     uint256 public auction_start;       //Start and end epoch times for auction
     uint256 public auction_end;
-    uint256 public highestBid;          //Highest bid amount in wei
-    address public highestBidder;       //Ethereum address of highest bidder
+    uint256 internal highestBid;          //Highest bid amount in wei
+    address internal highestBidder;       //Ethereum address of highest bidder
     uint256 public minimum_price;      //Min. bid for auctions other than Dutch
 
     enum auction_state{                 //Enum representing auction state
-        CANCELLED, STARTED
+        STARTED
     }
     
     struct item{
@@ -19,7 +19,7 @@ contract Auction{                       //defines a contract with name Auction
     
     item public auction_item; 
     address[] bidders;                  //Dynamic array storing bidders addresses
-    mapping(address=>uint) public bids; //Mapping that maps address of bidder with their bid
+    mapping(address=>uint) internal bids; //Mapping that maps address of bidder with their bid
     auction_state public STATE;         //Represents auction state, open or closed (cancelled)
     
     modifier ongoing_auction(){
@@ -35,8 +35,12 @@ contract Auction{                       //defines a contract with name Auction
     function get_owner() public view returns(address payable) {
         return auction_owner;
     }
+
+    function get_bid() public view returns(uint){
+        return bids[msg.sender];
+    }
     
-    function get_num_bidders() public only_owner returns(uint256) {
+    function get_num_bidders() public view only_owner returns(uint256) {
         return bidders.length;
     }
 
