@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -88,7 +88,18 @@ export default function NavBar() {
   const [anchorProfile, setAnchorProfile] = React.useState(null);
   const openAuctions = Boolean(anchorAuctions);
   const openProfile = Boolean(anchorProfile);
+  const [signedIn, setSignedIn] = useState(false);
 
+  useEffect(() => {
+    function checkSignedIn() {
+      if (window.localStorage.getItem('user')) {
+          setSignedIn(true);
+      } else {
+        setSignedIn(false);
+      }
+  }
+  checkSignedIn();
+  }, [])
 
   /* Nav Bar Callbacks */
   const openAuctionMenu = (event) => {
@@ -109,8 +120,15 @@ export default function NavBar() {
   }
 
   const handleAuth = () => {
-    setAnchorProfile(null);
-    window.location = '/signin'
+    if (!signedIn) {
+      setAnchorProfile(null);
+      window.location = '/signin'
+    } else { 
+      window.localStorage.removeItem('user');
+      window.location.reload();
+
+    }
+
   }
 
   const handleSealed = () => {
@@ -127,6 +145,11 @@ export default function NavBar() {
     setAnchorAuctions(null);
   };
 
+  const handleViewAuctions = () => {
+    setAnchorAuctions(null);
+    window.location = '/auctions'
+  }
+  
   /* Search Callbacks */
   const handleSearch = (e) => {
     setQuery(e.target.value);
@@ -177,7 +200,7 @@ export default function NavBar() {
               >
                 <MenuItem onClick={handleEditProfile}>Edit Profile</MenuItem>
                 <MenuItem onClick={handleAuth}>
-                  Sign In
+                  { !signedIn ? 'Sign In' : 'Sign Out' }
                 </MenuItem>
               </Menu>
 
@@ -195,7 +218,7 @@ export default function NavBar() {
               >
                 <MenuItem onClick={handleSealed}>Sealed Bid</MenuItem>
                 <MenuItem onClick={handleEnglish}>English Bid</MenuItem>
-                <MenuItem onClick={handleCloseAuctions}>Other</MenuItem>
+                <MenuItem onClick={handleViewAuctions}>View Auctions</MenuItem>
               </Menu>
             </div>
           </div>

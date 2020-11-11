@@ -56,4 +56,4 @@ class SealedBidViewSet(viewsets.ModelViewSet):
     """
     queryset = SealedBid.objects.all()
     serializer_class = SealedBidSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]

@@ -13,6 +13,7 @@ import Signin from './components/Signin';
 import Auctions from './components/Auctions';
 import Profile from './components/Profile';
 import NotFound from './components/NotFound';
+import SealedBid from './components/SealedBid';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route exact path="/signin" component={Signin} />
             <Route exact path="/auctions" component={Auctions} />
             <Route exact path="/profile" component={Profile} />
+            <Route exact path='/sealed-bid' component={SealedBid} />
             <Route exact path="*" component={NotFound} />
         </Switch>
         </Router>
