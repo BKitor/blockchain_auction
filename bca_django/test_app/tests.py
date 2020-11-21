@@ -93,3 +93,10 @@ class SealedBidTests(APITestCase):
         response = self.client.put(response.data['url'], data=new_p_data)
         self.assertEqual(response.data['auction_id'], 'lksdfjdflk')
         self.assertEqual(response.data['end_time'], '7566-07-06T13:15:00Z')
+
+    def test_start_auction(self):
+        url = '/auction/1/start_auction'
+        self.client.login(username='admin', password='Passw0rd')
+        res = self.client.put(url)
+        print(res)
+        print(res.data)
