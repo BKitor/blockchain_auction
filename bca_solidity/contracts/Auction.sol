@@ -1,4 +1,4 @@
-pragma solidity ^0.5.16;                //declares compiler version 
+pragma solidity ^0.7.5;                //declares compiler version 
 
 contract Auction{                       //defines a contract with name Auction
     //State variable declarations, similar to global variables in other languages 
@@ -23,7 +23,7 @@ contract Auction{                       //defines a contract with name Auction
     auction_state public STATE;         //Represents auction state, open or closed (cancelled)
     
     modifier ongoing_auction(){
-        require(now<=auction_end);
+        require(block.timestamp<=auction_end);
         _;
     }
     
@@ -45,7 +45,7 @@ contract Auction{                       //defines a contract with name Auction
     }
 
     function withdraw() public returns (bool) {
-        require(now > auction_end, "Auction still open. Cannot withdraw.");
+        require(block.timestamp > auction_end, "Auction still open. Cannot withdraw.");
         require(bids[msg.sender] > 0, "You have no bid to withdraw.");
         uint amount = bids[msg.sender];
         bids[msg.sender] = 0;
@@ -55,7 +55,7 @@ contract Auction{                       //defines a contract with name Auction
     }
 
     function destruct_auction() external only_owner returns (bool) {
-        require(now > auction_end, "Auction still open. Cannot destruct.");
+        require(block.timestamp > auction_end, "Auction still open. Cannot destruct.");
         for (uint i = 0; i < bidders.length; i++){
             assert(bids[bidders[i]] == 0);
         }
@@ -67,7 +67,7 @@ contract Auction{                       //defines a contract with name Auction
         return true;
     }
 
-    function bid() public payable ongoing_auction returns (bool) {}
+    function bid() public payable virtual ongoing_auction returns (bool) {}
     
     event BidEvent(address indexed highestBidder, uint256 highestBid);
     event WithdrawalEvent(address withdrawer, uint256 amount);
