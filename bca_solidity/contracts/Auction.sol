@@ -6,7 +6,7 @@ contract Auction{                       //defines a contract with name Auction
     uint256 public auction_start;       //Start and end epoch times for auction
     uint256 public auction_end;
     uint256 internal highestBid;          //Highest bid amount in wei
-    address internal highestBidder;       //Ethereum address of highest bidder
+    address payable internal highestBidder;       //Ethereum address of highest bidder
     uint256 public minimum_price;      //Min. bid for auctions other than Dutch
 
     enum auction_state{                 //Enum representing auction state
@@ -31,6 +31,11 @@ contract Auction{                       //defines a contract with name Auction
         require(msg.sender == auction_owner);
         _;
     }
+
+    modifier admin(){
+        require(msg.sender == msg.sender); //WHEN WE HAVE AN ADMIN ACCOUNT WE WILL PUT THE ADDRESS HERE
+        _;
+    }
     
     function get_owner() public view returns(address payable) {
         return auction_owner;
@@ -44,9 +49,14 @@ contract Auction{                       //defines a contract with name Auction
         return bidders.length;
     }
 
+    function get_highest_bidder() public view admin returns(address payable) {
+        return highestBidder;
+    }
+
     function withdraw() public returns (bool) {
         require(block.timestamp > auction_end, "Auction still open. Cannot withdraw.");
         require(bids[msg.sender] > 0, "You have no bid to withdraw.");
+        require(msg.sender != highestBidder, "You won, you cannot withdraw funds.");
         uint amount = bids[msg.sender];
         bids[msg.sender] = 0;
         msg.sender.transfer(amount);
