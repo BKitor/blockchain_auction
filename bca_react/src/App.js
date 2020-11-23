@@ -14,6 +14,11 @@ import Auctions from './components/Auctions';
 import Profile from './components/Profile';
 import NotFound from './components/NotFound';
 import SealedBid from './components/SealedBid';
+import PlaceSealedBid from './components/PlaceSealedBid';
+
+
+
+
 
 function App() {
   return (
@@ -27,6 +32,7 @@ function App() {
             <Route exact path="/auctions" component={Auctions} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path='/sealed-bid' component={SealedBid} />
+            <Route exact path="/place/sealedbid/:auction_pk" render={(props) => <PlaceSealedBid {...props} /> } />
             <Route exact path="*" component={NotFound} />
         </Switch>
         </Router>

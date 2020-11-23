@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "user": 1,
-      "wallet": "0xDe1CdE477d9570E4b59262a5b855c850148D56aa",
+      "wallet": "0x0C403D963e82F029b9D23d34fbe1b8410E363D73",
       "birthday": "2000-09-08",
       "publicProfile": true
     }

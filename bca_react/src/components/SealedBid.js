@@ -36,7 +36,8 @@ export default function SealedBid() {
         } else {
             const body = {
                 owner: parseInt(owner), 
-                end_time: String(value),
+                end_time: value.toISOString(),
+                auction_id: "",
                 min_bid: parseInt(minBid), 
                 item_description: itemDescription,
             }

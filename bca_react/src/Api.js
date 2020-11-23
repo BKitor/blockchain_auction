@@ -22,7 +22,8 @@ export default {
                 
             }).then(res => res),
         luanchSealedBid:(auction_pk, username, password) => 
-            axios.put(`http://127.0.0.1:8000/auction/${auction_pk}/start_auction`, { 
+            axios.put(`http://127.0.0.1:8000/auction/${auction_pk}/start_auction`, {
+            }, { 
                 auth: {
                     username: 'admin',
                     password: 'Passw0rd'
