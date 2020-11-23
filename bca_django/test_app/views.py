@@ -16,6 +16,12 @@ from test_app.blockchain import BChain
 bchain = BChain()
 w3 = bchain.get_w3()
 
+class IsAuthenticated(permissions.IsAuthenticated):
+    def has_permission(self, request, view):
+        if request.method == 'OPTIONS':
+            return True
+        return super(IsAuthenticated, self).has_permission(request, view)
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -40,7 +46,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     """
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     # @action(detail=True, methods=['post'])
     # def set_password(self, request, pk=None):

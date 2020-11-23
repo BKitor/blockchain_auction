@@ -14,12 +14,12 @@ export default {
     }, 
     auctions: { 
         newSealedBid: (body, username, password) => 
-            axios.post('http://127.0.0.1:8000/auction/', { 
+            axios.post('http://127.0.0.1:8000/auction/', body,{ 
                 auth: {
                     username: 'admin',
                     password: 'Passw0rd'
                 },
-                body,
+                
             }).then(res => res),
     },
 }

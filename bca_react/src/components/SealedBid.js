@@ -34,12 +34,11 @@ export default function SealedBid() {
         if (itemDescription === '' || minBid === 0) {
             window.alert("Invalid Inputs")
         } else {
-            const auctionID = Math.floor(Math.random() * 100000);
-            window.alert(`Your auctionID is: ${auctionID}`)
+            console.log(`date is :${String(value)}`)
             const body = {
                 owner: parseInt(owner), 
-                end_time: String(value),
-                auction_id: auctionID, 
+                auction_id: "",
+                end_time: value.toISOString(),
                 min_bid: parseInt(minBid), 
                 item_description: itemDescription,
             }
