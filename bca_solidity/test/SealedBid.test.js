@@ -53,6 +53,7 @@ contract('SealedBid', (accounts) => {
 
 	describe('Post Auction Fucntionality', async () => {
 		it('can no longer be bid on', async () => {
+			await sealedBid.end({from: accounts[0]})
 			await sealedBid.bid({ from: accounts[1], value: 100 }).should.be.rejected;
 		})
 		it('can identify winning bid', async () => {
