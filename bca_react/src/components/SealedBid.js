@@ -34,19 +34,18 @@ export default function SealedBid() {
         if (itemDescription === '' || minBid === 0) {
             window.alert("Invalid Inputs")
         } else {
-            console.log(`date is :${String(value)}`)
             const body = {
                 owner: parseInt(owner), 
-                auction_id: "",
-                end_time: value.toISOString(),
+                end_time: String(value),
                 min_bid: parseInt(minBid), 
                 item_description: itemDescription,
             }
             Api.auctions.newSealedBid(body).then(res => {
-                console.log(res);
+                Api.auctions.luanchSealedBid(res.data.id)
+            }).then(res => {
+                console.log(res)
             })
         }
-
     }
 
     return (
