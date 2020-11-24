@@ -28,7 +28,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -37,7 +37,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -67,13 +67,13 @@ class SealedBidViewSet(viewsets.ModelViewSet):
     """
     queryset = SealedBid.objects.all()
     serializer_class = SealedBidSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 
 class StartAuctionView(generics.RetrieveAPIView):
     queryset = SealedBid.objects.all()
     serializer_class = SealedBidSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def put(self, request, **kwargs):
         auction = self.get_object()

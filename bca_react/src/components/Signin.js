@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemText from '@material-ui/core/ListItemText';
+// import { makeStyles } from '@material-ui/core/styles';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
-import PersonIcon from '@material-ui/icons/Person';
-import AddIcon from '@material-ui/icons/Add';
-import { blue } from '@material-ui/core/colors';
+// import { blue } from '@material-ui/core/colors';
 import TextField from '@material-ui/core/TextField';
 
 import '../styles/signin.css';
@@ -18,12 +11,12 @@ import api from '../Api';
 
 const emails = ['16jw98@queensu.ca', 'other_user@gmail.com'];
 
-const useStyles = makeStyles({
-    avatar: {
-        backgroundColor: blue[100],
-        color: blue[600],
-    },
-});
+// const useStyles = makeStyles({
+//     avatar: {
+//         backgroundColor: blue[100],
+//         color: blue[600],
+//     },
+// });
 
 export default function Signin() {
     const [signinOpen, setSigninOpen] = useState(false);
@@ -78,7 +71,6 @@ export default function Signin() {
 }
 
 function SigninPopUp(props) {
-    const classes = useStyles();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -88,9 +80,9 @@ function SigninPopUp(props) {
         onClose(selectedValue);
     };
 
-    const handleListItemClick = (value) => {
-        onClose(value);
-    };
+    // const handleListItemClick = (value) => {
+    //     onClose(value);
+    // };
 
     const handleUserNameChange = (e) => {
         setUsername(e.target.value);

@@ -5,7 +5,6 @@ import Api from '../Api';
 
 export default function SealedBid() {
     const [owner, setOwner] = useState('');
-    const endTime = Date.now();
 
     const [minBid, setMinBid] = useState(0);
     const [itemDescription, setItemDescription] = useState('');
