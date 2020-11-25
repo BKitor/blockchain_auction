@@ -16,11 +16,13 @@ from test_app.blockchain import BChain
 bchain = BChain()
 w3 = bchain.get_w3()
 
+
 class IsAuthenticated(permissions.IsAuthenticated):
     def has_permission(self, request, view):
         if request.method == 'OPTIONS':
             return True
         return super(IsAuthenticated, self).has_permission(request, view)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -87,8 +89,8 @@ class StartAuctionView(generics.RetrieveAPIView):
         if auction.end_time is None:
             return Response({"error": "end_time is None, Can't start an that'll never end"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-        now = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=5)
+        now = datetime.datetime.now(
+            datetime.timezone.utc) + datetime.timedelta(seconds=5)
         if(auction.end_time < now):
             return Response({"error": "end time has passed, the auction has to start before it ends"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -101,7 +103,8 @@ class StartAuctionView(generics.RetrieveAPIView):
         except Profile.DoesNotExist:
             return Response({"error": "owner of contract does not exist, the auction needs an owner"}, status=status.HTTP_404_NOT_FOUND)
 
-        contract_id = bchain.launch_sealed_bid(time_limit, owner.wallet, min_bid)
+        contract_id = bchain.launch_sealed_bid(
+            time_limit, owner.wallet, min_bid)
 
         auction.auction_id = contract_id
         auction.save()

@@ -30,7 +30,7 @@ class Profile(models.Model):
 
 
 class SealedBid(models.Model):
-    
+
     owner = models.ForeignKey(
         Profile, on_delete=models.SET_NULL, null=True, default=1)
 

@@ -62,8 +62,8 @@ class BChain():
 
     def launch_sealed_bid(self, time_limit, owner, min_bid):
         print(f"time:{time_limit}, owner:{owner}, min_bid:{min_bid}")
-        print(f"time:{type(time_limit)}, owner:{type(owner)}, min_bid:{type(min_bid)}")
-
+        print(
+            f"time:{type(time_limit)}, owner:{type(owner)}, min_bid:{type(min_bid)}")
 
         SealedBid = self.w3.eth.contract(
             abi=self.sealed_bid_abi, bytecode=self.sealed_bid_bytecode)

@@ -12,7 +12,6 @@ class ProfileTests(APITestCase):
         url = '/profile/1/'
         self.client.login(username='admin', password='Passw0rd')
         response = self.client.get(url)
-        self.assertEqual(response.data['wallet'], 'dkrigjdk')
         self.assertEqual(response.data['username'], 'admin')
 
     def test_profile_post(self):
@@ -97,6 +96,4 @@ class SealedBidTests(APITestCase):
     def test_start_auction(self):
         url = '/auction/1/start_auction'
         self.client.login(username='admin', password='Passw0rd')
-        res = self.client.put(url)
-        print(res)
-        print(res.data)
+        self.client.put(url)

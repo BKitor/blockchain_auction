@@ -2,20 +2,26 @@ import { Button, TextField } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import Api from '../Api';
+import Web3 from "web3"
+import contract_artifact from "../../src/contracts/SealedBid.json"
 
 export default function PlaceSealedBid() {
     let { auction_pk } = useParams();
     const [minBid, setMinBid] = useState('loading...');
     const [itemDescription, setItemDiscription] = useState('loading...');
     const [endTime, setEndTime] = useState(new Date());
-    const [owner, setOwner] = useState('');
+    const [, setOwner] = useState('');
+    const [, setOwnerAddr] = useState('');
     const [userBid, setUserBid] = useState(0);
-    const [contractAddr, setContractAddr] = useState('');
+    const [, setContractAddr] = useState('');
+    const [web3, ] = useState(new Web3("http://localhost:8545"));
+    const [contract, setContract] = useState(null);
 
     useEffect(() => {
         function checkSignedIn() {
             if (window.localStorage.getItem('user')) {
                 setOwner(JSON.parse(window.localStorage.getItem('user')).user_id)
+                setOwnerAddr(JSON.parse(window.localStorage.getItem('user')).user_id)
             } else {
                 window.location = '/signin'
             }
@@ -27,11 +33,15 @@ export default function PlaceSealedBid() {
                     setItemDiscription(`${res.data.item_description}`);
                     setEndTime(new Date(res.data.end_time));
                     setContractAddr(res.data.auction_id);
+                    setContract(new web3.eth.Contract(contract_artifact.abi, res.data.auction_id))
+                }).catch(e=>{
+                    console.error(e);
                 })
         }
+        // console.log(contract_artifact)
         checkSignedIn();
         getAuctionInfo();
-    }, []);
+    }, [auction_pk, web3.eth.Contract]);
 
     const handleBidChange = (e) => {
         if (isNaN(e.target.value)){
@@ -42,11 +52,13 @@ export default function PlaceSealedBid() {
         }
     }
     const submitSealedBid = () => {
-        if (userBid == 0){
-            alert('Bid is not vallid')
+        if (userBid === 0){
         }else{
-            console.log("placing bet")
-            // do some spoopy blockchain stuff
+            const u = "0xD26f38099d8C6378f52bE5ff0cC1b5f4E7da2dC0"
+            // contract.methods.bid().estimateGas({from:u}).then(e=>console.log(e))
+            contract.methods.bid().send({from:u, value:userBid*Math.pow(10,18), gas:500000})
+            .then(res=>console.log(res))
+            .catch(err=>console.error(err))
         }
     }
 
