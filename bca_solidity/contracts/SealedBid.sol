@@ -12,7 +12,7 @@ contract SealedBid is Auction{
 		minimum_price = _minBid;
 	}
 
-	function bid() public payable override ongoing_auction returns (bool) {
+	function bid() public payable ongoing_auction override returns (bool) {
 		require(block.timestamp < auction_end, "Auction Ended");
 		require(bids[msg.sender] + msg.value > minimum_price, "Bid too low");
 		bidders.push(msg.sender);
@@ -25,6 +25,12 @@ contract SealedBid is Auction{
 		}
 
 		emit BidEvent(msg.sender, bids[msg.sender]);
+		return true;
+	}
+
+	function end() public admin returns (bool) {
+		//this function is just for dev purposes
+		auction_end = block.timestamp - 1;
 		return true;
 	}
 
