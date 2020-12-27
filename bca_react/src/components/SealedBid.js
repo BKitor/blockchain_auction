@@ -5,7 +5,6 @@ import Api from '../Api';
 
 export default function SealedBid() {
     const [owner, setOwner] = useState('');
-    const endTime = Date.now();
 
     const [minBid, setMinBid] = useState(0);
     const [itemDescription, setItemDescription] = useState('');
@@ -34,20 +33,19 @@ export default function SealedBid() {
         if (itemDescription === '' || minBid === 0) {
             window.alert("Invalid Inputs")
         } else {
-            const auctionID = Math.floor(Math.random() * 100000);
-            window.alert(`Your auctionID is: ${auctionID}`)
             const body = {
                 owner: parseInt(owner), 
-                end_time: String(value),
-                auction_id: auctionID, 
+                end_time: value.toISOString(),
+                auction_id: "",
                 min_bid: parseInt(minBid), 
                 item_description: itemDescription,
             }
             Api.auctions.newSealedBid(body).then(res => {
-                console.log(res);
+                Api.auctions.luanchSealedBid(res.data.id)
+            }).then(res => {
+                console.log(res)
             })
         }
-
     }
 
     return (

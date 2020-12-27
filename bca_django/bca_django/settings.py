@@ -145,3 +145,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
+
+BLOCKCHAIN_ADDRESS = 'http://127.0.0.1:8545'
+ADMIN_ADDR_PUBLIC = "0x7AbbF16e607C48752E04080e9ed8D2d562035fb8"

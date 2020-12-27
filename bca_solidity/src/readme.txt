@@ -1,0 +1,1 @@
+Note, I didn't make anything in this folder - it all came from a template. I left it in in case there is any helpful web3 refrences etc. but none of this relates to the Auctions.

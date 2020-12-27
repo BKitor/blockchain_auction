@@ -60,7 +60,7 @@ class SealedBidSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = SealedBid
-        fields = ['url', 'owner', 'end_time',
+        fields = ['url', 'id', 'owner', 'end_time',
                   'auction_id', 'min_bid', 'item_description']
 
     def create(self, validated_data):

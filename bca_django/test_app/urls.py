@@ -12,4 +12,5 @@ router.register(r'auction', views.SealedBidViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
+    path('auction/<pk>/start_auction', views.StartAuctionView.as_view())
 ]
