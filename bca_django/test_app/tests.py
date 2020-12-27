@@ -1,6 +1,9 @@
 from rest_framework.test import APITestCase
 from django.contrib.auth import hashers
 from test_app.models import Profile, SealedBid
+from rest_framework.authtoken.models import Token
+from test_app.models import User
+
 # Create your tests here.
 
 
@@ -8,15 +11,36 @@ class ProfileTests(APITestCase):
 
     fixtures = ['user_fixture']
 
+    def _auth(self):
+        t = self._get_token()
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {t}')
+
+    def _get_token(self):
+        url = '/api-token-auth/'
+        data = {
+            'username': 'admin',
+            'password': 'Passw0rd',
+        }
+        return self.client.post(url, data).json()['token']
+
+    def test_token_auth(self):
+        url = '/api-token-auth/'
+        data = {
+            'username': 'admin',
+            'password': 'Passw0rd',
+        }
+        res = self.client.post(url, data)
+        self.assertIn("token", res.json())
+
     def test_profile_get(self):
         url = '/profile/1/'
-        self.client.login(username='admin', password='Passw0rd')
+        self._auth()
         response = self.client.get(url)
         self.assertEqual(response.data['username'], 'admin')
 
     def test_profile_post(self):
         url = '/profile/'
-        self.client.login(username='admin', password='Passw0rd')
+        self._auth()
 
         new_p_data = {
             'email': 'tst@tst.tst',
@@ -34,7 +58,7 @@ class ProfileTests(APITestCase):
 
     def test_profile_put(self):
         url = '/profile/1/'
-        self.client.login(username='admin', password='Passw0rd')
+        self._auth()
 
         p = self.client.get(url).data
         p['wallet'] = 'updated_wallet'
@@ -51,15 +75,27 @@ class SealedBidTests(APITestCase):
 
     fixtures = ['user_fixture']
 
+    def _auth(self):
+        t = self._get_token()
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {t}')
+
+    def _get_token(self):
+        url = '/api-token-auth/'
+        data = {
+            'username': 'admin',
+            'password': 'Passw0rd',
+        }
+        return self.client.post(url, data).json()['token']
+
     def test_sealedBid_get(self):
         url = '/auction/1/'
-        self.client.login(username='admin', password='Passw0rd')
+        self._auth()
         response = self.client.get(url)
         self.assertEqual(response.data['auction_id'], 'sdfkj3')
 
     def test_sealedBid_post(self):
         url = '/auction/'
-        self.client.login(username='admin', password='Passw0rd')
+        self._auth()
 
         new_p_data = {
             'owner': 1,
@@ -74,7 +110,7 @@ class SealedBidTests(APITestCase):
 
     def test_sealedBid_put(self):
         url = '/auction/'
-        self.client.login(username='admin', password='Passw0rd')
+        self._auth()
 
         new_p_data = {
             'owner': 1,
@@ -95,5 +131,5 @@ class SealedBidTests(APITestCase):
 
     def test_start_auction(self):
         url = '/auction/1/start_auction'
-        self.client.login(username='admin', password='Passw0rd')
+        self._auth()
         self.client.put(url)
