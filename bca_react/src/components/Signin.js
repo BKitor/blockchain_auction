@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
-// import { makeStyles } from '@material-ui/core/styles';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
-// import { blue } from '@material-ui/core/colors';
 import TextField from '@material-ui/core/TextField';
 
 import '../styles/signin.css';
@@ -24,6 +22,7 @@ export default function Signin() {
     const [selectedValue] = React.useState(emails[0]);
     const [signedIn, setSignedIn] = useState(false);
     const [user, setUser] = useState(null);
+    const [, setToken] = useState("");
 
     useEffect(() => {
         function checkSignedIn() {
@@ -50,22 +49,22 @@ export default function Signin() {
 
     return (
         <div className="home">
-            { !signedIn ? 
-            <div>
-            <h1>Sign in page </h1>
-            <Button onClick={handleSignInClick}>Sign In</Button>
-            <Button onClick={handleSignUpClick}>Signup</Button>
-            <div>
-                <a href="/">Forgot your password?</a>
-            </div>
-            <SigninPopUp setSignedIn={setSignedIn} setUser={setUser} selectedValue={selectedValue} open={signinOpen} onClose={handleClose} />
-            <SignupPopUp selectedValue={selectedValue} open={signupOpen} onClose={handleClose} />
-            </div>
-            :
-            <div>
-                <h1>Welcome back {user && user.first_name}</h1>
-            </div>
-}
+            { !signedIn ?
+                <div>
+                    <h1>Sign in page </h1>
+                    <Button onClick={handleSignInClick}>Sign In</Button>
+                    <Button onClick={handleSignUpClick}>Signup</Button>
+                    <div>
+                        <a href="/">Forgot your password?</a>
+                    </div>
+                    <SigninPopUp setSignedIn={setSignedIn} setUser={setUser} selectedValue={selectedValue} open={signinOpen} onClose={handleClose} setToken={setToken} />
+                    <SignupPopUp selectedValue={selectedValue} open={signupOpen} onClose={handleClose} />
+                </div>
+                :
+                <div>
+                    <h1>Welcome back {user && user.first_name}</h1>
+                </div>
+            }
         </div>
     )
 }
@@ -74,7 +73,7 @@ function SigninPopUp(props) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const { onClose, selectedValue, open, setUser, setSignedIn } = props;
+    const { onClose, selectedValue, open, setUser, setToken, setSignedIn } = props;
 
     const handleClose = () => {
         onClose(selectedValue);
@@ -93,28 +92,35 @@ function SigninPopUp(props) {
     }
 
     const handleSignIn = () => {
-        api.user.signin(username, password).then(res => {
-            if (res.data){
-            console.log(res.data.results[0]);
-            setUser(res.data.results[0]);
-            window.localStorage.setItem('user', JSON.stringify(res.data.results[0]))
-            setSignedIn(true);
-
-            } 
-        }).catch(err => { 
-                window.alert("Invalid Credentials");
+        api.user.getToken(username, password).then(res => {
+            if (res.data) {
+                console.log(res.data);
+                setToken(res.data.token)
+                window.localStorage.setItem('user_token', res.data.token)
+                setSignedIn(true);
+            }
+            return [username, res.data.token]
+        }).then(([uname, token]) => {
+            api.user.getByUname(uname, token).then(res => {
+                setUser(res.data)
+                window.localStorage.setItem('user', JSON.stringify(res.data))
+                console.log(res)
+            })
         })
-        
+            .catch(err => {
+                window.alert("Invalid Credentials");
+            })
+
         onClose();
     }
-    
+
     return (
         <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
             <DialogTitle id="simple-dialog-title">Sign In</DialogTitle>
-            <div style={{width: '80%', margin: 'auto'}}>
-            <TextField onChange={handleUserNameChange} placeholder='username'></TextField>
-            <TextField onChange={handlePasswordChange} placeholder='password' type='password'></TextField>
-            <Button onClick={handleSignIn}>Sign In!</Button>
+            <div style={{ width: '80%', margin: 'auto' }}>
+                <TextField onChange={handleUserNameChange} placeholder='username'></TextField>
+                <TextField onChange={handlePasswordChange} placeholder='password' type='password'></TextField>
+                <Button onClick={handleSignIn}>Sign In!</Button>
             </div>
         </Dialog>
     );

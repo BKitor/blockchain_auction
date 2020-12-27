@@ -69,6 +69,14 @@ class ProfileTests(APITestCase):
         self.assertEqual(p['wallet'], p_o.wallet)
         self.assertEqual(p['first_name'], p_o.user.first_name)
 
+    def test_get_p_by_uname(self):
+        url = '/profile/uname/admin/'
+        self._auth()
+
+        j = self.client.get(url).json()
+        self.assertIn('url', j)
+        self.assertEqual('admin', j['username'])
+
 
 # Sealed bid tests
 class SealedBidTests(APITestCase):

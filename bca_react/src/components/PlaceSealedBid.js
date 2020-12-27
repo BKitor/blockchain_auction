@@ -7,6 +7,7 @@ import contract_artifact from "../../src/contracts/SealedBid.json"
 
 export default function PlaceSealedBid() {
     let { auction_pk } = useParams();
+    const [token, setToken] = useState(window.localStorage.getItem('user_token'));
     const [minBid, setMinBid] = useState('loading...');
     const [itemDescription, setItemDiscription] = useState('loading...');
     const [endTime, setEndTime] = useState(new Date());
@@ -19,15 +20,16 @@ export default function PlaceSealedBid() {
 
     useEffect(() => {
         function checkSignedIn() {
-            if (window.localStorage.getItem('user')) {
+            if (window.localStorage.getItem('user_token')) {
                 setOwner(JSON.parse(window.localStorage.getItem('user')).user_id)
                 setOwnerAddr(JSON.parse(window.localStorage.getItem('user')).user_id)
+                setToken(window.localStorage.getItem('user_token'))
             } else {
                 window.location = '/signin'
             }
         }
         function getAuctionInfo() {
-            Api.auctions.getAuctionByPK(auction_pk)
+            Api.auctions.getAuctionByPK(auction_pk, token)
                 .then(res => {
                     setMinBid(`${res.data.min_bid} eth`);
                     setItemDiscription(`${res.data.item_description}`);
@@ -35,13 +37,13 @@ export default function PlaceSealedBid() {
                     setContractAddr(res.data.auction_id);
                     setContract(new web3.eth.Contract(contract_artifact.abi, res.data.auction_id))
                 }).catch(e=>{
+                    alert("There was an issue getting auction info, this might be broken")
                     console.error(e);
                 })
         }
-        // console.log(contract_artifact)
         checkSignedIn();
         getAuctionInfo();
-    }, [auction_pk, web3.eth.Contract]);
+    }, [auction_pk, web3.eth.Contract, token]);
 
     const handleBidChange = (e) => {
         if (isNaN(e.target.value)){
