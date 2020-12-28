@@ -15,6 +15,7 @@ import Profile from './components/Profile';
 import NotFound from './components/NotFound';
 import SealedBid from './components/SealedBid';
 import PlaceSealedBid from './components/PlaceSealedBid';
+import ProfileByUname from './components/ProfileByUname';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route exact path="/signin" component={Signin} />
             <Route exact path="/auctions" component={Auctions} />
             <Route exact path="/profile" component={Profile} />
+            <Route exact path="/user/:uname" component={ProfileByUname}/>
             <Route exact path='/sealed-bid' component={SealedBid} />
             <Route exact path="/place/sealed-bid/:auction_pk" component={PlaceSealedBid} />
             <Route exact path="*" component={NotFound} />

@@ -28,6 +28,7 @@ export default function Signin() {
         function checkSignedIn() {
             if (window.localStorage.getItem('user')) {
                 setUser(JSON.parse(window.localStorage.getItem('user')))
+                setToken(window.localStorage.getItem('user_token'))
                 setSignedIn(true);
             }
         }

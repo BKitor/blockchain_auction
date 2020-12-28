@@ -22,7 +22,7 @@ export default function PlaceSealedBid() {
         function checkSignedIn() {
             if (window.localStorage.getItem('user_token')) {
                 setOwner(JSON.parse(window.localStorage.getItem('user')).user_id)
-                setOwnerAddr(JSON.parse(window.localStorage.getItem('user')).user_id)
+                setOwnerAddr(JSON.parse(window.localStorage.getItem('user')).wallet)
                 setToken(window.localStorage.getItem('user_token'))
             } else {
                 window.location = '/signin'
