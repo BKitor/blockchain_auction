@@ -88,12 +88,12 @@ export default function NavBar() {
   useEffect(() => {
     function checkSignedIn() {
       if (window.localStorage.getItem('user')) {
-          setSignedIn(true);
+        setSignedIn(true);
       } else {
         setSignedIn(false);
       }
-  }
-  checkSignedIn();
+    }
+    checkSignedIn();
   }, [])
 
   /* Nav Bar Callbacks */
@@ -118,12 +118,11 @@ export default function NavBar() {
     if (!signedIn) {
       setAnchorProfile(null);
       window.location = '/signin'
-    } else { 
+    } else {
       window.localStorage.removeItem('user');
+      window.localStorage.removeItem('user_token');
       window.location.reload();
-
     }
-
   }
 
   const handleSealed = () => {
@@ -144,7 +143,7 @@ export default function NavBar() {
     setAnchorAuctions(null);
     window.location = '/auctions'
   }
-  
+
   /* Search Callbacks */
   const handleSearch = (e) => {
     setQuery(e.target.value);
@@ -195,7 +194,7 @@ export default function NavBar() {
               >
                 <MenuItem onClick={handleEditProfile}>Edit Profile</MenuItem>
                 <MenuItem onClick={handleAuth}>
-                  { !signedIn ? 'Sign In' : 'Sign Out' }
+                  {!signedIn ? 'Sign In' : 'Sign Out'}
                 </MenuItem>
               </Menu>
 
