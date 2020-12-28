@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import Api from '../Api.js';
 import { singOut } from '../util.js'
 import Typography from '@material-ui/core/Typography';
+import Error404 from '../components/Error404.js'
 
 export default function ProfileByUname() {
   let { uname } = useParams();
@@ -42,17 +43,14 @@ export default function ProfileByUname() {
   return (
     <div className="home">
       { userNotFound ?
-        <div>
-          <Typography variant="h1" align='center'>404</Typography>
-          <Typography variant="h5" align='center'>User {uname} not found</Typography>
-        </div>
+        <Error404 type={"User"} identifier={uname}></Error404>
         :
-        <div>
+        <>
           <Typography variant="h4" align='center'>{uname}</Typography>
           <Typography variant="subtitle1" align='center'>{fname} {lname}</Typography>
           <Typography variant="h6" align='center'>Wallet: {wallet}</Typography>
           <Typography variant="h6" align='center'>{email}</Typography>
-        </div>
+        </>
       }
     </div>
   )
