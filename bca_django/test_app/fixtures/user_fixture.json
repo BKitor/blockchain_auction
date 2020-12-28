@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "user": 1,
-      "wallet": "0x0C403D963e82F029b9D23d34fbe1b8410E363D73",
+      "wallet": "0x8Aa46fcE750074e2c31fA2AF8651C73C179E5bED",
       "birthday": "2000-09-08",
       "publicProfile": true
     }
@@ -14,7 +14,7 @@
     "pk": 2,
     "fields": {
       "user": 2,
-      "wallet": "klsdkgj",
+      "wallet": "0x1D033a348d63345a56D63b6c77De4813E5AB7a76",
       "birthday": "2000-07-02",
       "publicProfile": false
     }
@@ -46,7 +46,7 @@
     "pk": 1,
     "fields": {
       "owner": 1,
-      "end_time": "2002-08-02",
+      "end_time": "2002-08-02T00:00:00Z",
       "auction_id": "sdfkj3",
       "min_bid": 5,
       "item_description": "this is an item test"

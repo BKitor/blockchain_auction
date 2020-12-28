@@ -4,42 +4,49 @@ const djangoUrl = 'http://127.0.0.1:8000'
 
 export default {
     user: {
-        signin: (username, pw) =>
-            axios.get('http://127.0.0.1:8000/profile/',
+        getToken: (username, password) =>
+            axios.post(`${djangoUrl}/api-token-auth/`,
                 {
-                    auth: {
-                        username,
-                        password: pw
+                    username,
+                    password
+                }
+            ).then(res => res),
+        getByUname: (username, token) =>
+            axios.get(`${djangoUrl}/profile/uname/${username}/`,
+                {
+                    headers: {
+                        'Authorization': `Token ${token}`
                     }
-                },
+                }
             ).then(res => res)
+
     },
     auctions: {
-        newSealedBid: (body, username, password) =>
-            axios.post('http://127.0.0.1:8000/auction/', body, {
-                auth: {
-                    username: 'admin',
-                    password: 'Passw0rd'
-                },
+        newSealedBid: (body, token) => {
+            return axios.post(`${djangoUrl}/auction/`, body,
+            {
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            } )
+        },
 
-            }).then(res => res),
+        luanchSealedBid: (auction_pk, token) => {
+            return axios.put(`${djangoUrl}/auction/${auction_pk}/start_auction`, {}, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            })
+        },
 
-        luanchSealedBid: (auction_pk, username, password) =>
-            axios.put(`http://127.0.0.1:8000/auction/${auction_pk}/start_auction`, {
-            }, {
-                auth: {
-                    username: 'admin',
-                    password: 'Passw0rd'
-                },
-            }).then(res => res),
-
-        getAuctionByPK: (auction_pk) =>
-            axios.get(`${djangoUrl}/auction/${auction_pk}/`, {
-                auth: {
-                    username: 'admin',
-                    password: 'Passw0rd'
-                },
-            }).then(res => res).catch(err=>console.error(err))
-
+        getAuctionByPK: (auction_pk, token) =>{
+            return axios.get(`${djangoUrl}/auction/${auction_pk}/`,
+                {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                }
+            )
+        }
     },
 }

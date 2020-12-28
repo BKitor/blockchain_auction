@@ -5,6 +5,7 @@ import Api from '../Api';
 
 export default function SealedBid() {
     const [owner, setOwner] = useState('');
+    const [token, setToken] = useState('');
 
     const [minBid, setMinBid] = useState(0);
     const [itemDescription, setItemDescription] = useState('');
@@ -12,7 +13,8 @@ export default function SealedBid() {
 
     useEffect(() => {
         function checkSignedIn() {
-            if (window.localStorage.getItem('user')) {
+            if (window.localStorage.getItem('user_token')) {
+                setToken(window.localStorage.getItem('user_token'))
                 setOwner(JSON.parse(window.localStorage.getItem('user')).user_id)
             } else {
                 window.location = '/signin'
@@ -34,17 +36,18 @@ export default function SealedBid() {
             window.alert("Invalid Inputs")
         } else {
             const body = {
-                owner: parseInt(owner), 
+                owner: parseInt(owner),
                 end_time: value.toISOString(),
                 auction_id: "",
-                min_bid: parseInt(minBid), 
+                min_bid: parseInt(minBid),
                 item_description: itemDescription,
             }
-            Api.auctions.newSealedBid(body).then(res => {
-                Api.auctions.luanchSealedBid(res.data.id)
+            Api.auctions.newSealedBid(body, token).then(res => {
+                Api.auctions.luanchSealedBid(res.data.id, token)
             }).then(res => {
                 console.log(res)
             })
+                .catch(err => console.error(err))
         }
     }
 

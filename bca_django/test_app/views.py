@@ -3,7 +3,7 @@ import datetime
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from test_app.models import Profile, User, SealedBid
 from django.contrib.auth.models import Group
 from rest_framework import generics, permissions, viewsets, status
@@ -70,6 +70,14 @@ class SealedBidViewSet(viewsets.ModelViewSet):
     queryset = SealedBid.objects.all()
     serializer_class = SealedBidSerializer
     permission_classes = [IsAuthenticated]
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_profile_by_uname(request, username=None):
+    u = get_object_or_404(User, username=username)
+    p = get_object_or_404(Profile, user=u)
+    return Response(ProfileSerializer(p, context={'request': request}).data, status=status.HTTP_200_OK)
 
 
 class StartAuctionView(generics.RetrieveAPIView):
