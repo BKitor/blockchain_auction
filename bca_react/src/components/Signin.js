@@ -9,13 +9,6 @@ import api from '../Api';
 
 const emails = ['16jw98@queensu.ca', 'other_user@gmail.com'];
 
-// const useStyles = makeStyles({
-//     avatar: {
-//         backgroundColor: blue[100],
-//         color: blue[600],
-//     },
-// });
-
 export default function Signin() {
     const [signinOpen, setSigninOpen] = useState(false);
     const [signupOpen, setSignupOpen] = useState(false);
@@ -95,7 +88,6 @@ function SigninPopUp(props) {
     const handleSignIn = () => {
         api.user.getToken(username, password).then(res => {
             if (res.data) {
-                console.log(res.data);
                 setToken(res.data.token)
                 window.localStorage.setItem('user_token', res.data.token)
                 setSignedIn(true);
@@ -105,7 +97,6 @@ function SigninPopUp(props) {
             api.user.getByUname(uname, token).then(res => {
                 setUser(res.data)
                 window.localStorage.setItem('user', JSON.stringify(res.data))
-                console.log(res)
             })
         })
             .catch(err => {
