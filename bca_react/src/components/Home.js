@@ -7,6 +7,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import { Typography } from '@material-ui/core';
 
 // Generate Order Data
 function createData(id, date, name, shipTo, paymentMethod, amount) {
@@ -35,7 +36,7 @@ export default function Orders() {
   const classes = useStyles();
   return (
     <React.Fragment>
-      <h1>Live Auctions</h1>
+      <Typography variant="h4">Live Auctions</Typography>
       <Table size="small">
         <TableHead>
           <TableRow>

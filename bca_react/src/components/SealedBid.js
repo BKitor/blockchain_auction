@@ -43,6 +43,7 @@ export default function SealedBid() {
                 item_description: itemDescription,
             }
             Api.auctions.newSealedBid(body, token).then(res => {
+                window.location = `/place/sealed-bid/${res.data.id}`
                 Api.auctions.luanchSealedBid(res.data.id, token)
             }).then(res => {
                 console.log(res)
