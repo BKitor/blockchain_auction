@@ -25,4 +25,9 @@ const handleProfileUnameReq = rest.get(`${djangoUrl}/profile/uname/admin/`, (req
     return res(ctx.json(adminUser));
 })
 
-export const server = setupServer(handleTokenReq, handleProfileUnameReq);
+const handleCreateUser = rest.post(`${djangoUrl}/newuser/`, (req, res, ctx) => {
+    return res(ctx.json(adminUser))
+})
+
+
+export const server = setupServer(handleTokenReq, handleProfileUnameReq, handleCreateUser);

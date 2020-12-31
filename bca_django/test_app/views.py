@@ -26,7 +26,7 @@ class IsAuthenticated(permissions.IsAuthenticated):
 
 class UserViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint that allows Users to be viewed or edited.
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
@@ -35,7 +35,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows Groups to be viewed or edited.
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -44,32 +44,34 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class ProfileViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows Profiles to be viewed or edited.
     """
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
-    # @action(detail=True, methods=['post'])
-    # def set_password(self, request, pk=None):
-    #   user = self.get_object()
-    #  serializer = ProfileSerializer(data=request.data)
-    # if serializer.is_valid():
-    #    user.set_password(serializer.data['password'])
-    #   user.save()
-    #  return Response({'status': 'password set'})
-    # else:
-    #   return Response(serializer.errors,
-    #                  status=status.HTTP_400_BAD_REQUEST)
-
 
 class SealedBidViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows SlealedBidAuctions to be viewed or edited.
     """
     queryset = SealedBid.objects.all()
     serializer_class = SealedBidSerializer
     permission_classes = [IsAuthenticated]
+
+
+@api_view(['POST'])
+def create_new_user(request):
+    # this is an endpoint without authentication for creating a new user
+    # this would probably need stuff like rate limiting and protection against DOSs or somethig
+    p = ProfileSerializer(data=request.data, context={'request': request})
+    p.is_valid(raise_exception=True)
+
+    if len(User.objects.filter(username=request.data['username'])) > 0:
+        return Response({"message": "Username is taken"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        p.save()
+        return Response(p.data)
 
 
 @api_view(['GET'])

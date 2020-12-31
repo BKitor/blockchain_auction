@@ -8,12 +8,6 @@ from rest_framework.authtoken.models import Token
 # Create your models here.
 
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
-
-
 class User(AbstractUser):
     pass
 
@@ -21,20 +15,9 @@ class User(AbstractUser):
 class Profile(models.Model):
     user = models.OneToOneField(
         User, primary_key=True, related_name='profile', on_delete=models.CASCADE)
-    wallet = models.CharField(max_length=30)
+    wallet = models.CharField(max_length=50)
     birthday = models.DateField(default=timezone.now)
     publicProfile = models.BooleanField(default=False)
-
-    @receiver(post_save, sender=User)
-    def create_profile_for_user(sender, instance=None, created=False, **kwargs):
-        if created:
-            Profile.objects.get_or_create(user=instance)
-
-    @receiver(pre_delete, sender=User)
-    def delete_profile_for_user(sender, instance=None, **kwargs):
-        if instance:
-            profile = Profile.objects.get(user=instance)
-            profile.delete()
 
 
 class SealedBid(models.Model):
@@ -48,10 +31,28 @@ class SealedBid(models.Model):
     auction_id = models.CharField(max_length=30, blank=True)
     item_description = models.CharField(max_length=400)
 
-    # AUCTION_TYPE = (
-    #   ('D', 'Dutch'),
-    #  ('E', 'English'),
-    # ('S', 'SealedBid'),
-    # ('C', 'Channel'),
-    # )
-    # auction_type = models.CharField(max_length=1, choices=AUCTION_TYPE)
+
+@receiver(post_save, sender=User)
+def create_profile_for_user(sender, instance=None, created=False, **kwargs):
+    if created:
+        Profile.objects.get_or_create(user=instance)
+
+
+@receiver(pre_delete, sender=User)
+def delete_profile_for_user(sender, instance=None, **kwargs):
+    if instance:
+        profile = Profile.objects.get(user=instance)
+        profile.delete()
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
+
+
+@receiver(pre_delete, sender=settings.AUTH_USER_MODEL)
+def delete_auth_token(sender, instance=None, using=None, **kwargs):
+    if instance:
+        token = Token.objects.get(user=instance)
+        token.delete()

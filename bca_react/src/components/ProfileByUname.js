@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom/cjs/react-router-dom.min'
+import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import Api from '../Api.js';
-import { singOut } from '../util.js'
+import Util from '../util.js'
 import Typography from '@material-ui/core/Typography';
 import Error404 from '../components/Error404.js'
 
-export default function ProfileByUname() {
+export default function ProfileByUname(props) {
   let { uname } = useParams();
-  let [token,] = useState(window.localStorage.getItem('user_token'));
+  const { tokenP, userP } = (props.location.state) ? props.location.state : [null, null];
+  const [token, ] = (tokenP && userP) ? [tokenP, userP] : Util.checkSignedIn();
+
   let [wallet, setWallet] = useState('loading...');
   let [email, setEmail] = useState('loading...');
   let [fname, setfname] = useState('loading...')
@@ -32,25 +34,21 @@ export default function ProfileByUname() {
           }
         })
     }
-    if (token === null) {
-      alert("You're not signed in, please sign in");
-      singOut();
-      window.location = '/signin'
-    }
     getUserInfo()
-  }, [token, uname]);
+  }, [uname, token]);
 
   return (
     <div className="home">
-      { userNotFound ?
-        <Error404 type={"User"} identifier={uname}></Error404>
-        :
-        <>
-          <Typography variant="h4" align='center'>{uname}</Typography>
-          <Typography variant="subtitle1" align='center'>{fname} {lname}</Typography>
-          <Typography variant="h6" align='center'>Wallet: {wallet}</Typography>
-          <Typography variant="h6" align='center'>{email}</Typography>
-        </>
+      {(!token) ?
+        < Redirect to='/signin' /> : (userNotFound) ?
+          <Error404 type={"User"} identifier={uname}></Error404>
+          :
+          <>
+            <Typography variant="h4" align='center'>{uname}</Typography>
+            <Typography variant="subtitle1" align='center'>{fname} {lname}</Typography>
+            <Typography variant="h6" align='center'>Wallet: {wallet}</Typography>
+            <Typography variant="h6" align='center'>{email}</Typography>
+          </>
       }
     </div>
   )
