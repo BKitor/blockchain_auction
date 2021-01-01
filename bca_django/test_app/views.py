@@ -59,35 +59,8 @@ class SealedBidViewSet(viewsets.ModelViewSet):
     serializer_class = SealedBidSerializer
     permission_classes = [IsAuthenticated]
 
-
-@api_view(['POST'])
-def create_new_user(request):
-    # this is an endpoint without authentication for creating a new user
-    # this would probably need stuff like rate limiting and protection against DOSs or somethig
-    p = ProfileSerializer(data=request.data, context={'request': request})
-    p.is_valid(raise_exception=True)
-
-    if len(User.objects.filter(username=request.data['username'])) > 0:
-        return Response({"message": "Username is taken"}, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        p.save()
-        return Response(p.data)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_profile_by_uname(request, username=None):
-    u = get_object_or_404(User, username=username)
-    p = get_object_or_404(Profile, user=u)
-    return Response(ProfileSerializer(p, context={'request': request}).data, status=status.HTTP_200_OK)
-
-
-class StartAuctionView(generics.RetrieveAPIView):
-    queryset = SealedBid.objects.all()
-    serializer_class = SealedBidSerializer
-    permission_classes = [IsAuthenticated]
-
-    def put(self, request, **kwargs):
+    @action(methods=['PUT'], detail=True, url_path='start')
+    def start_auction(self, request, **kwargs):
         auction = self.get_object()
 
         if auction.auction_id != "":
@@ -120,3 +93,25 @@ class StartAuctionView(generics.RetrieveAPIView):
         auction.save()
 
         return Response(SealedBidSerializer(auction, context={'request': request}).data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def create_new_user(request):
+    # this is an endpoint without authentication for creating a new user
+    # this would probably need stuff like rate limiting and protection against DOSs or somethig
+    p = ProfileSerializer(data=request.data, context={'request': request})
+    p.is_valid(raise_exception=True)
+
+    if len(User.objects.filter(username=request.data['username'])) > 0:
+        return Response({"message": "Username is taken"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        p.save()
+        return Response(p.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_profile_by_uname(request, username=None):
+    u = get_object_or_404(User, username=username)
+    p = get_object_or_404(Profile, user=u)
+    return Response(ProfileSerializer(p, context={'request': request}).data, status=status.HTTP_200_OK)

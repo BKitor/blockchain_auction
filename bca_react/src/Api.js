@@ -18,18 +18,18 @@ export default {
   },
   auctions: {
     newSealedBid: (body, token) => {
-      return axios.post(`${djangoUrl}/auction/`, body,
+      return axios.post(`${djangoUrl}/auction/sealed_bid/`, body,
         { headers: { 'Authorization': `Token ${token}` } })
     },
 
     luanchSealedBid: (auction_pk, token) => {
-      return axios.put(`${djangoUrl}/auction/${auction_pk}/start_auction`, {}, {
+      return axios.put(`${djangoUrl}/auction/sealed_bid/${auction_pk}/start/`, {}, {
         headers: { 'Authorization': `Token ${token}` }
       })
     },
 
     getAuctionByPK: (auction_pk, token) => {
-      return axios.get(`${djangoUrl}/auction/${auction_pk}/`,
+      return axios.get(`${djangoUrl}/auction/sealed_bid/${auction_pk}/`,
         { headers: { 'Authorization': `Token ${token}` } }
       )
     }
