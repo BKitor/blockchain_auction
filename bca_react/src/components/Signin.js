@@ -49,12 +49,10 @@ export default function Signin() {
           <SignupPopUp selectedValue={selectedValue} open={signupOpen} setUser={setUser} setToken={setToken} onClose={handleClose} />
         </div>
         :
-        <div>
-          <Redirect to={{
-            pathname: `/user/${user.username}`,
-            state: { tokenP: token, userP: user }
-          }} />
-        </div>
+        <Redirect to={{
+          pathname: `/user/${user.username}`,
+          state: { tokenP: token, userP: user }
+        }} />
       }
     </div>
   )

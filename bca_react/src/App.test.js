@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, act, screen, waitFor, wait } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import App from './App';
 import Error404 from './components/Error404.js'
