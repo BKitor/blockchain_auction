@@ -153,13 +153,13 @@ class SealedBidTests(APITestCase):
         return self.client.post(url, data).json()['token']
 
     def test_sealedBid_get(self):
-        url = '/auction/1/'
+        url = '/auction/sealed_bid/1/'
         self._auth()
         response = self.client.get(url)
         self.assertEqual(response.data['auction_id'], 'sdfkj3')
 
     def test_sealedBid_post(self):
-        url = '/auction/'
+        url = '/auction/sealed_bid/'
         self._auth()
 
         new_p_data = {
@@ -174,7 +174,7 @@ class SealedBidTests(APITestCase):
         self.assertEqual(response.data['auction_id'], new_p_data['auction_id'])
 
     def test_sealedBid_put(self):
-        url = '/auction/'
+        url = '/auction/sealed_bid/'
         self._auth()
 
         new_p_data = {
@@ -195,6 +195,7 @@ class SealedBidTests(APITestCase):
         self.assertEqual(response.data['end_time'], '7566-07-06T13:15:00Z')
 
     def test_start_auction(self):
-        url = '/auction/1/start_auction'
+        url = '/auction/sealed_bid/1/start/'
         self._auth()
-        self.client.put(url)
+        res = self.client.put(url)
+        self.assertEqual(res.status_code, 400)

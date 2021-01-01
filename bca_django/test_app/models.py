@@ -20,16 +20,20 @@ class Profile(models.Model):
     publicProfile = models.BooleanField(default=False)
 
 
-class SealedBid(models.Model):
-
+class Auction(models.Model):
+    item_description = models.CharField(max_length=400)
     owner = models.ForeignKey(
         Profile, on_delete=models.SET_NULL, null=True, default=1)
-
     end_time = models.DateTimeField(null=True, blank=True)
+    auction_id = models.CharField(max_length=30, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class SealedBid(Auction):
 
     min_bid = models.IntegerField()
-    auction_id = models.CharField(max_length=30, blank=True)
-    item_description = models.CharField(max_length=400)
 
 
 @receiver(post_save, sender=User)
