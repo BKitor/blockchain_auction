@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -9,6 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import Fade from '@material-ui/core/Fade';
+import Util from '../../util.js'
 
 import '../../styles/nav.css';
 import { Button } from '@material-ui/core';
@@ -77,24 +78,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function NavBar() {
+  const [token, ] = Util.checkSignedIn();
   const classes = useStyles();
-  const [setQuery] = React.useState('');
-  const [anchorAuctions, setAnchorAuctions] = React.useState(null);
-  const [anchorProfile, setAnchorProfile] = React.useState(null);
+  const [setQuery] = useState('');
+  const [anchorAuctions, setAnchorAuctions] = useState(null);
+  const [anchorProfile, setAnchorProfile] = useState(null);
   const openAuctions = Boolean(anchorAuctions);
   const openProfile = Boolean(anchorProfile);
-  const [signedIn, setSignedIn] = useState(false);
-
-  useEffect(() => {
-    function checkSignedIn() {
-      if (window.localStorage.getItem('user')) {
-        setSignedIn(true);
-      } else {
-        setSignedIn(false);
-      }
-    }
-    checkSignedIn();
-  }, [])
 
   /* Nav Bar Callbacks */
   const openAuctionMenu = (event) => {
@@ -115,13 +105,12 @@ export default function NavBar() {
   }
 
   const handleAuth = () => {
-    if (!signedIn) {
+    if (!token) {
       setAnchorProfile(null);
       window.location = '/signin'
     } else {
-      window.localStorage.removeItem('user');
-      window.localStorage.removeItem('user_token');
-      window.location.reload();
+      Util.singOut();
+      window.location = '/signin'
     }
   }
 
@@ -194,7 +183,7 @@ export default function NavBar() {
               >
                 <MenuItem onClick={handleEditProfile}>Edit Profile</MenuItem>
                 <MenuItem onClick={handleAuth}>
-                  {!signedIn ? 'Sign In' : 'Sign Out'}
+                  {!token ? 'Sign In' : 'Sign Out'}
                 </MenuItem>
               </Menu>
 

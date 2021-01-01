@@ -19,19 +19,23 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     user_id = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     username = serializers.CharField(source='user.username')
-    email = serializers.CharField(source='user.email')
-    first_name = serializers.CharField(source='user.first_name')
-    last_name = serializers.CharField(source='user.last_name')
+    email = serializers.CharField(source='user.email', required=False)
+    first_name = serializers.CharField(
+        source='user.first_name', required=False)
+    last_name = serializers.CharField(source='user.last_name', required=False)
+    password = serializers.CharField(source='user.password', write_only=True)
 
     class Meta:
         model = Profile
         fields = ['url', 'user_id', 'username', 'email', 'first_name',
-                  'last_name', 'wallet', 'birthday', 'publicProfile']
+                  'last_name', 'wallet', 'birthday', 'publicProfile', 'password']
 
     def update(self, instance, validated_data):
         # First, update the User
         user_data = validated_data.pop('user', {})
         for attr, value in user_data.items():
+            if attr == 'password':
+                continue
             setattr(instance.user, attr, value)
         instance.user.save()
         # Then, update UserProfile
@@ -42,11 +46,12 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
-        user = User.objects.create(**user_data)
+        user = User.objects.create_user(**user_data)
         profile, _ = Profile.objects.get_or_create(user=user)
-        profile.birthday = validated_data['birthday']
+        profile.birthday = validated_data['birthday'] if 'birthday' in validated_data.keys(
+        ) else '2000-1-1'
         profile.wallet = validated_data['wallet']
-        profile.publicProfile = validated_data['publicProfile']
+        profile.publicProfile = validated_data['publicProfile'] if 'publicProfile' in validated_data else False
         profile.save()
         return profile
 
