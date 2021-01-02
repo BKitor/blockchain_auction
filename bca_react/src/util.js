@@ -1,4 +1,5 @@
 export default {
+    bcURL: "http://localhost:8545",
 
     checkSignedIn: () => {
         const token = window.localStorage.getItem('user_token');
