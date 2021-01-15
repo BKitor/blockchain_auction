@@ -44,6 +44,20 @@ You will need to make a virtual environment, install the venv tool from apt.
 
 To check if it's installed, you can run `python3 -m venv -h` and it should display a help message for making virtual environments. 
 
+## Installing Blockchain tools
+__This depends on npm being avaliable__
+
+We're using [truffle and ganache](https://www.trufflesuite.com/) as blockchain tools, these can be installed with `npm install -g truffle` and `npm install -g ganache-cli`.
+In order for Python to do blockchain stuff it's going to need the solc compiler, 
+you need to download it from github, change it's name to _solc_, make it an executable, and place it in the venv's binary folder. 
+
+``` 
+wget https://github.com/ethereum/solidity/releases/download/v0.7.5/solc-static-linux
+mv solc-static-linux solc
+chmod +x solc
+mv solc /venv/bin
+```
+
 
 ## Cloning Blockchain Auction
 
@@ -113,6 +127,21 @@ Window 2:
 
 `python manage.py runserver`
 
+
+## Usefull commands
+A lot of these commands are specified in `travis.yml`
+
+The python test suite can be run with `python manage.py test`
+
+Python fixtures can be loaded with `python manage.py loaddata user_fixture`
+
+`./refresh_db_and_run.sh` is a scritp that deletes the database, remigrates all the models,populates the database with user fixtures and runs the server.
+
+React tests can be run with `npm run test`
+
+A ganache-cli server can be quickstarted with `./init_ganache.sh`
+
+Solidity tests can be run with `truffle test`
 
 ### If you have any question don't hesitate to ask me on Discord or Facebook or whatever. If something doesn't work, let me know, I'll help you fix it. 
 

@@ -14,10 +14,10 @@ class BChain():
     def __init__(self):
         self.admin_public_key = settings.ADMIN_ADDR_PUBLIC
         self.w3 = Web3(Web3.HTTPProvider(settings.BLOCKCHAIN_ADDRESS))
-        with open('../bca_solidity/contracts/Auction.sol') as f:
+        with open('../bca_react/contracts/Auction.sol') as f:
             auction_contents = f.read()
 
-        with open('../bca_solidity/contracts/SealedBid.sol') as f:
+        with open('../bca_react/contracts/SealedBid.sol') as f:
             sealed_bid_contents = f.read()
 
         compiled_auctions = compile_standard({
