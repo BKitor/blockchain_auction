@@ -16,6 +16,7 @@ import NotFound from './components/NotFound';
 import SealedBid from './components/SealedBid';
 import PlaceSealedBid from './components/PlaceSealedBid';
 import ProfileByUname from './components/ProfileByUname';
+import WithdrawSealedBid from './components/WithdrawSB.js'
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route exact path="/user/:uname" component={ProfileByUname}/>
             <Route exact path='/sealed-bid' component={SealedBid} />
             <Route exact path="/place/sealed-bid/:auction_pk" component={PlaceSealedBid} />
+            <Route exact path="/withdraw/sealed-bid/:auction_pk" component={WithdrawSealedBid} />
             <Route exact path="*" component={NotFound} />
         </Switch>
         </Router>
