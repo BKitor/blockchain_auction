@@ -1,3 +1,4 @@
+
 import { Button, TextField } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
@@ -5,10 +6,10 @@ import Api from '../Api';
 import Web3 from "web3"
 import contract_artifact from "../contracts/SealedBid.json"
 import Typography from '@material-ui/core/Typography';
-import Error404 from '../components/Error404.js'
+import Error404 from './Error404.js'
 import Util from '../util.js';
 
-export default function PlaceSealedBid() {
+export default function PlaceEnglish() {
   let { auction_pk } = useParams();
   const [token, user] = Util.checkSignedIn();
 
@@ -23,7 +24,8 @@ export default function PlaceSealedBid() {
 
   useEffect(() => {
     const web3 = new Web3(Util.bcURL)
-    Api.auctions.getSealedBidByPK(auction_pk, token)
+    console.log(Api)
+    Api.auctions.getEnglishByPK(auction_pk, token)
       .then(res => {
         setMinBid(`${res.data.min_bid} eth`);
         setItemDiscription(`${res.data.item_description}`);
