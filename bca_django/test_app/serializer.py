@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from test_app.models import Profile, User, SealedBid
+from test_app.models import Profile, User, SealedBid, English
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -77,3 +77,27 @@ class SealedBidSerializer(serializers.HyperlinkedModelSerializer):
         sealed_bid.item_description = validated_data['item_description']
         sealed_bid.save()
         return sealed_bid
+
+
+class EnglishSerializer(serializers.HyperlinkedModelSerializer):
+
+    owner = serializers.PrimaryKeyRelatedField(
+        many=False, queryset=Profile.objects.all())
+    auction_id = serializers.CharField(allow_blank=True)
+    end_time = serializers.DateTimeField(allow_null=True)
+
+    class Meta:
+        model = English
+        fields = ['url', 'id', 'owner', 'end_time',
+                  'auction_id', 'min_bid', 'current_bid', 'item_description']
+
+    def create(self, validated_data):
+        english_auction = English()
+        english_auction.owner = validated_data['owner']
+        english_auction.end_time = validated_data.get('end_time')
+        english_auction.auction_id = validated_data.get('auction_id')
+        english_auction.min_bid = validated_data['min_bid']
+        english_auction.current_bid = validated_data['current_bid']
+        english_auction.item_description = validated_data['item_description']
+        english_auction.save()
+        return english_auction
