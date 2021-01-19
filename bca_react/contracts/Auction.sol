@@ -37,6 +37,10 @@ contract Auction{                       //defines a contract with name Auction
         _;
     }
     
+    function payable (){
+        revert();
+    }
+
     function get_owner() public view returns(address payable) {
         return auction_owner;
     }
@@ -55,11 +59,21 @@ contract Auction{                       //defines a contract with name Auction
 
     function withdraw() public returns (bool) {
         require(block.timestamp > auction_end, "Auction still open. Cannot withdraw.");
-        require(bids[msg.sender] > 0, "You have no bid to withdraw.");
         require(msg.sender != highestBidder, "You won, you cannot withdraw funds.");
-        uint amount = bids[msg.sender];
-        bids[msg.sender] = 0;
-        msg.sender.transfer(amount);
+        
+        if(msg.sender == auction_owner){
+            require(bids[highestBidder] > 0, "You have already withdrawn winnings.")
+            uint amount = bids[highestBidder];
+            bids[highestBidder] = 0;
+        } else {
+            require(bids[msg.sender] > 0, "You have no bid to withdraw.");
+            uint amount = bids[msg.sender];
+            bids[msg.sender] = 0;
+        }
+
+        (bool success, ) = msg.sender.call.value(amount)("");
+        require(success, "Transfer failed.");
+        
         emit WithdrawalEvent(msg.sender, amount);
         return true;
     }
