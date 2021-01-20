@@ -89,7 +89,7 @@ class EnglishSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = English
         fields = ['url', 'id', 'owner', 'end_time',
-                  'auction_id', 'min_bid', 'current_bid', 'item_description']
+                  'auction_id', 'min_bid', 'item_description']
 
     def create(self, validated_data):
         english_auction = English()
@@ -97,7 +97,6 @@ class EnglishSerializer(serializers.HyperlinkedModelSerializer):
         english_auction.end_time = validated_data.get('end_time')
         english_auction.auction_id = validated_data.get('auction_id')
         english_auction.min_bid = validated_data['min_bid']
-        english_auction.current_bid = validated_data['current_bid']
         english_auction.item_description = validated_data['item_description']
         english_auction.save()
         return english_auction

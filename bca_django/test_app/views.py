@@ -135,9 +135,6 @@ class EnglishViewSet(viewsets.ModelViewSet):
         if auction.min_bid is None:
             return Response({"error": "min_bid is None, Can't start an auction that doesn't have a mininum bid"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if auction.current_bid is None:
-            return Response({"error": "current_bid is None, Can't start an auction that doesn't have a current bid"}, status=status.HTTP_400_BAD_REQUEST)
-
         if auction.end_time is None:
             return Response({"error": "end_time is None, Can't start an that'll never end"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -149,7 +146,6 @@ class EnglishViewSet(viewsets.ModelViewSet):
         time_d = auction.end_time - now
         time_limit = int(time_d.total_seconds())
         min_bid = auction.min_bid
-        current_bid = auction.current_bid
 
         try:
             owner = Profile.objects.get(user=auction.owner)

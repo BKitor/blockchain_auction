@@ -62,5 +62,4 @@ def delete_auth_token(sender, instance=None, using=None, **kwargs):
         token.delete()
 
 class English(Auction):
-    current_bid = models.IntegerField()
     min_bid = models.IntegerField()
