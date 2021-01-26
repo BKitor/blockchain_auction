@@ -8,5 +8,5 @@ const ChannelAuction = artifacts.require("./SealedBid.sol");
 //I assume the deploy functions will be called somewhere on the JS/React side
 module.exports = function(deployer, network, accounts) {
   deployer.deploy(Auction);
-  deployer.deploy(SealedBid, 1, accounts[0], 0)
+  deployer.deploy(SealedBid, accounts[0], 1, 0)
 };
