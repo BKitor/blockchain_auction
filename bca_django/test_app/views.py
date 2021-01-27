@@ -78,7 +78,7 @@ class SealedBidViewSet(viewsets.ModelViewSet):
             return Response({"error": "end time has passed, the auction has to start before it ends"}, status=status.HTTP_400_BAD_REQUEST)
 
         time_d = auction.end_time - now
-        time_limit = int(time_d.total_seconds())
+        time_limit = int(time_d.total_seconds()) * 60
         min_bid = auction.min_bid
 
         try:
@@ -144,7 +144,7 @@ class EnglishViewSet(viewsets.ModelViewSet):
             return Response({"error": "end time has passed, the auction has to start before it ends"}, status=status.HTTP_400_BAD_REQUEST)
 
         time_d = auction.end_time - now
-        time_limit = int(time_d.total_seconds())
+        time_limit = int(time_d.total_seconds()) * 60
         min_bid = auction.min_bid
 
         try:
@@ -152,7 +152,7 @@ class EnglishViewSet(viewsets.ModelViewSet):
         except Profile.DoesNotExist:
             return Response({"error": "owner of contract does not exist, the auction needs an owner"}, status=status.HTTP_404_NOT_FOUND)
 
-        contract_id = bchain.launch_sealed_bid(
+        contract_id = bchain.launch_english(
             time_limit, owner.wallet, min_bid)
 
         auction.auction_id = contract_id

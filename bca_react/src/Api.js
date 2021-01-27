@@ -35,51 +35,21 @@ export default {
     },
 
     newEnglish: (body, token) => {
-      return Promise.resolve({
-        "data": {
-          "url": "http://localhost:8000/auction/sealed_bid/1/",
-          "id": 1,
-          "owner": 1,
-          "end_time": "2002-08-02T00:00:00Z",
-          "auction_id": "",
-          "min_bid": 5,
-          "item_description": "this is an item test"
-        },
-        "status": 200
-      })
+      return axios.post(`${djangoUrl}/auction/english_auction/`, body,
+        { headers: { 'Authorization': `Token ${token}` } }
+      )
     },
 
     launchEnglish: (auction_pk, token) => {
-      return Promise.resolve({
-        "data": {
-          "url": "http://localhost:8000/auction/sealed_bid/1/",
-          "id": 1,
-          "owner": 1,
-          "end_time": "2002-08-02T00:00:00Z",
-          "auction_id": "",
-          "min_bid": 5,
-          "item_description": "this is an item test"
-        },
-        "status": 200
-      })
+      return axios.put(`${djangoUrl}/auction/english_auction/${auction_pk}/start/`, {},
+        { headers: { 'Authorization': `Token ${token}` } }
+      )
     },
 
     getEnglishByPK: (auction_pk, token) => {
-      return Promise.resolve({
-        "data": {
-          "url": "http://localhost:8000/auction/sealed_bid/1/",
-          "id": 1,
-          "owner": 1,
-          "end_time": "2002-08-02T00:00:00Z",
-          "auction_id": "",
-          "min_bid": 5,
-          "item_description": "this is an item test"
-        },
-        "status": 200
-      })
-      // return axios.get(`${djangoUrl}/auction/english/${auction_pk}/`,
-      //   { headers: { 'Authorization': `Token ${token}` } }
-      // )
+      return axios.get(`${djangoUrl}/auction/english_auction/${auction_pk}/`, 
+        {headers: { 'Authorization': `Token ${token}` }}
+      ) 
     },
   }
 }

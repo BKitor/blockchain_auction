@@ -32,8 +32,8 @@ export default function English() {
         item_description: itemDescription,
       }
       Api.auctions.newEnglish(body, token).then(res => {
-        window.location = `/place/english/${res.data.id}`
         Api.auctions.launchEnglish(res.data.id, token)
+        window.location = `/place/english/${res.data.id}`
       }).then(res => {
         console.log(res)
       })
