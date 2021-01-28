@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.7.5;
 
 import "./Auction.sol";
@@ -11,7 +12,7 @@ contract ChannelAuction is Auction{
     
     uint256 public buyNowPrice;
 
-    constructor (address payable _owner, uint _biddingTime, uint _startBid, uint _buyNowPrice) public {
+    constructor (address payable _owner, uint _biddingTime, uint _startBid, uint _buyNowPrice) {
         auctionOwner = _owner;
         auctionStart = block.timestamp; 
         auctionEnd = auctionStart + _biddingTime * 1 minutes;

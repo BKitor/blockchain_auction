@@ -1,16 +1,21 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.7.5;
 
 import "./Auction.sol";
 
 contract EnglishAuction is Auction{
 
-	constructor (address payable _owner, uint _biddingTime, uint _minBid) public {
+	constructor (address payable _owner, uint _biddingTime, uint _minBid) {
 		auctionOwner = _owner;
 		auctionStart = block.timestamp; 
 		auctionEnd = auctionStart + _biddingTime * 1 minutes;
 		minPrice = _minBid;
         ongoingAuction = true;
 	}
+
+    function getHighestBid() public ongoing_auction view returns (uint256){
+        return highestBid; 
+    }
 
     function bid() public payable ongoing_auction override returns (bool) {
         require(bids[msg.sender] + msg.value > highestBid, "Bid too low.");

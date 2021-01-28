@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.7.5;                //declares compiler version 
 
 contract Auction{                       //defines a contract with name Auction

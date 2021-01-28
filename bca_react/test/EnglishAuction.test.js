@@ -23,6 +23,7 @@ contract('English', (accounts)=> {
 	})
 
 	describe('During Auction Functionality', async () => {
+
 		it('can be bid on', async () => {
 			await english.bid({ from: accounts[1], value: 100 })
 			const bid = await english.get_bid({ from: accounts[1] })
@@ -41,6 +42,10 @@ contract('English', (accounts)=> {
 		})
 		it('cannot be destructed while in progress', async () => {
 			await english.destruct_auction({from: accounts[0]}).should.be.rejected;
+		})
+		it('can fetch the current highest bid', async () =>{
+			const c = await english.getHighestBid()
+			assert.equal(c.words[0], 150) // set during 'allows for max bid to be outbid'
 		})
 	})
 

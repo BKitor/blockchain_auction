@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import Api from '../Api';
 import Web3 from "web3"
-import contract_artifact from "../contracts/SealedBid.json"
+import contract_artifact from "../contracts/EnglishAuction.json"
 import Typography from '@material-ui/core/Typography';
 import Error404 from './Error404.js'
 import Util from '../util.js';
@@ -20,25 +20,53 @@ export default function PlaceEnglish() {
   const [contract, setContract] = useState(null);
   const [auctionNotFound, setNotFound] = useState(false);
   const [auctionOwner, setAuctionOwner] = useState(null);
+  const [currentBid, setCurrentBid] = useState("loading...");
+  const [auctionID, setAuctionID] = useState(null)
 
+  const onBidEvent = (error, event) => {
+    if (error) {
+      console.log(error);
+    }
+    else {
+      if (parseInt(event.returnValues.bid, 10) > parseInt(currentBid, 10)) {
+        setCurrentBid(Number(event.returnValues.bid))
+      }
+    }
+  }
 
-  useEffect(() => {
+  function getEthData() {
+    if (!auctionID) { return }
     const web3 = new Web3(Util.bcURL)
-    console.log(Api)
+    const englishContract = new web3.eth.Contract(contract_artifact.abi, auctionID)
+    setContract(englishContract)
+    const subsription = englishContract.events.BidEvent({}, onBidEvent)
+    englishContract.methods.getHighestBid().call().then(hb => { setCurrentBid(hb) })
+    return function cleanup() {
+      subsription.unsubscribe()
+    }
+  }
+
+  function getDjangoData() {
     Api.auctions.getEnglishByPK(auction_pk, token)
       .then(res => {
+        setAuctionID(res.data.auction_id)
         setMinBid(`${res.data.min_bid} eth`);
         setItemDiscription(`${res.data.item_description}`);
         setEndTime(new Date(res.data.end_time));
-        setContract(new web3.eth.Contract(contract_artifact.abi, res.data.auction_id))
         setAuctionOwner(res.data.owner);
-      }).catch(e => {
+      })
+      .catch(e => {
         if (e.response && e.response.status === 404) {
           setNotFound(true);
         }
         console.error(e);
       })
-  }, [auction_pk, token]);
+
+  }
+
+  useEffect(getDjangoData, [auction_pk, token])
+  useEffect(getEthData, [auctionID, currentBid])
+
 
   const handleBidChange = (e) => {
     console.log(e)
@@ -49,7 +77,7 @@ export default function PlaceEnglish() {
       setUserBid(e.target.value)
     }
   }
-  const submitSealedBid = () => {
+  const submitEnglishBid = () => {
     if (userBid === 0) {
       console.log("not happening cheif")
     } else {
@@ -73,38 +101,43 @@ export default function PlaceEnglish() {
             minBid={minBid}
             endTime={endTime}
             handleBidChange={handleBidChange}
-            submitSealedBid={submitSealedBid}></BidderView>
+            submitEnglishBid={submitEnglishBid}
+            currentBid={currentBid} />
           :
           <AuctioneerView itemDescription={itemDescription}
             minBid={minBid}
-            endTime={endTime}></AuctioneerView>
+            endTime={endTime}
+            currentBid={currentBid} />
       }
+      <Button onClick={() => { console.log(window.alert('benis')) }}>Debug</Button>
     </div>
   )
 }
 
 function AuctioneerView(props) {
-  const { itemDescription, minBid, endTime } = props;
+  const { itemDescription, minBid, endTime, currentBid } = props;
   return (
     <>
       <Typography>Item : {itemDescription}</Typography>
-      <Typography>Minimum Bid: {minBid}</Typography>
+      <Typography>Starting Bid: {minBid}</Typography>
+      <Typography>Current Bid: {currentBid}</Typography>
       <Typography>End Time: {endTime.toLocaleString()}</Typography>
     </>
   )
 }
 
 function BidderView(props) {
-  const { itemDescription, minBid, endTime, handleBidChange, submitSealedBid } = props;
+  const { itemDescription, minBid, currentBid, endTime, handleBidChange, submitEnglishBid } = props;
   return (
     <>
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
       <br style={{ padding: '50px' }}></br>
       <Typography variant="h4">Minimum Bid: {minBid} </Typography>
+      <Typography variant="h4">Current Highest Bid: {currentBid} </Typography>
       <Typography variant="h4">End Time: {endTime.toLocaleString()} </Typography>
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>
-      <Button onClick={submitSealedBid}>Place Bid</Button>
+      <Button onClick={submitEnglishBid}>Place Bid</Button>
       <br style={{ padding: '50px' }}></br>
     </>
   )
