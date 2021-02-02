@@ -31,10 +31,4 @@ contract SealedBid is Auction{
 		return true;
 	}
 
-	function end() public admin returns (bool) {
-		//this function is just for dev purposes
-		auctionEnd = block.timestamp - 1;
-		return true;
-	}
-
 }

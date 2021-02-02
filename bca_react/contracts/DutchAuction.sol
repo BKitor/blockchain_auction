@@ -18,11 +18,13 @@ contract DutchAuction is Auction{
 	}
 
 	function bid() public payable ongoing_auction override returns (bool) {
-		require(msg.value >= rate * (block.timestamp - auctionStart));
+		require(msg.value >= startPrice - (rate * (block.timestamp - auctionStart)));
 		require(msg.value >= minPrice);
 
 		highestBid = msg.value;
 		highestBidder = msg.sender;
+		bidders.push(msg.sender);
+		bids[msg.sender] = msg.value;
 
 		ongoingAuction = false;
 

@@ -15,7 +15,7 @@ contract Auction{                       //defines a contract with name Auction
     
     modifier ongoing_auction(){
         require(ongoingAuction, "Auction has ended.");
-        require(block.timestamp < auctionEnd);
+        require(block.timestamp < auctionEnd, "Auction has ended.");
         _;
     }
     
@@ -55,8 +55,7 @@ contract Auction{                       //defines a contract with name Auction
         
         uint amount; 
         if(msg.sender == auctionOwner){
-            //highestBidder == null ONLY during a channel auction in which the winner won by using the "buy_now()" function
-            require(highestBidder == 0x638Ba56Adef3c8235ba7fC2a907f4ddb763Be608 || bids[highestBidder] > 0, "You have already withdrawn winnings.");
+            require(bids[highestBidder] > 0, "You have already withdrawn winnings.");
             amount = highestBid;
             bids[highestBidder] = 0;
         } else {
@@ -75,12 +74,8 @@ contract Auction{                       //defines a contract with name Auction
     function destruct_auction() external only_owner returns (bool) {
         require(block.timestamp > auctionEnd, "Auction still open. Cannot destruct.");
         for (uint i = 0; i < bidders.length; i++){
-            assert(bids[bidders[i]] == 0);
+            require(bids[bidders[i]] == 0, "All bids have not been withdrawn yet.");
         }
-        //selfdestruct removes the contract code from the blockchain and sends
-        //all remaining ether to the specified address. This is cheaper than 
-        //just sending the funds and leaving the contract as it actually costs 
-        //negative gas somehow. 
         selfdestruct(auctionOwner); //will be admin eventually
         return true;
     }
