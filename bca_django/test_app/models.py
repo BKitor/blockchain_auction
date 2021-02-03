@@ -63,3 +63,7 @@ def delete_auth_token(sender, instance=None, using=None, **kwargs):
 
 class English(Auction):
     min_bid = models.IntegerField()
+
+
+class Dutch(Auction):
+    min_bid = models.IntegerField()
