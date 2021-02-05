@@ -1,21 +1,25 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.7.5;
 
 import "./Auction.sol";
 
 contract SealedBid is Auction{
 
-	constructor (uint _biddingTime, address payable _owner, uint _minBid) public {
-		auction_owner = _owner;
-		auction_start = block.timestamp; 
-		auction_end = auction_start + _biddingTime * 1 minutes;
-		STATE = auction_state.STARTED;
-		minimum_price = _minBid;
+	constructor (address payable _owner, uint _biddingTime, uint _minBid) {
+		auctionOwner = _owner;
+		auctionStart = block.timestamp; 
+		auctionEnd = auctionStart + _biddingTime * 1 minutes;
+		minPrice = _minBid;
+		ongoingAuction = true;
 	}
 
 	function bid() public payable ongoing_auction override returns (bool) {
-		require(block.timestamp < auction_end, "Auction Ended");
-		require(bids[msg.sender] + msg.value > minimum_price, "Bid too low");
-		bidders.push(msg.sender);
+		require(bids[msg.sender] + msg.value > minPrice, "Bid too low");
+		
+		if(bids[msg.sender] == 0){
+			bidders.push(msg.sender);
+		}		
+
 		bids[msg.sender] = bids[msg.sender] + msg.value;
 
 		//Note: highestBid and highestBidder are public (bc of other auction types), so this may not be the most secure 
@@ -30,7 +34,7 @@ contract SealedBid is Auction{
 
 	function end() public admin returns (bool) {
 		//this function is just for dev purposes
-		auction_end = block.timestamp - 1;
+		auctionEnd = block.timestamp - 1;
 		return true;
 	}
 

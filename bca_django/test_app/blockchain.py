@@ -9,6 +9,8 @@ class BChain():
     auction_bytecod3 = None
     sealed_bid_abi = None
     sealed_bid_bytecode = None
+    english_abi = None
+    english_bytecode = None
     admin_public_key = None
 
     def __init__(self):
@@ -20,6 +22,9 @@ class BChain():
         with open('../bca_react/contracts/SealedBid.sol') as f:
             sealed_bid_contents = f.read()
 
+        with open('../bca_react/contracts/EnglishAuction.sol') as f:
+            english_contents = f.read()
+
         compiled_auctions = compile_standard({
             "language": "Solidity",
             "sources": {
@@ -28,7 +33,10 @@ class BChain():
                 },
                 "SealedBid.sol": {
                     "content": sealed_bid_contents
-                }
+                },
+                "EnglishAuction.sol": {
+                    "content": english_contents
+                },
             },
             "settings":
             {
@@ -51,6 +59,11 @@ class BChain():
         self.sealed_bid_abi = json.loads(compiled_auctions['contracts']['SealedBid.sol']
                                          ['SealedBid']['metadata'])['output']['abi']
 
+        self.english_bytecode = compiled_auctions['contracts'][
+            'EnglishAuction.sol']['EnglishAuction']['evm']['bytecode']['object']
+        self.english_abi = json.loads(compiled_auctions['contracts']['EnglishAuction.sol']
+                                      ['EnglishAuction']['metadata'])['output']['abi']
+
     def get_w3(self):
         return self.w3
 
@@ -60,16 +73,31 @@ class BChain():
     def get_sealed_bid_bytecode(self):
         return self.sealed_bid_bytecode
 
+    def get_english_abi(self):
+        return self.english_abi
+
+    def get_english_bytecode(self):
+        return self.english_bytecode
+
     def launch_sealed_bid(self, time_limit, owner, min_bid):
-        print(f"time:{time_limit}, owner:{owner}, min_bid:{min_bid}")
-        print(
-            f"time:{type(time_limit)}, owner:{type(owner)}, min_bid:{type(min_bid)}")
+        print(f"LAUNCH SEALED_BID time:{time_limit}, owner:{owner}, min_bid:{min_bid}")
 
         SealedBid = self.w3.eth.contract(
             abi=self.sealed_bid_abi, bytecode=self.sealed_bid_bytecode)
 
         tx_hash = SealedBid.constructor(
-            time_limit, owner, min_bid).transact({'from': self.admin_public_key})
+            owner, time_limit, min_bid).transact({'from': self.admin_public_key})
+
+        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+        return tx_receipt.contractAddress
+
+    def launch_english(self, time_limit, owner, min_bid):
+        print(f"LAUNCH ENGLISH time:{time_limit}, owner:{owner}, min_bid:{min_bid}")
+        English = self.w3.eth.contract(
+            abi=self.english_abi, bytecode=self.english_bytecode)
+
+        tx_hash = English.constructor(
+            owner, time_limit, min_bid).transact({'from': self.admin_public_key})
 
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
         return tx_receipt.contractAddress

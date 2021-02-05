@@ -121,7 +121,7 @@ export default function NavBar() {
 
   const handleEnglish = () => {
     setAnchorAuctions(null);
-    window.location = '/english-bid'
+    window.location = '/english'
   }
 
   const handleCloseAuctions = () => {
@@ -201,7 +201,7 @@ export default function NavBar() {
                 TransitionComponent={Fade}
               >
                 <MenuItem onClick={handleSealed}>Sealed Bid</MenuItem>
-                <MenuItem onClick={handleEnglish}>English Bid</MenuItem>
+                <MenuItem onClick={handleEnglish}>English</MenuItem>
                 <MenuItem onClick={handleViewAuctions}>View Auctions</MenuItem>
               </Menu>
             </div>
