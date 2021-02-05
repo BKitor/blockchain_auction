@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function NavBar() {
-  const [token, ] = Util.checkSignedIn();
+  const [token, user] = Util.checkSignedIn();
   const classes = useStyles();
   const [setQuery] = useState('');
   const [anchorAuctions, setAnchorAuctions] = useState(null);
@@ -121,7 +121,7 @@ export default function NavBar() {
 
   const handleEnglish = () => {
     setAnchorAuctions(null);
-    window.location = '/english-bid'
+    window.location = '/english'
   }
 
   const handleCloseAuctions = () => {
@@ -168,6 +168,7 @@ export default function NavBar() {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
+            <Typography variant="overline" style={{ padding: 4 }}>{(user && user.username) ? `Logged in as ${user.username}` : ""}</Typography>
             <div className="container">
               {/* Profile Dropdown */}
               <Button variant='text' onClick={openProfileMenu}>
@@ -200,7 +201,7 @@ export default function NavBar() {
                 TransitionComponent={Fade}
               >
                 <MenuItem onClick={handleSealed}>Sealed Bid</MenuItem>
-                <MenuItem onClick={handleEnglish}>English Bid</MenuItem>
+                <MenuItem onClick={handleEnglish}>English</MenuItem>
                 <MenuItem onClick={handleViewAuctions}>View Auctions</MenuItem>
               </Menu>
             </div>

@@ -5,8 +5,13 @@ import App from './App';
 import Error404 from './components/Error404.js'
 import Signin from './components/Signin.js';
 import NavBar from './components/global/NavBar.js'
+import English from './components/English.js'
+import WithdrawSealedBid from './components/WithdrawSB.js'
+import PlaceEnglish from './components/PlaceEnglish.js'
+import PlaceSealedBid from './components/PlaceSealedBid.js'
 import { BrowserRouter as Router } from "react-router-dom";
 import { server } from './mockServer.js'
+import 'jest-canvas-mock'
 
 
 beforeAll(() => server.listen())
@@ -79,4 +84,13 @@ describe('Unit tests', () => {
 
     expect(pageTitleElement).toBeInTheDocument();
   });
+
+  test('Create English', () => {
+    const {} = render(<Router><English /></Router>);
+  })
+
+  test('Withdraw SB', () => {
+    const {} = render(<Router><WithdrawSealedBid /></Router>);
+  })
+
 })
