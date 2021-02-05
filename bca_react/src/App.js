@@ -16,8 +16,10 @@ import NotFound from './components/NotFound';
 import SealedBid from './components/SealedBid';
 import PlaceSealedBid from './components/PlaceSealedBid';
 import ProfileByUname from './components/ProfileByUname';
+import WithdrawSealedBid from './components/WithdrawSB.js'
 import PlaceEnglish from './components/PlaceEnglish.js';
 import English from './components/English.js';
+
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
         <NavBar />
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route exact path="/auctions" component={Auctions} />
+          <Route exact path="/withdraw/sealed-bid/:auction_pk" component={WithdrawSealedBid} />
 
           <Route exact path="/signin" component={Signin} />
           <Route exact path="/profile" component={Profile} />

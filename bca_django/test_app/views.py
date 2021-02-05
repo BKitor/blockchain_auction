@@ -78,7 +78,9 @@ class SealedBidViewSet(viewsets.ModelViewSet):
             return Response({"error": "end time has passed, the auction has to start before it ends"}, status=status.HTTP_400_BAD_REQUEST)
 
         time_d = auction.end_time - now
-        time_limit = int(time_d.total_seconds()) * 60
+
+        time_limit = int(time_d.total_seconds() / 60)
+
         min_bid = auction.min_bid
 
         try:

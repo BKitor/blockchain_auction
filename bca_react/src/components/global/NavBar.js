@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function NavBar() {
-  const [token, ] = Util.checkSignedIn();
+  const [token, user] = Util.checkSignedIn();
   const classes = useStyles();
   const [setQuery] = useState('');
   const [anchorAuctions, setAnchorAuctions] = useState(null);
@@ -168,6 +168,7 @@ export default function NavBar() {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
+            <Typography variant="overline" style={{ padding: 4 }}>{(user && user.username) ? `Logged in as ${user.username}` : ""}</Typography>
             <div className="container">
               {/* Profile Dropdown */}
               <Button variant='text' onClick={openProfileMenu}>
