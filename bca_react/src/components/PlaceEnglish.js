@@ -112,7 +112,6 @@ export default function PlaceEnglish() {
             endTime={endTime}
             currentBid={currentBid} />
       }
-      <Button onClick={() => { console.log(window.alert('benis')) }}>Debug</Button>
     </div>
   )
 }
