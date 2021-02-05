@@ -22,7 +22,7 @@ export default function WithdrawSealedBid() {
 
   useEffect(() => {
     const web3 = new Web3(Util.bcURL)
-    Api.auctions.getAuctionByPK(auction_pk, token)
+    Api.auctions.getSealedBidByPK(auction_pk, token)
       .then(res => {
         const d = new Date(res.data.end_time)
         setItemDiscription(`${res.data.item_description}`);

@@ -50,7 +50,7 @@ export default function PlaceEnglish() {
     Api.auctions.getEnglishByPK(auction_pk, token)
       .then(res => {
         setAuctionID(res.data.auction_id)
-        setMinBid(`${res.data.min_bid} eth`);
+        setMinBid(`${res.data.min_bid}`);
         setItemDiscription(`${res.data.item_description}`);
         setEndTime(new Date(res.data.end_time));
         setAuctionOwner(res.data.owner);
@@ -78,8 +78,11 @@ export default function PlaceEnglish() {
     }
   }
   const submitEnglishBid = () => {
-    if (userBid === 0) {
-      console.log("not happening cheif")
+    console.log(userBid)
+    console.log(minBid)
+    console.log(currentBid)
+    if (userBid === 0 || parseInt(userBid)<parseInt(minBid) || parseInt(userBid)<parseInt(currentBid)) {
+      window.alert("Your bid isn't high enough")
     } else {
       contract.methods.bid().send({ from: user.wallet, value: userBid * Math.pow(10, 18), gas: 500000 })
         .then(res => console.log(res))
@@ -119,7 +122,7 @@ function AuctioneerView(props) {
   return (
     <>
       <Typography>Item : {itemDescription}</Typography>
-      <Typography>Starting Bid: {minBid}</Typography>
+      <Typography>Starting Bid: {minBid} eth</Typography>
       <Typography>Current Bid: {currentBid}</Typography>
       <Typography>End Time: {endTime.toLocaleString()}</Typography>
     </>
@@ -132,7 +135,7 @@ function BidderView(props) {
     <>
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
       <br style={{ padding: '50px' }}></br>
-      <Typography variant="h4">Minimum Bid: {minBid} </Typography>
+      <Typography variant="h4">Minimum Bid: {minBid} eth</Typography>
       <Typography variant="h4">Current Highest Bid: {currentBid} </Typography>
       <Typography variant="h4">End Time: {endTime.toLocaleString()} </Typography>
       <br style={{ padding: '50px' }}></br>

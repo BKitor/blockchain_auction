@@ -28,7 +28,7 @@ export default function PlaceSealedBid() {
     Api.auctions.getSealedBidByPK(auction_pk, token)
       .then(res => {
         const d = new Date(res.data.end_time)
-        setMinBid(`${res.data.min_bid} eth`);
+        setMinBid(`${res.data.min_bid}`);
         setItemDiscription(`${res.data.item_description}`);
         setEndTime(d);
         setContract(new web3.eth.Contract(contract_artifact.abi, res.data.auction_id))
@@ -52,8 +52,8 @@ export default function PlaceSealedBid() {
     }
   }
   const submitSealedBid = () => {
-    if (userBid === 0) {
-      console.log("not happening cheif")
+    if (userBid === 0 || parseInt(userBid)<parseInt(minBid)) {
+      window.alert("Your bid's to low")
     } else {
       contract.methods.bid().send({ from: user.wallet, value: userBid * Math.pow(10, 18), gas: 500000 })
         .then(res => {
@@ -99,7 +99,7 @@ function AuctioneerView(props) {
   return (
     <>
       <Typography>Item : {itemDescription}</Typography>
-      <Typography>Minimum Bid: {minBid}</Typography>
+      <Typography>Minimum Bid: {minBid} eth</Typography>
       <Typography>End Time: {endTime.toLocaleString()}</Typography>
     </>
   )
@@ -111,7 +111,7 @@ function BidderView(props) {
     <>
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
       <br style={{ padding: '50px' }}></br>
-      <Typography variant="h4">Minimum Bid: {minBid} </Typography>
+      <Typography variant="h4">Minimum Bid: {minBid} eth</Typography>
       <Typography variant="h4">End Time: {endTime.toLocaleString()} </Typography>
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>
