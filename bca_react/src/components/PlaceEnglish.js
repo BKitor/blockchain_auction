@@ -78,10 +78,7 @@ export default function PlaceEnglish() {
     }
   }
   const submitEnglishBid = () => {
-    console.log(userBid)
-    console.log(minBid)
-    console.log(currentBid)
-    if (userBid === 0 || parseInt(userBid)<parseInt(minBid) || parseInt(userBid)<parseInt(currentBid)) {
+    if (userBid === 0 || parseInt(userBid)<parseInt(minBid) || parseInt(userBid)*10e18<parseInt(currentBid)) {
       window.alert("Your bid isn't high enough")
     } else {
       contract.methods.bid().send({ from: user.wallet, value: userBid * Math.pow(10, 18), gas: 500000 })

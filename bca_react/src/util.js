@@ -1,5 +1,6 @@
 export default {
-    bcURL: "ws://localhost:8545",
+    // bcURL: "ws://localhost:8545",
+    bcURL: (window.ethereum && window.ethereum.isMetaMask)?window.ethereum:"ws://localhost:8545",
 
     checkSignedIn: () => {
         const token = window.localStorage.getItem('user_token');
