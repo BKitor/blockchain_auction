@@ -1,5 +1,8 @@
 const Auction = artifacts.require("./Auction.sol");
 const SealedBid = artifacts.require("./SealedBid.sol")
+const Channel = artifacts.require("./ChannelAuction.sol")
+const { time } = require('@openzeppelin/test-helpers');
+const { assert } = require('chai');
 
 require('chai')
 	.use(require('chai-as-promised'))
@@ -10,7 +13,7 @@ contract('SealedBid', (accounts) => {
 
 	before(async () => {
 		auction = await Auction.new()
-		sealedBid = await SealedBid.new(1, accounts[0], 75)
+		sealedBid = await SealedBid.new(accounts[0], 1, 75)
 	})
 
 	describe('Auction Deployment', async () => {
@@ -42,22 +45,14 @@ contract('SealedBid', (accounts) => {
 		})
 	})
 
-	describe('Auction Security', async () => {
-		it('prevents access to other users bid information', async () => {
-
-		})
-		it('prevents access to max. bid information', async () => {
-
-		})
-	})
-
 	describe('Post Auction Fucntionality', async () => {
 		it('can no longer be bid on', async () => {
-			await sealedBid.end({from: accounts[0]})
+			await time.increase(100);
 			await sealedBid.bid({ from: accounts[1], value: 100 }).should.be.rejected;
 		})
 		it('can identify winning bid', async () => {
-
+			const highest_bidder = await sealedBid.get_highest_bidder({ from: accounts[0] });
+			assert.equal(highest_bidder, accounts[1]);
 		})
 		it('allows users to withdraw', async () => {
 			await sealedBid.withdraw({from: accounts[2]})
@@ -70,8 +65,8 @@ contract('SealedBid', (accounts) => {
 		it('cannot be destroyed by non-owner', async () => {
 			await sealedBid.destruct_auction({from: accounts[1]}).should.be.rejected;
 		})
-		it('can be destroyed by owner', async () => {
-			await sealedBid.destruct_auction({from: accounts[0]})
-		})
+		//it('can be destroyed by owner', async () => {
+		//	await sealedBid.destruct_auction({from: accounts[0]})
+		//})
 	})
 })

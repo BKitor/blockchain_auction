@@ -22,16 +22,34 @@ export default {
         { headers: { 'Authorization': `Token ${token}` } })
     },
 
-    luanchSealedBid: (auction_pk, token) => {
+    launchSealedBid: (auction_pk, token) => {
       return axios.put(`${djangoUrl}/auction/sealed_bid/${auction_pk}/start/`, {}, {
         headers: { 'Authorization': `Token ${token}` }
       })
     },
 
-    getAuctionByPK: (auction_pk, token) => {
+    getSealedBidByPK: (auction_pk, token) => {
       return axios.get(`${djangoUrl}/auction/sealed_bid/${auction_pk}/`,
         { headers: { 'Authorization': `Token ${token}` } }
       )
-    }
-  },
+    },
+
+    newEnglish: (body, token) => {
+      return axios.post(`${djangoUrl}/auction/english_auction/`, body,
+        { headers: { 'Authorization': `Token ${token}` } }
+      )
+    },
+
+    launchEnglish: (auction_pk, token) => {
+      return axios.put(`${djangoUrl}/auction/english_auction/${auction_pk}/start/`, {},
+        { headers: { 'Authorization': `Token ${token}` } }
+      )
+    },
+
+    getEnglishByPK: (auction_pk, token) => {
+      return axios.get(`${djangoUrl}/auction/english_auction/${auction_pk}/`, 
+        {headers: { 'Authorization': `Token ${token}` }}
+      ) 
+    },
+  }
 }

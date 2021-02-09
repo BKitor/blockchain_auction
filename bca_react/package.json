@@ -8,6 +8,7 @@
     "axios": "^0.21.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "jest-canvas-mock": "^2.3.0",
     "react": "^17.0.1",
     "react-datetime-picker": "^3.0.4",
     "react-dom": "^17.0.1",
@@ -22,7 +23,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jest-environment-jsdom-sixteen",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test-sol": "truffle test"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -40,6 +42,7 @@
     ]
   },
   "devDependencies": {
+    "@openzeppelin/test-helpers": "^0.5.10",
     "@testing-library/dom": "^7.29.0",
     "@testing-library/jest-dom": "^5.11.7",
     "@testing-library/react": "^11.2.2",

@@ -20,6 +20,16 @@
     }
   },
   {
+    "model": "test_app.Profile",
+    "pk": 3,
+    "fields": {
+      "user": 3,
+      "wallet": "0x0b4bcFB59043b0350EA8368290F6E942B5926019",
+      "birthday": "2000-07-02",
+      "publicProfile": false
+    }
+  },
+  {
     "model": "test_app.User",
     "pk": 1,
     "fields": {
@@ -39,6 +49,17 @@
       "email": "John@Lennon.com",
       "first_name": "John",
       "last_name": "Lennon"
+    }
+  },
+  {
+    "model": "test_app.User",
+    "pk": 3,
+    "fields": {
+      "username": "p_mccartney",
+      "password": "pbkdf2_sha256$216000$0hbOwYYemIY0$XFdEAYGMUJLv2f+5jQE1Zsom1ewt+qM63OTrRkjrdD4=",
+      "email": "paul@mccartney.com",
+      "first_name": "Paul",
+      "last_name": "mccartney"
     }
   },
   {

@@ -201,6 +201,8 @@ class SealedBidTests(APITestCase):
         self.assertEqual(res.status_code, 400)
 
 # English auction tests
+
+
 class EnglishTests(APITestCase):
 
     fixtures = ['user_fixture']
