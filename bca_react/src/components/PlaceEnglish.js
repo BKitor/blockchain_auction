@@ -11,6 +11,7 @@ import Util from '../util.js';
 export default function PlaceEnglish() {
   let { auction_pk } = useParams();
   const [token, user] = Util.checkSignedIn();
+  const [loadTime,] = useState(new Date());
 
   const [minBid, setMinBid] = useState('loading...');
   const [itemDescription, setItemDiscription] = useState('loading...');
@@ -23,6 +24,7 @@ export default function PlaceEnglish() {
   const [currentUserBid, setCurrentUserBid] = useState("Loading");
   const [auctionID, setAuctionID] = useState(null)
   const [openBidSubmitDialog, setOpenBidSubmitDialog] = useState(false);
+  const [auctionIsOver, setAuctionIsOver] = useState(false);
 
   function handleSubmitDialogOpen() {
     setOpenBidSubmitDialog(true);
@@ -59,11 +61,13 @@ export default function PlaceEnglish() {
   function getDjangoData() {
     Api.auctions.getEnglishByPK(auction_pk, token)
       .then(res => {
+        const d = new Date(res.data.end_time)
         setAuctionID(res.data.auction_id)
         setMinBid(`${res.data.min_bid}`);
         setItemDiscription(`${res.data.item_description}`);
         setEndTime(new Date(res.data.end_time));
         setAuctionOwner(res.data.owner);
+        setAuctionIsOver((d.getTime() < loadTime.getTime()))
       })
       .catch(e => {
         if (e.response && e.response.status === 404) {
@@ -109,6 +113,12 @@ export default function PlaceEnglish() {
     return (!token && !user) ? < Redirect to='/signin' /> : null;
   }
 
+  function auctionIsLive(){
+    return (auctionIsOver)?
+      <Redirect to={`/withdraw/english/${auction_pk}`}/>
+      :null;
+  }
+
   function calcNewSubmission(){
     return (parseInt(userBidSumbission)-parseInt(currentUserBid)/1e18)
   }
@@ -116,6 +126,7 @@ export default function PlaceEnglish() {
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {isSignedIn()}
+      {auctionIsLive()}
       {(auctionNotFound) ?
         <Error404 type={"Auction"} identifier={auction_pk}></Error404>
         :
