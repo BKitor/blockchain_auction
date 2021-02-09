@@ -38,12 +38,18 @@ contract ChannelAuction is Auction{
     }
 
     function buy_now() public payable ongoing_auction returns (bool) {
-        require(msg.value >= buyNowPrice, "Sent less than buy now price.");
+        require(bids[msg.sender] + msg.value >= buyNowPrice, "Sent less than buy now price.");
 
         ongoingAuction = false; 
 
-        highestBidder = 0x638Ba56Adef3c8235ba7fC2a907f4ddb763Be608;       //setting to TEMP PLACEHOLDER VAL so prev. highest bidder can still withdraw and winner by buy_now can withdraw past bids
-        highestBid = msg.value;
+        if(bids[msg.sender] == 0){
+            bidders.push(msg.sender);
+        }   
+
+        bids[msg.sender] = bids[msg.sender] + msg.value;
+        
+        highestBidder = msg.sender;
+        highestBid = bids[msg.sender];
 
         emit BuyEvent(highestBidder, highestBid);
         return true;
