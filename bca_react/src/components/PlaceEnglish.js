@@ -1,12 +1,11 @@
 
-import { Button, TextField } from '@material-ui/core';
+import { Button, Dialog, Typography, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import Api from '../Api';
-import Web3 from "web3"
-import contract_artifact from "../contracts/EnglishAuction.json"
-import Typography from '@material-ui/core/Typography';
-import Error404 from './Error404.js'
+import Web3 from "web3";
+import contract_artifact from "../contracts/EnglishAuction.json";
+import Error404 from './Error404.js';
 import Util from '../util.js';
 
 export default function PlaceEnglish() {
@@ -16,20 +15,30 @@ export default function PlaceEnglish() {
   const [minBid, setMinBid] = useState('loading...');
   const [itemDescription, setItemDiscription] = useState('loading...');
   const [endTime, setEndTime] = useState(new Date());
-  const [userBid, setUserBid] = useState(0);
+  const [userBidSumbission, setUserBidSubmission] = useState(0);
   const [contract, setContract] = useState(null);
   const [auctionNotFound, setNotFound] = useState(false);
   const [auctionOwner, setAuctionOwner] = useState(null);
-  const [currentBid, setCurrentBid] = useState("loading...");
+  const [currentHighestBid, setCurrentHighestBid] = useState("Loading...");
+  const [currentUserBid, setCurrentUserBid] = useState("Loading");
   const [auctionID, setAuctionID] = useState(null)
+  const [openBidSubmitDialog, setOpenBidSubmitDialog] = useState(false);
+
+  function handleSubmitDialogOpen() {
+    setOpenBidSubmitDialog(true);
+  }
+
+  function handleSubmitDialogClose() {
+    setOpenBidSubmitDialog(false);
+  }
 
   const onBidEvent = (error, event) => {
     if (error) {
       console.log(error);
     }
     else {
-      if (parseInt(event.returnValues.bid, 10) > parseInt(currentBid, 10)) {
-        setCurrentBid(Number(event.returnValues.bid))
+      if (parseInt(event.returnValues.bid, 10) > parseInt(currentHighestBid, 10)) {
+        setCurrentHighestBid(Number(event.returnValues.bid))
       }
     }
   }
@@ -40,7 +49,8 @@ export default function PlaceEnglish() {
     const englishContract = new web3.eth.Contract(contract_artifact.abi, auctionID)
     setContract(englishContract)
     const subsription = englishContract.events.BidEvent({}, onBidEvent)
-    englishContract.methods.getHighestBid().call().then(hb => { setCurrentBid(hb) })
+    englishContract.methods.getHighestBid().call().then(hb => { setCurrentHighestBid(hb) })
+    englishContract.methods.get_bid().call({ from: user.wallet }).then(cb => { setCurrentUserBid(cb) })
     return function cleanup() {
       subsription.unsubscribe()
     }
@@ -61,36 +71,46 @@ export default function PlaceEnglish() {
         }
         console.error(e);
       })
-
   }
 
   useEffect(getDjangoData, [auction_pk, token])
-  useEffect(getEthData, [auctionID, currentBid])
-
+  useEffect(getEthData, [auctionID, currentHighestBid])
 
   const handleBidChange = (e) => {
     console.log(e)
     if (isNaN(e.target.value)) {
-      setUserBid(0);
+      setUserBidSubmission(0);
     }
     else {
-      setUserBid(e.target.value)
+      setUserBidSubmission(e.target.value)
     }
   }
+
   const submitEnglishBid = () => {
-    console.log(userBid)
-    console.log(minBid)
-    console.log(currentBid)
-    if (userBid === 0 || parseInt(userBid)<parseInt(minBid) || parseInt(userBid)<parseInt(currentBid)) {
+    // console.log(`chb: ${parseInt(currentHighestBid)/1e18}`)
+    // console.log((parseInt(userBidSumbission)*1e18 - parseInt(currentUserBid))/1e18)
+    if (userBidSumbission === 0
+      || parseInt(userBidSumbission) < parseInt(minBid)
+      || (parseInt(userBidSumbission)*1e18) <= parseInt(currentHighestBid)) {
       window.alert("Your bid isn't high enough")
     } else {
-      contract.methods.bid().send({ from: user.wallet, value: userBid * Math.pow(10, 18), gas: 500000 })
-        .then(res => console.log(res))
-        .catch(err => console.error(err))
+      handleSubmitDialogOpen();
     }
   }
+
+  function submitBidToBlockchain() {
+    contract.methods.bid().send({ from: user.wallet, value: calcNewSubmission() * Math.pow(10, 18), gas: 500000 })
+      .then(res => { handleSubmitDialogClose()})
+      .catch(err => console.error(err))
+  }
+
+
   function isSignedIn() {
     return (!token && !user) ? < Redirect to='/signin' /> : null;
+  }
+
+  function calcNewSubmission(){
+    return (parseInt(userBidSumbission)-parseInt(currentUserBid)/1e18)
   }
 
   return (
@@ -105,13 +125,32 @@ export default function PlaceEnglish() {
             endTime={endTime}
             handleBidChange={handleBidChange}
             submitEnglishBid={submitEnglishBid}
-            currentBid={currentBid} />
+            currentBid={currentHighestBid}
+            userBid={currentUserBid}
+          />
           :
           <AuctioneerView itemDescription={itemDescription}
             minBid={minBid}
             endTime={endTime}
-            currentBid={currentBid} />
+            currentBid={currentHighestBid} />
       }
+      <Dialog
+        open={openBidSubmitDialog}
+        onClose={handleSubmitDialogClose}
+      >
+        <DialogTitle>Confirm Bid Submission</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {(currentHighestBid === 0 || parseInt(currentUserBid) === 0)?`Place bet of ${userBidSumbission}`
+            :`You've already placed ${currentUserBid/1e18} eth,
+             submit another ${calcNewSubmission()} eth to total ${userBidSumbission} eth`}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={submitBidToBlockchain}>Submit Bid</Button>
+          <Button onClick={handleSubmitDialogClose}>Wait go back</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }
@@ -122,20 +161,21 @@ function AuctioneerView(props) {
     <>
       <Typography>Item : {itemDescription}</Typography>
       <Typography>Starting Bid: {minBid} eth</Typography>
-      <Typography>Current Bid: {currentBid}</Typography>
+      <Typography>Highest Bid: {currentBid / 1e18} eth</Typography>
       <Typography>End Time: {endTime.toLocaleString()}</Typography>
     </>
   )
 }
 
 function BidderView(props) {
-  const { itemDescription, minBid, currentBid, endTime, handleBidChange, submitEnglishBid } = props;
+  const { itemDescription, minBid, currentBid, endTime, handleBidChange, submitEnglishBid, userBid } = props;
   return (
     <>
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
       <br style={{ padding: '50px' }}></br>
       <Typography variant="h4">Minimum Bid: {minBid} eth</Typography>
-      <Typography variant="h4">Current Highest Bid: {currentBid} </Typography>
+      <Typography variant="h4">Current Highest Bid: {currentBid / 1e18} eth</Typography>
+      <Typography variant="h4">Your Bid: {userBid / 1e18} eth {(userBid===currentBid)?"☜(ﾟヮﾟ☜) You're the highest bidder":''}</Typography>
       <Typography variant="h4">End Time: {endTime.toLocaleString()} </Typography>
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>
