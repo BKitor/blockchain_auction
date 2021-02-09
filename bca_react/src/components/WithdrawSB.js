@@ -44,7 +44,7 @@ export default function WithdrawSealedBid() {
     const winnerStr = "revert You won, you cannot withdraw funds";
     contract.methods.withdraw().send({ from: user.wallet, gas: 500000 })
       .then(res => {
-        if(user && user.user_id == auctionOwner){
+        if(user && user.user_id === auctionOwner){
           alert("Winnings successfully withdrawn")
         }
         else{

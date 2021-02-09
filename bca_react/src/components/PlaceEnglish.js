@@ -132,7 +132,7 @@ function BidderView(props) {
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
       <br style={{ padding: '50px' }}></br>
       <Typography variant="h4">Minimum Bid: {minBid} eth</Typography>
-      <Typography variant="h4">Current Highest Bid: {currentBid} </Typography>
+      <Typography variant="h4">Current Highest Bid: {parseInt(currentBid)/10e18} </Typography>
       <Typography variant="h4">End Time: {endTime.toLocaleString()} </Typography>
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>

@@ -4,22 +4,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import '../styles/auctions.css';
-import Web3 from "web3"
 
 
 export default function Auctions() {
-  console.log(window.web3)
-  console.log(window.ethereum)
   const [existingSession, setExistingSession] = useState(false);
   const [sessionCode, setSessionCode] = useState(null);
 
   const handleExistingAuction = () => {
-    // setExistingSession(true);
-    if (window.ethereum && window.ethereum.isMetaMask){
-      const w3 = new Web3(window.ethereum);
-      console.log(w3)
-      console.log(w3.eth.accounts)
-    }
+    setExistingSession(true);
   }
 
   const handleClose = () => {
