@@ -68,4 +68,5 @@ class English(Auction):
 
 class Dutch(Auction):
     min_bid = models.IntegerField()
-
+    start_price = models.IntegerField()
+    rate = models.IntegerField()  # in eth/s

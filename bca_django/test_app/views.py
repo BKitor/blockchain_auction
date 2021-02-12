@@ -181,6 +181,12 @@ class DutchViewSet(viewsets.ModelViewSet):
         if auction.min_bid is None:
             return Response({"error": "min_bid is None, Can't start an auction that doesn't have a mininum bid"}, status=status.HTTP_400_BAD_REQUEST)
 
+        if auction.start_price is None:
+            return Response({"error": "start_price is None, Can't start an that without an initial price"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if auction.rate is None:
+            return Response({"error": "rate is None, Can't start an that'll never end"}, status=status.HTTP_400_BAD_REQUEST)
+
         if auction.end_time is None:
             return Response({"error": "end_time is None, Can't start an that'll never end"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -198,8 +204,8 @@ class DutchViewSet(viewsets.ModelViewSet):
         except Profile.DoesNotExist:
             return Response({"error": "owner of contract does not exist, the auction needs an owner"}, status=status.HTTP_404_NOT_FOUND)
 
-        contract_id = bchain.launch_sealed_bid(
-            time_limit, owner.wallet, min_bid)
+        contract_id = bchain.launch_dutch(
+            time_limit, owner.wallet, min_bid, auction.start_price, auction.rate)
 
         auction.auction_id = contract_id
         auction.save()

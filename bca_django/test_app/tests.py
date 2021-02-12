@@ -268,7 +268,6 @@ class EnglishTests(APITestCase):
         self.assertEqual(res.status_code, 400)
 
 
-
 # Dutch auction tests
 class DutchTests(APITestCase):
 
@@ -302,6 +301,8 @@ class DutchTests(APITestCase):
             'auction_id': '49849837',
             'min_bid': 3,
             'item_description': 'this is a test item 2',
+            'start_price': 99,
+            'rate': 1,
         }
 
         response = self.client.post(url, data=new_p_data)
@@ -317,6 +318,8 @@ class DutchTests(APITestCase):
             'auction_id': '',
             'min_bid': 3,
             'item_description': 'this is a test item 2',
+            'start_price': 99,
+            'rate': 1,
         }
 
         response = self.client.post(url, data=new_p_data)
@@ -333,4 +336,3 @@ class DutchTests(APITestCase):
         self._auth()
         res = self.client.put(url)
         self.assertEqual(res.status_code, 400)
-

@@ -7,6 +7,7 @@ contract DutchAuction is Auction{
 	
 	uint public rate;
 	uint public startPrice;
+	//might want to also add a var for the winning bid here
 
 	constructor (address payable _owner, uint _biddingTime, uint _startPrice, uint _rate, uint _minBid) {
 		auctionOwner = _owner;
@@ -33,4 +34,8 @@ contract DutchAuction is Auction{
 		return true;
 	}
 
+	// what's the best way to set this so that it can only be called when an auction is over?
+    function getHighestBid() public view returns (uint256){
+        return highestBid; 
+    }
 }

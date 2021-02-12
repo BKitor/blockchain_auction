@@ -9,7 +9,7 @@ contract Auction{                       //defines a contract with name Auction
     uint256 internal highestBid;          //Highest bid amount in wei
     address payable internal highestBidder;       //Ethereum address of highest bidder
     uint256 public minPrice;      //Min. bid for auctions other than Dutch
-    bool ongoingAuction;
+    bool public ongoingAuction;
     
     address[] bidders;                  //Dynamic array storing bidders addresses
     mapping(address=>uint) internal bids; //Mapping that maps address of bidder with their bid
@@ -51,6 +51,7 @@ contract Auction{                       //defines a contract with name Auction
     }
 
     function withdraw() public returns (bool) {
+        // will run into issues with Dutch, should add ` || !ongoingAuction`
         require(block.timestamp > auctionEnd, "Auction still open. Cannot withdraw.");
         require(msg.sender != highestBidder, "You won, you cannot withdraw funds.");
         
