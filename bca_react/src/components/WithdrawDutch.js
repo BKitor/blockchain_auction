@@ -20,17 +20,34 @@ export default function WithdrawDutch() {
   const [auctionOwner, setAuctionOwner] = useState(null);
   const [auctionID, setAuctionID] = useState(null)
   const [auctionIsOver, setAuctionIsOver] = useState(true);
+  // const [bidEvents, setBidEvents] = useState(null);
+  // const [withdrawArray, setWithdrawArray] = useState(null)
+  const [ethWithdrawn, setEthWithdrawn] = useState(true);
 
   const [rate, setRate] = useState('loading...');
   const [startPrice, setStartPrice] = useState("loading...");
+  const [contract, setContract] = useState(null);
 
   function getEthData() {
     if (!auctionID) { return }
     const web3 = new Web3(Util.bcURL)
     const dutchContract = new web3.eth.Contract(contract_artifact.abi, auctionID)
-    dutchContract.methods.ongoingAuction().call().then(oa => setAuctionIsOver(!oa))
-    // dutchContract.methods.highestBid().call().then(console.log)
-    dutchContract.methods.getHighestBid().call().then(console.log)
+    setContract(dutchContract)
+    dutchContract.getPastEvents('BidEvent').then(bidArr => {
+      // setBidEvents(bidArr)
+      // console.log(bidArr.length, bidArr.length>0)
+      // setAuctionIsOver(bidArr.lengh>0) <- it took my 30 minutes to find this bug, I fucking hate this stupid language
+      setAuctionIsOver(bidArr.length > 0)
+      if (bidArr.length > 0) {
+        setWinningBid(bidArr[0].returnValues.bid / 1e18)
+      }
+    })
+    dutchContract.getPastEvents('WithdrawalEvent').then(wdArr => {
+      // setWithdrawArray(wdArr)
+      console.log(wdArr)
+      setEthWithdrawn(wdArr.length > 0)
+
+    })
   }
 
   function getDjangoData() {
@@ -59,9 +76,20 @@ export default function WithdrawDutch() {
   }
 
   function auctionIsLive() {
-    return (auctionIsOver) ? null : (
+    return (auctionIsOver) ? null :
       <Redirect to={`/place/dutch/${auction_pk}`} />
-    )
+  }
+
+  function handleWithdraw() {
+    if (contract === null) { return }
+    if (ethWithdrawn) {
+      window.alert("Ethereum already withdrawn")
+    } else {
+      contract.methods.withdraw().send({from:user.wallet, gas:500000})
+        .then(res=>{
+          alert("eth successfully extracted")
+        })
+    }
   }
 
   return (
@@ -76,10 +104,11 @@ export default function WithdrawDutch() {
       <Typography>Minimum Bid: {minBid} eth</Typography>
       <Typography variant="h6">End Time: {endTime.toLocaleString()} </Typography>
       {(user && user.user_id !== auctionOwner) ? null :
-        <AuctioneerView/>}
+        <AuctioneerView handleWithdraw={handleWithdraw} />}
     </div >
   )
 }
 function AuctioneerView(props) {
-  return (<Button onClick={window.alert("TODO:withdraw auctioneer eth")}>Withdraw Winnings</Button>)
+  const { handleWithdraw } = props;
+  return (<Button onClick={handleWithdraw}>Withdraw Winnings</Button>)
 }

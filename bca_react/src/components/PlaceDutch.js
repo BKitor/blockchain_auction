@@ -27,6 +27,7 @@ export default function PlaceDutch() {
   const [rate, setRate] = useState('loading...');
   const [startPrice, setStartPrice] = useState("loading...");
   const [currentPrice, setCurrentPrice] = useState("loading...");
+  const [bidEvents, setBidEvents] = useState([]);
 
   const onBidEvent = (error, event) => {
     if (error) {
@@ -48,9 +49,9 @@ export default function PlaceDutch() {
     setContract(dutchContract)
     const subsription = dutchContract.events.BidEvent({}, onBidEvent)
     dutchContract.methods.auctionStart().call().then(st => setStartTime(new Date(st * 1000)))
-    dutchContract.methods.ongoingAuction().call().then(oa => setAuctionIsOver(!oa))
-    dutchContract.methods.ongoingAuction().call().then(console.log)
-    // console.log(dutchContract.methods)
+    // dutchContract.methods.ongoingAuction().call().then(oa => setAuctionIsOver(!oa))
+    // dutchContract.methods.ongoingAuction().call().then(oa=>console.log("ongoing", oa))
+    dutchContract.getPastEvents('BidEvent').then(setBidEvents)
     return function cleanup() {
       subsription.unsubscribe()
     }
@@ -103,7 +104,9 @@ export default function PlaceDutch() {
 
   // could probably be a util fn
   function redirectIfOver(){
-    return (auctionIsOver)?
+    // console.log(bidEvents.length>0)
+    // return (auctionIsOver)?
+    return (bidEvents.length>0)?
       <Redirect to={`/withdraw/dutch/${auction_pk}`} />:null;
   }
 
@@ -116,7 +119,7 @@ export default function PlaceDutch() {
       <Typography>Start Price: {startPrice}</Typography>
       <Typography variant="h4">Current Price: {(currentPrice.toFixed) ? currentPrice.toFixed(4) : currentPrice} eth</Typography>
       <Typography>Rate: {rate}</Typography>
-      <Typography>Minimum Bid: {minBid} eth</Typography>
+      {/* <Typography>Minimum Bid: {minBid} eth</Typography> */}
       <Typography variant="h6">End Time: {endTime.toLocaleString()} </Typography>
       {(user && user.user_id !== auctionOwner) ?
         <BidderView itemDescription={itemDescription}

@@ -45,7 +45,9 @@ contract('Dutch', (accounts)=> {
         it('can be won via bid', async () => {
 			//Have to figure out rate stuff here, setting way higher than rate to guarrantee succesful bid for testing
 			//Should be testing "can be won via bidding EXACTLY at the current price"
+			assert.equal(await dutch_bid.ongoingAuction(), true)
 			await dutch_bid.bid({from: accounts[1], value: 100000})
+			assert.equal(await dutch_bid.ongoingAuction(), false)
         })
 	})
 
