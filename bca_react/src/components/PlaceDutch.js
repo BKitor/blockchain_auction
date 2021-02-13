@@ -16,12 +16,11 @@ export default function PlaceDutch() {
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
   const [minBid, setMinBid] = useState('loading...');
   const [itemDescription, setItemDiscription] = useState('loading...');
-  const [endTime, setEndTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(null);
   const [contract, setContract] = useState(null);
   const [auctionNotFound, setNotFound] = useState(false);
   const [auctionOwner, setAuctionOwner] = useState(null);
   const [auctionID, setAuctionID] = useState(null)
-  const [auctionIsOver, setAuctionIsOver] = useState(false);
 
   const [startTime, setStartTime] = useState()
   const [rate, setRate] = useState('loading...');
@@ -34,11 +33,7 @@ export default function PlaceDutch() {
       console.log(error);
     }
     else {
-      setAuctionIsOver(true)
-      // TODO: auction is over, transition to withdraw 
-      // if (parseInt(event.returnValues.bid, 10) > parseInt(currentBid, 10)) {
-      //   setCurrentBid(Number(event.returnValues.bid))
-      // }
+      setBidEvents([event])
     }
   }
 
@@ -49,9 +44,7 @@ export default function PlaceDutch() {
     setContract(dutchContract)
     const subsription = dutchContract.events.BidEvent({}, onBidEvent)
     dutchContract.methods.auctionStart().call().then(st => setStartTime(new Date(st * 1000)))
-    // dutchContract.methods.ongoingAuction().call().then(oa => setAuctionIsOver(!oa))
-    // dutchContract.methods.ongoingAuction().call().then(oa=>console.log("ongoing", oa))
-    dutchContract.getPastEvents('BidEvent').then(setBidEvents)
+    dutchContract.getPastEvents('BidEvent', { fromBlock: "earliest" }).then(setBidEvents)
     return function cleanup() {
       subsription.unsubscribe()
     }
@@ -60,7 +53,6 @@ export default function PlaceDutch() {
   function getDjangoData() {
     Api.auctions.getDutchByPK(auction_pk, token)
       .then(res => {
-        // console.log(res)
         setAuctionID(res.data.auction_id)
         setMinBid(res.data.min_bid);
         setItemDiscription(`${res.data.item_description}`);
@@ -102,12 +94,13 @@ export default function PlaceDutch() {
     return (!token && !user) ? < Redirect to='/signin' /> : null;
   }
 
-  // could probably be a util fn
-  function redirectIfOver(){
-    // console.log(bidEvents.length>0)
-    // return (auctionIsOver)?
-    return (bidEvents.length>0)?
-      <Redirect to={`/withdraw/dutch/${auction_pk}`} />:null;
+  function redirectIfOver() {
+    if (endTime === null) { return null }
+    // const d = new Date();
+    const timeExpired = endTime.getTime() < currentTime
+    const bidPlaced = bidEvents.length > 0;
+    return (timeExpired || bidPlaced) ?
+      <Redirect to={`/withdraw/dutch/${auction_pk}`} /> : null;
   }
 
   return (
@@ -119,8 +112,7 @@ export default function PlaceDutch() {
       <Typography>Start Price: {startPrice}</Typography>
       <Typography variant="h4">Current Price: {(currentPrice.toFixed) ? currentPrice.toFixed(4) : currentPrice} eth</Typography>
       <Typography>Rate: {rate}</Typography>
-      {/* <Typography>Minimum Bid: {minBid} eth</Typography> */}
-      <Typography variant="h6">End Time: {endTime.toLocaleString()} </Typography>
+      <Typography variant="h6">End Time: {(endTime) ? endTime.toLocaleString() : "Loading..."} </Typography>
       {(user && user.user_id !== auctionOwner) ?
         <BidderView itemDescription={itemDescription}
           currentPrice={currentPrice}

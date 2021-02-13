@@ -15,39 +15,45 @@ export default function WithdrawDutch() {
   const [winningBid, setWinningBid] = useState(0);
   const [minBid, setMinBid] = useState('loading...');
   const [itemDescription, setItemDiscription] = useState('loading...');
-  const [endTime, setEndTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(null);
   const [auctionNotFound, setNotFound] = useState(false);
   const [auctionOwner, setAuctionOwner] = useState(null);
   const [auctionID, setAuctionID] = useState(null)
-  const [auctionIsOver, setAuctionIsOver] = useState(true);
-  // const [bidEvents, setBidEvents] = useState(null);
-  // const [withdrawArray, setWithdrawArray] = useState(null)
-  const [ethWithdrawn, setEthWithdrawn] = useState(true);
+  const [bidEvents, setBidEvents] = useState(null);
+  const [withdrawArray, setWithdrawArray] = useState(null)
 
   const [rate, setRate] = useState('loading...');
   const [startPrice, setStartPrice] = useState("loading...");
   const [contract, setContract] = useState(null);
+
+  function onWithdrawlsEvent(withdrawError, withdrawEvent) {
+    if (withdrawError) {
+      console.log(withdrawError)
+      return
+    }
+    if (withdrawEvent) {
+      setWithdrawArray([withdrawEvent])
+    }
+  }
 
   function getEthData() {
     if (!auctionID) { return }
     const web3 = new Web3(Util.bcURL)
     const dutchContract = new web3.eth.Contract(contract_artifact.abi, auctionID)
     setContract(dutchContract)
-    dutchContract.getPastEvents('BidEvent').then(bidArr => {
-      // setBidEvents(bidArr)
-      // console.log(bidArr.length, bidArr.length>0)
-      // setAuctionIsOver(bidArr.lengh>0) <- it took my 30 minutes to find this bug, I fucking hate this stupid language
-      setAuctionIsOver(bidArr.length > 0)
+    const withdrawSub = dutchContract.events.WithdrawalEvent({}, onWithdrawlsEvent)
+    dutchContract.getPastEvents('BidEvent', { fromBlock: "earliest" }).then(bidArr => {
+      setBidEvents(bidArr)
       if (bidArr.length > 0) {
         setWinningBid(bidArr[0].returnValues.bid / 1e18)
       }
     })
     dutchContract.getPastEvents('WithdrawalEvent').then(wdArr => {
-      // setWithdrawArray(wdArr)
-      console.log(wdArr)
-      setEthWithdrawn(wdArr.length > 0)
-
+      setWithdrawArray(wdArr)
     })
+    return function cleanup() {
+      withdrawSub.unsubscribe()
+    }
   }
 
   function getDjangoData() {
@@ -75,18 +81,30 @@ export default function WithdrawDutch() {
     return (!token && !user) ? < Redirect to='/signin' /> : null;
   }
 
-  function auctionIsLive() {
-    return (auctionIsOver) ? null :
+  function redirectifNotOver() {
+    if (endTime === null) { return null }
+    if (bidEvents === null) { return null }
+    const d = new Date();
+    const timeExpired = endTime.getTime() < d.getTime()
+    const bidPlaced = bidEvents.length > 0;
+    return (timeExpired || bidPlaced) ? null :
       <Redirect to={`/place/dutch/${auction_pk}`} />
   }
 
+
   function handleWithdraw() {
     if (contract === null) { return }
-    if (ethWithdrawn) {
+    if (withdrawArray === null) { return }
+    if (bidEvents === null) {return}
+    if (withdrawArray.length > 0) {
       window.alert("Ethereum already withdrawn")
-    } else {
-      contract.methods.withdraw().send({from:user.wallet, gas:500000})
-        .then(res=>{
+    }
+    else if (bidEvents.length<1) {
+      window.alert("No bids were placed")
+    }
+    else {
+      contract.methods.withdraw().send({ from: user.wallet, gas: 500000 })
+        .then(res => {
           alert("eth successfully extracted")
         })
     }
@@ -95,14 +113,14 @@ export default function WithdrawDutch() {
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {userIsSignedIn()}
-      {auctionIsLive()}
+      {redirectifNotOver()}
       {(auctionNotFound) ? <Error404 type={"Auction"} identifier={auction_pk}></Error404> : null}
       <Typography variant="h4">Auction over for : {itemDescription}</Typography>
       <Typography>Start Price: {startPrice}</Typography>
       <Typography variant="h4">Winning Bid: {winningBid.toFixed(4)} eth</Typography>
       <Typography>Rate: {rate}</Typography>
       <Typography>Minimum Bid: {minBid} eth</Typography>
-      <Typography variant="h6">End Time: {endTime.toLocaleString()} </Typography>
+      <Typography variant="h6">End Time: {(endTime) ? endTime.toLocaleString() : "Loading..."} </Typography>
       {(user && user.user_id !== auctionOwner) ? null :
         <AuctioneerView handleWithdraw={handleWithdraw} />}
     </div >

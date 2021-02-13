@@ -112,7 +112,7 @@ class DutchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Dutch
         fields = ['url', 'id', 'owner', 'end_time',
-                  'auction_id', 'min_bid', 'item_description', 
+                  'auction_id', 'min_bid', 'item_description',
                   'start_price', 'rate']
 
     def create(self, validated_data):

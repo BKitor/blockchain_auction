@@ -30,7 +30,7 @@ export default function Dutch() {
     setItemDescription(e.target.value);
   }
 
-  const submitEnglish = () => {
+  const submitDutch = () => {
     if (itemDescription === '' || minBid === 0) {
       window.alert("Invalid Inputs")
     } else {
@@ -79,7 +79,7 @@ export default function Dutch() {
         value={endTime}
       />
       <br style={{ padding: '50px' }}></br>
-      <Button onClick={submitEnglish}>Create new English</Button>
+      <Button onClick={submitDutch}>Create new Dutch</Button>
 
     </div>
   )
