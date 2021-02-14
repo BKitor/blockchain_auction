@@ -31,10 +31,11 @@ export default function SealedBid() {
         item_description: itemDescription,
       }
       Api.auctions.newSealedBid(body, token).then(res => {
-        Api.auctions.launchSealedBid(res.data.id, token)
-        window.location = `/place/sealed-bid/${res.data.id}`
-      }).then(res => {
-        console.log(res)
+        return Promise.all([Api.auctions.launchSealedBid(res.data.id, token), Promise.resolve(res)])
+      }).then(([lres, cres]) => {
+        window.location = `/place/sealed-bid/${cres.data.id}`
+        console.log(lres)
+        console.log(cres)
       })
         .catch(err => {
           console.error(err)
