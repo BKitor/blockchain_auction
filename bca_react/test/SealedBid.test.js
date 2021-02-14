@@ -56,8 +56,8 @@ contract('SealedBid', (accounts) => {
 		})
 		it('allows users to withdraw', async () => {
 			await sealedBid.withdraw({from: accounts[2]})
-			const bid = await sealedBid.get_bid({ from: accounts[2] })
-			assert.equal(bid, 0)
+			const withdrawn = await sealedBid.get_withdrawn({ from: accounts[2] })
+			assert.equal(withdrawn, true)
 		})
 		it('does not allow winner to withdraw', async () => {
 			await sealedBid.withdraw({from: accounts[1]}).should.be.rejected;

@@ -3,6 +3,11 @@ pragma solidity ^0.7.5;                //declares compiler version
 
 contract Auction{                       //defines a contract with name Auction
     //State variable declarations, similar to global variables in other languages 
+    struct Bid {
+        uint256 value;
+        bool withdrawn;
+    }
+
     address payable internal auctionOwner;     //Auction owner's address, where winning bid will be sent
     uint256 public auctionStart;       //Start and end epoch times for auction
     uint256 public auctionEnd;
@@ -12,7 +17,7 @@ contract Auction{                       //defines a contract with name Auction
     bool public ongoingAuction;
     
     address[] bidders;                  //Dynamic array storing bidders addresses
-    mapping(address=>uint) internal bids; //Mapping that maps address of bidder with their bid
+    mapping(address=>Bid) internal bids; //Mapping that maps address of bidder with their bid
     
     modifier ongoing_auction(){
         require(ongoingAuction, "Auction has ended.");
@@ -39,7 +44,11 @@ contract Auction{                       //defines a contract with name Auction
     }
 
     function get_bid() public view returns(uint){
-        return bids[msg.sender];
+        return bids[msg.sender].value;
+    }
+
+    function get_withdrawn() public view returns(bool){
+        return bids[msg.sender].withdrawn;
     }
     
     function get_num_bidders() public view only_owner returns(uint256) {
@@ -51,19 +60,18 @@ contract Auction{                       //defines a contract with name Auction
     }
 
     function withdraw() public returns (bool) {
-        // will run into issues with Dutch, should add ` || !ongoingAuction`
-        require(block.timestamp > auctionEnd, "Auction still open. Cannot withdraw.");
+        require(block.timestamp > auctionEnd || !ongoingAuction, "Auction still open. Cannot withdraw.");
         require(msg.sender != highestBidder, "You won, you cannot withdraw funds.");
+        require(bids[highestBidder].withdrawn == false || msg.sender != auctionOwner, "You have already withdrawn winnings.");
+        require(bids[msg.sender].withdrawn == false || msg.sender == auctionOwner, "You have no bid to withdraw.");
         
         uint amount; 
         if(msg.sender == auctionOwner){
-            require(bids[highestBidder] > 0, "You have already withdrawn winnings.");
-            amount = highestBid;
-            bids[highestBidder] = 0;
+            amount = bids[highestBidder].value;
+            bids[highestBidder].withdrawn = true;
         } else {
-            require(bids[msg.sender] > 0, "You have no bid to withdraw.");
-            amount = bids[msg.sender];
-            bids[msg.sender] = 0;
+            amount = bids[msg.sender].value;
+            bids[msg.sender].withdrawn = true;
         }
 
         (bool success, ) = msg.sender.call{value: amount}("");
@@ -76,7 +84,7 @@ contract Auction{                       //defines a contract with name Auction
     function destruct_auction() external only_owner returns (bool) {
         require(block.timestamp > auctionEnd, "Auction still open. Cannot destruct.");
         for (uint i = 0; i < bidders.length; i++){
-            require(bids[bidders[i]] == 0, "All bids have not been withdrawn yet.");
+            require(bids[bidders[i]].withdrawn == true, "All bids have not been withdrawn yet.");
         }
         selfdestruct(auctionOwner); //will be admin eventually
         return true;

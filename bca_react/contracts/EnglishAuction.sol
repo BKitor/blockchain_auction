@@ -18,16 +18,17 @@ contract EnglishAuction is Auction{
     }
 
     function bid() public payable ongoing_auction override returns (bool) {
-        require(bids[msg.sender] + msg.value > highestBid, "Bid too low.");
+        require(bids[msg.sender].value + msg.value > highestBid, "Bid too low.");
         
-        if(bids[msg.sender] == 0){
+        if(bids[msg.sender].value == 0){
             bidders.push(msg.sender);
-        }   
-
-        bids[msg.sender] = bids[msg.sender] + msg.value;
+            bids[msg.sender] = Bid(msg.value, false);
+        } else {
+            bids[msg.sender].value = bids[msg.sender].value + msg.value;
+        }
 
         highestBidder = msg.sender; 
-        highestBid = bids[msg.sender]; 
+        highestBid = bids[msg.sender].value; 
 
         emit BidEvent(highestBidder, highestBid);
         return true; 

@@ -69,8 +69,11 @@ contract('Dutch', (accounts)=> {
 		it('cannot be destroyed by non-owner', async () => {
 			await dutch_bid.destruct_auction({from: accounts[1]}).should.be.rejected;
 		})
-		it('can award winnings to winner', async () => {
+		it('can award winnings to owner', async () => {
 			await dutch_bid.withdraw({from: accounts[0]})
+		})
+		it('prevents owner from withdrawing again', async () => {
+			await dutch_bid.withdraw({from: accounts[0]}).should.be.rejected;
 		})
 		it('can be destroyed by owner', async () => {
 			await dutch_bid.destruct_auction({from: accounts[0]})
