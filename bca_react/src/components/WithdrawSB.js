@@ -44,15 +44,23 @@ export default function WithdrawSealedBid() {
     const winnerStr = "revert You won, you cannot withdraw funds";
     contract.methods.withdraw().send({ from: user.wallet, gas: 500000 })
       .then(res => {
-        alert("Eth successfuly withdrawn, sorry you din't win")
+        if(user && user.user_id === auctionOwner){
+          alert("Winnings successfully withdrawn")
+        }
+        else{
+          alert("Eth successfuly withdrawn, sorry you din't win")
+        }
         console.log(res)
       })
       .catch(err => {
-        if (err.stack.includes(noBidStr)) {
+        if (err.stack.includes && err.stack.includes(noBidStr)) {
           alert("no bid withdrawn, either you didn't participate or you've already withdrawn your funds")
         }
-        else if (err.stack.includes(winnerStr)) {
+        else if (err.stack.includes && err.stack.includes(winnerStr)) {
           alert("Congradulation! you won! we'll figure out shipping details later...")
+        }
+        else{
+          console.log(err)
         }
       })
 
@@ -68,10 +76,6 @@ export default function WithdrawSealedBid() {
     )
   }
 
-  function withdrawWinnings(){
-    alert("TODO:THIS NEEDS TO BE IMPLIMENTED")
-    return
-  }
 
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
@@ -87,7 +91,7 @@ export default function WithdrawSealedBid() {
           :
           <AuctioneerView itemDescription={itemDescription}
             endTime={endTime}
-            withdrawWinnings={withdrawWinnings}>
+            withdrawWinnings={withdrawFunds}>
             </AuctioneerView>
       }
     </div>
@@ -100,7 +104,7 @@ function AuctioneerView(props) {
     <>
       <Typography>Item : {itemDescription}</Typography>
       <Typography>End Time: {endTime.toLocaleString()}</Typography>
-      <Button onClick={withdrawWinnings}>Withdraw Winnings</Button>
+      <Button onClick={withdrawWinnings}>Claim Winnings</Button>
     </>
   )
 }

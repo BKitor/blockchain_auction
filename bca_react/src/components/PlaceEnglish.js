@@ -78,10 +78,7 @@ export default function PlaceEnglish() {
     }
   }
   const submitEnglishBid = () => {
-    console.log(userBid)
-    console.log(minBid)
-    console.log(currentBid)
-    if (userBid === 0 || parseInt(userBid)<parseInt(minBid) || parseInt(userBid)<parseInt(currentBid)) {
+    if (userBid === 0 || parseInt(userBid)<parseInt(minBid) || parseInt(userBid)*10e18<parseInt(currentBid)) {
       window.alert("Your bid isn't high enough")
     } else {
       contract.methods.bid().send({ from: user.wallet, value: userBid * Math.pow(10, 18), gas: 500000 })
@@ -135,7 +132,7 @@ function BidderView(props) {
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
       <br style={{ padding: '50px' }}></br>
       <Typography variant="h4">Minimum Bid: {minBid} eth</Typography>
-      <Typography variant="h4">Current Highest Bid: {currentBid} </Typography>
+      <Typography variant="h4">Current Highest Bid: {parseInt(currentBid)/10e18} </Typography>
       <Typography variant="h4">End Time: {endTime.toLocaleString()} </Typography>
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>
