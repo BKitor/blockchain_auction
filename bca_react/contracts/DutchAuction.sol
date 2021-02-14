@@ -19,8 +19,8 @@ contract DutchAuction is Auction{
 		ongoingAuction = true;
 	}
 
-	function bid() public payable ongoing_auction override returns (bool) {
-		require(msg.value >= startPrice - (rate * (block.timestamp - auctionStart)) || minPrice >= startPrice - (rate * (block.timestamp - auctionStart)));
+	function bid() external payable ongoing_auction override returns (bool) {
+		require(msg.value >= startPrice - (rate * (block.timestamp - auctionStart)*1 minutes) || minPrice >= startPrice - (rate * (block.timestamp - auctionStart)*1 minutes));
 		require(msg.value >= minPrice);
 
 		highestBid = msg.value;
@@ -30,13 +30,10 @@ contract DutchAuction is Auction{
 		bids[msg.sender] = Bid(msg.value, false);
 
 		ongoingAuction = false;
+		// auctionEnd = block.timestamp;
 
 		emit BidEvent(highestBidder, highestBid);
 		return true;
 	}
 
-	// what's the best way to set this so that it can only be called when an auction is over?
-    function getHighestBid() public view returns (uint256){
-        return highestBid; 
-    }
 }

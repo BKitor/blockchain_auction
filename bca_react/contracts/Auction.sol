@@ -90,9 +90,8 @@ contract Auction{                       //defines a contract with name Auction
         return true;
     }
 
-    function bid() public payable virtual ongoing_auction returns (bool) {}
+    function bid() external payable virtual ongoing_auction returns (bool) {}
     
     event BidEvent(address indexed bidder, uint256 bid);
     event WithdrawalEvent(address withdrawer, uint256 amount);
-    
 }
