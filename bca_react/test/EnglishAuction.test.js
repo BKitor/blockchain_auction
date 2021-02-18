@@ -59,9 +59,9 @@ contract('English', (accounts)=> {
 			assert.equal(highest_bidder, accounts[3]);
 		})
 		it('allows users to withdraw', async () => {
-			await english.withdraw({from: accounts[1]})
-			const bid = await english.get_bid({ from: accounts[1] })
-			assert.equal(bid, 0)
+			await english.withdraw({from: accounts[1]});
+			const withdrawn = await english.get_withdrawn({ from: accounts[1] });
+			assert.equal(withdrawn, true);
 		})
 		it('does not allow winner to withdraw', async () => {
 			await english.withdraw({from: accounts[1]}).should.be.rejected;

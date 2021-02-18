@@ -19,6 +19,9 @@ import ProfileByUname from './components/ProfileByUname';
 import WithdrawSealedBid from './components/WithdrawSB.js'
 import PlaceEnglish from './components/PlaceEnglish.js';
 import English from './components/English.js';
+import Dutch from './components/Dutch.js';
+import PlaceDutch from './components/PlaceDutch.js';
+import WithdrawDutch from './components/WithdrawDutch.js'
 
 
 function App() {
@@ -30,7 +33,6 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/auctions" component={Auctions} />
-          <Route exact path="/withdraw/sealed-bid/:auction_pk" component={WithdrawSealedBid} />
 
           <Route exact path="/signin" component={Signin} />
           <Route exact path="/profile" component={Profile} />
@@ -38,8 +40,15 @@ function App() {
 
           <Route exact path='/sealed-bid' component={SealedBid} />
           <Route exact path="/place/sealed-bid/:auction_pk" component={PlaceSealedBid} />
+          <Route exact path="/withdraw/sealed-bid/:auction_pk" component={WithdrawSealedBid} />
+
           <Route exact path='/english' component={English} />
           <Route exact path="/place/english/:auction_pk" component={PlaceEnglish} />
+
+          <Route exact path='/dutch' component={Dutch} />
+          <Route exact path="/place/dutch/:auction_pk" component={PlaceDutch} />
+          <Route exact path="/withdraw/dutch/:auction_pk" component={WithdrawDutch} />
+
 
           <Route exact path="/auctions" component={Auctions} />
 

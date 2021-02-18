@@ -21,29 +21,37 @@ contract ChannelAuction is Auction{
         buyNowPrice = _buyNowPrice;
     }
 
-    function bid() public payable ongoing_auction override returns (bool) {
-        require(bids[msg.sender] + msg.value > highestBid, "Bid too low.");
+    function bid() external payable ongoing_auction override returns (bool) {
+        require(bids[msg.sender].value + msg.value > highestBid, "Bid too low.");
         
-        if(bids[msg.sender] == 0){
+        if(bids[msg.sender].value == 0){
             bidders.push(msg.sender);
-        }   
-
-        bids[msg.sender] = bids[msg.sender] + msg.value;
+            bids[msg.sender] = Bid(msg.value, false);
+        } else {
+            bids[msg.sender].value = bids[msg.sender].value + msg.value;
+        }
 
         highestBidder = msg.sender;
-        highestBid = bids[msg.sender];
+        highestBid = bids[msg.sender].value;
 
         emit BidEvent(highestBidder, highestBid);
         return true;
     }
 
     function buy_now() public payable ongoing_auction returns (bool) {
-        require(msg.value >= buyNowPrice, "Sent less than buy now price.");
+        require(bids[msg.sender].value + msg.value >= buyNowPrice, "Sent less than buy now price.");
 
         ongoingAuction = false; 
 
-        highestBidder = 0x638Ba56Adef3c8235ba7fC2a907f4ddb763Be608;       //setting to TEMP PLACEHOLDER VAL so prev. highest bidder can still withdraw and winner by buy_now can withdraw past bids
-        highestBid = msg.value;
+        if(bids[msg.sender].value == 0){
+            bidders.push(msg.sender);
+            bids[msg.sender] = Bid(msg.value, false);
+        } else {
+            bids[msg.sender].value = bids[msg.sender].value + msg.value;
+        }
+        
+        highestBidder = msg.sender;
+        highestBid = bids[msg.sender].value;
 
         emit BuyEvent(highestBidder, highestBid);
         return true;

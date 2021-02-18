@@ -1,3 +1,4 @@
+import {useRef, useEffect} from 'react'
 export default {
     bcURL: "ws://localhost:8545",
 
@@ -19,6 +20,24 @@ export default {
         if (user) {
             window.localStorage.setItem('user', JSON.stringify(user))
         }
+    },
+
+    // from: https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+    useInterval: (callback, delay) => {
+        const savedCallback = useRef();
+        useEffect(() => {
+            savedCallback.current = callback
+        }, [callback])
+
+        useEffect(() => {
+            function tick() {
+                savedCallback.current()
+            }
+            if (delay !== null) {
+                let id = setInterval(tick, delay);
+                return () => clearInterval(id);
+            }
+        }, [delay]);
     }
 }
 
