@@ -70,3 +70,9 @@ class Dutch(Auction):
     min_bid = models.IntegerField()
     start_price = models.IntegerField()
     rate = models.IntegerField()  # in eth/s
+
+
+class Channel(Auction):
+    min_bid = models.IntegerField()
+    buy_now_price = models.IntegerField()
+    

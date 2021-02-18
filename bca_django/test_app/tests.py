@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase
 from django.contrib.auth import hashers
-from test_app.models import Profile, SealedBid, English, Dutch
+from test_app.models import Profile, SealedBid, English, Dutch, Channel
 from rest_framework.authtoken.models import Token
 from test_app.models import User
 
@@ -333,6 +333,74 @@ class DutchTests(APITestCase):
 
     def test_start_auction(self):
         url = '/auction/dutch_auction/1/start/'
+        self._auth()
+        res = self.client.put(url)
+        self.assertEqual(res.status_code, 400)
+
+
+# Channel auction tests
+class ChannelTests(APITestCase):
+
+    fixtures = ['user_fixture']
+
+    def _auth(self):
+        t = self._get_token()
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {t}')
+
+    def _get_token(self):
+        url = '/api-token-auth/'
+        data = {
+            'username': 'admin',
+            'password': 'Passw0rd',
+        }
+        return self.client.post(url, data).json()['token']
+
+    def test_channel_get(self):
+        url = '/auction/channel_auction/1/'
+        self._auth()
+        response = self.client.get(url)
+        self.assertEqual(response.data['auction_id'], 'sdfkj3')
+
+    def test_channel_post(self):
+        url = '/auction/channel_auction/'
+        self._auth()
+
+        new_p_data = {
+            'owner': 1,
+            'end_time': '6566-06-06T08:15-05:00',
+            'auction_id': '49849837',
+            'min_bid': 3,
+            'item_description': 'this is a test item 2',
+            'buy_now_price': 90,
+        }
+
+        response = self.client.post(url, data=new_p_data)
+        self.assertEqual(response.data['auction_id'], new_p_data['auction_id'])
+
+    def test_channel_put(self):
+        url = '/auction/channel_auction/'
+        self._auth()
+
+        new_p_data = {
+            'owner': 1,
+            'end_time': '',
+            'auction_id': '',
+            'min_bid': 3,
+            'item_description': 'this is a test item 2',
+            'buy_now_price': 90,
+        }
+
+        response = self.client.post(url, data=new_p_data)
+        self.assertEqual(response.data['auction_id'], '')
+
+        new_p_data['auction_id'] = 'lksdfjdflk'
+        new_p_data['end_time'] = '7566-07-06T08:15-05:00'
+        response = self.client.put(response.data['url'], data=new_p_data)
+        self.assertEqual(response.data['auction_id'], 'lksdfjdflk')
+        self.assertEqual(response.data['end_time'], '7566-07-06T13:15:00Z')
+
+    def test_start_auction(self):
+        url = '/auction/channel_auction/1/start/'
         self._auth()
         res = self.client.put(url)
         self.assertEqual(res.status_code, 400)

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from test_app.models import Profile, User, SealedBid, English, Dutch
+from test_app.models import Profile, User, SealedBid, English, Dutch, Channel
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -126,3 +126,28 @@ class DutchSerializer(serializers.HyperlinkedModelSerializer):
         dutch_auction.rate = validated_data['rate']
         dutch_auction.save()
         return dutch_auction
+
+
+class ChannelSerializer(serializers.HyperlinkedModelSerializer):
+
+    owner = serializers.PrimaryKeyRelatedField(
+        many=False, queryset=Profile.objects.all())
+    auction_id = serializers.CharField(allow_blank=True)
+    end_time = serializers.DateTimeField(allow_null=True)
+
+    class Meta:
+        model = Channel
+        fields = ['url', 'id', 'owner', 'end_time',
+                  'auction_id', 'min_bid', 'item_description',
+                  'buy_now_price']
+
+    def create(self, validated_data):
+        channel_auction = Channel()
+        channel_auction.owner = validated_data['owner']
+        channel_auction.end_time = validated_data.get('end_time')
+        channel_auction.auction_id = validated_data.get('auction_id')
+        channel_auction.min_bid = validated_data['min_bid']
+        channel_auction.item_description = validated_data['item_description']
+        channel_auction.buy_now_price = validated_data['buy_now_price']
+        channel_auction.save()
+        return channel_auction

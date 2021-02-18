@@ -13,6 +13,8 @@ class BChain():
     english_bytecode = None
     dutch_abi = None
     dutch_bytecode = None
+    channel_abi = None
+    channel_bytecode = None
     admin_public_key = None
 
     def __init__(self):
@@ -30,6 +32,9 @@ class BChain():
         with open('../bca_react/contracts/DutchAuction.sol') as f:
             dutch_contents = f.read()
 
+        with open('../bca_react/contracts/ChannelAuction.sol') as f:
+            channel_contents = f.read()
+
         compiled_auctions = compile_standard({
             "language": "Solidity",
             "sources": {
@@ -44,6 +49,9 @@ class BChain():
                 },
                 "DutchAuction.sol": {
                     "content": dutch_contents
+                },
+                "ChannelAuction.sol": {
+                    "content": channel_contents
                 },
             },
             "settings":
@@ -77,6 +85,11 @@ class BChain():
         self.dutch_abi = json.loads(compiled_auctions['contracts']['DutchAuction.sol']
                                     ['DutchAuction']['metadata'])['output']['abi']
 
+        self.channel_bytecode = compiled_auctions['contracts'][
+            'ChannelAuction.sol']['ChannelAuction']['evm']['bytecode']['object']
+        self.channel_abi = json.loads(compiled_auctions['contracts']['ChannelAuction.sol']
+                                    ['ChannelAuction']['metadata'])['output']['abi']
+
     def get_w3(self):
         return self.w3
 
@@ -97,6 +110,12 @@ class BChain():
 
     def get_dutch_bytecode(self):
         return self.dutch_bytecode
+
+    def get_channel_abi(self):
+        return self.channel_abi
+
+    def get_channel_bytecode(self):
+        return self.channel_bytecode
 
     def launch_sealed_bid(self, time_limit, owner, min_bid):
         print(
@@ -127,10 +146,22 @@ class BChain():
         print(
             f"LAUNCH DUTCH time:{time_limit}, owner:{owner}, min_bid:{min_bid}")
         Dutch = self.w3.eth.contract(
-            abi=self.dutch_abi, bytecode=self.english_bytecode)
+            abi=self.dutch_abi, bytecode=self.english_bytecode) # I think this needs to be dutch_bytecode
 
         tx_hash = Dutch.constructor(
             owner, time_limit, start_price, rate, min_bid).transact({'from': self.admin_public_key})
+
+        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+        return tx_receipt.contractAddress
+
+    def launch_channel(self, time_limit, owner, min_bid, buy_now_price):
+        print(
+            f"LAUNCH CHANNEL time:{time_limit}, owner:{owner}, min_bid:{min_bid}")
+        Channel = self.w3.eth.contract(
+            abi=self.channel_abi, bytecode=self.channel_bytecode)
+
+        tx_hash = Channel.constructor(
+            owner, time_limit, buy_now_price, min_bid).transact({'from': self.admin_public_key})
 
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
         return tx_receipt.contractAddress
