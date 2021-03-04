@@ -19,6 +19,7 @@ import ProfileByUname from './components/ProfileByUname';
 import WithdrawSealedBid from './components/WithdrawSB.js'
 import PlaceEnglish from './components/PlaceEnglish.js';
 import English from './components/English.js';
+import WithdrawEnglish from './components/WithdrawEnglish';
 import Dutch from './components/Dutch.js';
 import PlaceDutch from './components/PlaceDutch.js';
 import WithdrawDutch from './components/WithdrawDutch.js'
@@ -44,6 +45,7 @@ function App() {
 
           <Route exact path='/english' component={English} />
           <Route exact path="/place/english/:auction_pk" component={PlaceEnglish} />
+          <Route exact path="/withdraw/english/:auction_pk" component={WithdrawEnglish}/>
 
           <Route exact path='/dutch' component={Dutch} />
           <Route exact path="/place/dutch/:auction_pk" component={PlaceDutch} />
