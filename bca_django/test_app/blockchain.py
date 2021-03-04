@@ -88,7 +88,7 @@ class BChain():
         self.channel_bytecode = compiled_auctions['contracts'][
             'ChannelAuction.sol']['ChannelAuction']['evm']['bytecode']['object']
         self.channel_abi = json.loads(compiled_auctions['contracts']['ChannelAuction.sol']
-                                    ['ChannelAuction']['metadata'])['output']['abi']
+                                      ['ChannelAuction']['metadata'])['output']['abi']
 
     def get_w3(self):
         return self.w3
@@ -146,7 +146,7 @@ class BChain():
         print(
             f"LAUNCH DUTCH time:{time_limit}, owner:{owner}, min_bid:{min_bid}")
         Dutch = self.w3.eth.contract(
-            abi=self.dutch_abi, bytecode=self.english_bytecode) # I think this needs to be dutch_bytecode
+            abi=self.dutch_abi, bytecode=self.dutch_bytecode)
 
         tx_hash = Dutch.constructor(
             owner, time_limit, start_price, rate, min_bid).transact({'from': self.admin_public_key})
@@ -161,7 +161,19 @@ class BChain():
             abi=self.channel_abi, bytecode=self.channel_bytecode)
 
         tx_hash = Channel.constructor(
-            owner, time_limit, buy_now_price, min_bid).transact({'from': self.admin_public_key})
+            owner, time_limit, min_bid, buy_now_price).transact({'from': self.admin_public_key})
+
+        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+        return tx_receipt.contractAddress
+
+    def launch_squeeze(self, time_limit, owner, start_low, start_high, rate):
+        print(
+            f"LAUNCH SQUEEZE time:{time_limit}, owner:{owner}, start_low:{start_low} start_high:{start_high} rate:{rate}")
+        Squeeze = self.w3.eth.contract(
+            abi=self.squeeze_abi, bytecode=self.squeeze_bytecode)
+
+        tx_hash = Squeeze.constructor(
+            owner, time_limit, start_low, start_high, rate).transact({'from': self.admin_public_key})
 
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
         return tx_receipt.contractAddress

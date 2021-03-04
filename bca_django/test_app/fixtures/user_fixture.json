@@ -194,5 +194,17 @@
       "item_description": "this is an item test",
       "buy_now_price":90
     }
+  },
+  {
+    "model": "test_app.Squeeze",
+    "pk":1,
+    "fields":{
+      "owner":1,
+      "item_description": "this is an item test",
+      "auction_id": "sdfkj3",
+      "start_low":10,
+      "start_high":100,
+      "rate":3
+    }
   }
 ]

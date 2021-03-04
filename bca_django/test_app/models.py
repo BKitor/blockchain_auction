@@ -75,4 +75,9 @@ class Dutch(Auction):
 class Channel(Auction):
     min_bid = models.IntegerField()
     buy_now_price = models.IntegerField()
-    
+
+
+class Squeeze(Auction):
+    start_low = models.IntegerField()
+    start_high = models.IntegerField()
+    rate = models.IntegerField()
