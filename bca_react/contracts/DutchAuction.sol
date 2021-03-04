@@ -7,6 +7,7 @@ contract DutchAuction is Auction{
 	
 	uint public rate;
 	uint public startPrice;
+	//might want to also add a var for the winning bid here
 
 	constructor (address payable _owner, uint _biddingTime, uint _startPrice, uint _rate, uint _minBid) {
 		auctionOwner = _owner;
@@ -18,14 +19,18 @@ contract DutchAuction is Auction{
 		ongoingAuction = true;
 	}
 
-	function bid() public payable ongoing_auction override returns (bool) {
-		require(msg.value >= rate * (block.timestamp - auctionStart));
+	function bid() external payable ongoing_auction override returns (bool) {
+		require(msg.value >= startPrice - (rate * (block.timestamp - auctionStart)*1 minutes) || minPrice >= startPrice - (rate * (block.timestamp - auctionStart)*1 minutes));
 		require(msg.value >= minPrice);
 
 		highestBid = msg.value;
 		highestBidder = msg.sender;
 
+		bidders.push(msg.sender);
+		bids[msg.sender] = Bid(msg.value, false);
+
 		ongoingAuction = false;
+		// auctionEnd = block.timestamp;
 
 		emit BidEvent(highestBidder, highestBid);
 		return true;

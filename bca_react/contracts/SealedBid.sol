@@ -13,28 +13,23 @@ contract SealedBid is Auction{
 		ongoingAuction = true;
 	}
 
-	function bid() public payable ongoing_auction override returns (bool) {
-		require(bids[msg.sender] + msg.value > minPrice, "Bid too low");
+	function bid() external payable ongoing_auction override returns (bool) {
+		require(bids[msg.sender].value + msg.value > minPrice, "Bid too low");
 		
-		if(bids[msg.sender] == 0){
+		if(bids[msg.sender].value == 0){
 			bidders.push(msg.sender);
+			bids[msg.sender] = Bid(msg.value, false);
+		} else {
+			bids[msg.sender].value = bids[msg.sender].value + msg.value;
 		}		
 
-		bids[msg.sender] = bids[msg.sender] + msg.value;
-
 		//Note: highestBid and highestBidder are public (bc of other auction types), so this may not be the most secure 
-		if(bids[msg.sender] > highestBid){
-			highestBid = bids[msg.sender];
+		if(bids[msg.sender].value > highestBid){
+			highestBid = bids[msg.sender].value;
 			highestBidder = msg.sender;
 		}
 
-		emit BidEvent(msg.sender, bids[msg.sender]);
-		return true;
-	}
-
-	function end() public admin returns (bool) {
-		//this function is just for dev purposes
-		auctionEnd = block.timestamp - 1;
+		emit BidEvent(msg.sender, bids[msg.sender].value);
 		return true;
 	}
 
