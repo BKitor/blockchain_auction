@@ -63,5 +63,22 @@ export default {
         {headers: { 'Authorization': `Token ${token}` }}
       ) 
     },
+
+    newChannel: (body, token) => {
+      return axios.post(`${djangoUrl}/auction/channel_auction/`, body,
+        { headers: { 'Authorization': `Token ${token}` } }
+      )
+    },
+    launchChannel: (auction_pk, token) => {
+      return axios.put(`${djangoUrl}/auction/channel_auction/${auction_pk}/start/`, {},
+        { headers: { 'Authorization': `Token ${token}` } }
+      )
+    },
+    getChannelByPK: (auction_pk, token) => {
+      return axios.get(`${djangoUrl}/auction/channel_auction/${auction_pk}/`, 
+        {headers: { 'Authorization': `Token ${token}` }}
+      ) 
+    },
+
   }
 }

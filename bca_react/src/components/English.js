@@ -31,16 +31,15 @@ export default function English() {
         min_bid: parseInt(minBid),
         item_description: itemDescription,
       }
-
-
       const EnglishPromise = Api.auctions.newEnglish(body, token)
 
       EnglishPromise.then(res => {
-        return Promise.all([Api.auctions.launchEnglish(res.data.id, token), Promise.resolve(res)])
+        return Promise.all([
+          Api.auctions.launchEnglish(res.data.id, token), 
+          Promise.resolve(res)
+        ])
       }).then(([lres, cres]) => {
         window.location = `/place/english/${cres.data.id}`
-        console.log(lres)
-        console.log(cres)
       })
         .catch(err => {
           console.error(err)

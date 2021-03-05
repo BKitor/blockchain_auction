@@ -23,6 +23,9 @@ import WithdrawEnglish from './components/WithdrawEnglish';
 import Dutch from './components/Dutch.js';
 import PlaceDutch from './components/PlaceDutch.js';
 import WithdrawDutch from './components/WithdrawDutch.js'
+import Channel from './components/Channel.js'
+import PlaceChannel from './components/PlaceChannel.js'
+import WithdrawChannel from './components/WithdrawChannel.js'
 
 
 function App() {
@@ -45,12 +48,15 @@ function App() {
 
           <Route exact path='/english' component={English} />
           <Route exact path="/place/english/:auction_pk" component={PlaceEnglish} />
-          <Route exact path="/withdraw/english/:auction_pk" component={WithdrawEnglish}/>
+          <Route exact path="/withdraw/english/:auction_pk" component={WithdrawEnglish} />
 
           <Route exact path='/dutch' component={Dutch} />
           <Route exact path="/place/dutch/:auction_pk" component={PlaceDutch} />
           <Route exact path="/withdraw/dutch/:auction_pk" component={WithdrawDutch} />
 
+          <Route exact path='/channel' component={Channel} />
+          <Route exact path='/place/channel/:auction_pk' component={PlaceChannel} />
+          <Route exact path='/withdraw/channel/:auction_pk' component={WithdrawChannel} />
 
           <Route exact path="/auctions" component={Auctions} />
 

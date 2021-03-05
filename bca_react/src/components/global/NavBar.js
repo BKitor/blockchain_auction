@@ -129,6 +129,11 @@ export default function NavBar() {
     window.location = '/dutch'
   }
 
+  const handleChannel = ()=>{
+    setAnchorAuctions(null);
+    window.location = '/channel'
+  }
+
   const handleCloseAuctions = () => {
     setAnchorAuctions(null);
   };
@@ -208,6 +213,7 @@ export default function NavBar() {
                 <MenuItem onClick={handleSealed}>Sealed Bid</MenuItem>
                 <MenuItem onClick={handleEnglish}>English</MenuItem>
                 <MenuItem onClick={handleDutch}>Dutch</MenuItem>
+                <MenuItem onClick={handleChannel}>Channel</MenuItem>
                 <MenuItem onClick={handleViewAuctions}>View Auctions</MenuItem>
               </Menu>
             </div>

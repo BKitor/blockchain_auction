@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import Api from '../Api';
 import Web3 from "web3"
-import contract_artifact from "../contracts/EnglishAuction.json"
+import contract_artifact from "../contracts/ChannelAuction.json"
 import Typography from '@material-ui/core/Typography';
 import Error404 from './Error404.js'
 import Util from '../util.js';
 
-export default function WithdrawEnglish() {
+export default function WithdrawChannel() {
   let { auction_pk } = useParams();
   const [token, user] = Util.checkSignedIn();
   const [loadTime,] = useState(new Date());
@@ -18,10 +18,12 @@ export default function WithdrawEnglish() {
   const [contract, setContract] = useState(null);
   const [auctionNotFound, setNotFound] = useState(false);
   const [auctionOwner, setAuctionOwner] = useState(null);
-  const [auctionIsOver, setAuctionIsOver] = useState(true);
+  const [timeExceeded, setTimeExceeded] = useState(true);
   const [highestBid, setHighestBid] = useState("Loading...")
   const [userBid, setUserBid] = useState("Loading...");
   const [withdrawEvents, setWithdrawEvents] = useState(null);
+  const [buyEvents, setBuyEvents] = useState(["loading..."]);
+  const [, setBuyNowPrice] = useState(0);
 
   function onWithdrawEvent(wError, wEvent) {
     if (wError) {
@@ -36,14 +38,15 @@ export default function WithdrawEnglish() {
 
   function getDjangoData() {
     const web3 = new Web3(Util.bcURL)
-    Api.auctions.getEnglishByPK(auction_pk, token)
+    Api.auctions.getChannelByPK(auction_pk, token)
       .then(res => {
         const d = new Date(res.data.end_time)
         setItemDiscription(`${res.data.item_description}`);
         setEndTime(d);
         setContract(new web3.eth.Contract(contract_artifact.abi, res.data.auction_id))
-        setAuctionIsOver((d.getTime() < loadTime.getTime()))
+        setTimeExceeded((d.getTime() < loadTime.getTime()))
         setAuctionOwner(res.data.owner);
+        setBuyNowPrice(res.data.buy_now_price)
       })
       .catch(e => {
         if (e.response && e.response.status === 404) {
@@ -55,11 +58,13 @@ export default function WithdrawEnglish() {
 
   function getEthData() {
     if (!contract) { return }
+    contract.getPastEvents('BuyEvent', { fromBlock: "earliest" }).then(setBuyEvents)
     const withdrawSub = contract.events.WithdrawalEvent({ filter: { withdrawer: user.wallet } }, onWithdrawEvent)
     contract.getPastEvents('BidEvent', { fromBlock: "earliest" }).then(be => {
       if (be.length === 0) {//no bids
         setHighestBid(0)
         setUserBid(0)
+        return
       }
       const highestBid = be[be.length - 1].returnValues.bid / 1e18
       setHighestBid(highestBid)
@@ -71,9 +76,6 @@ export default function WithdrawEnglish() {
         const lastBid = myBids[myBids.length - 1].returnValues.bid / 1e18
         setUserBid(lastBid)
       }
-      console.log("be all", be)
-      console.log("be filter", myBids)
-      console.log("highestBid", highestBid)
     })
 
     contract.getPastEvents('WithdrawalEvent', { fromBlock: "earliest" })
@@ -94,9 +96,10 @@ export default function WithdrawEnglish() {
   const withdrawFunds = () => {
     const noBidStr = "revert You have no bid to withdraw";
     const winnerStr = "revert You won, you cannot withdraw funds";
-    if (Array.isArray(withdrawEvents) && withdrawEvents.length > 0) { alert("You've already withdrawn your funds"); return}
-    if (userBid === 0 && user.user_id !== auctionOwner) {alert("You didn't participate in this auction"); return}
-    if (userBid === highestBid){alert("You Won! congrats! TODO: IMPLIMENT SHIPPING"); return}
+    if (Array.isArray(withdrawEvents) && withdrawEvents.length > 0) { alert("You've already withdrawn your funds"); return }
+    if (userBid === 0 && user.user_id !== auctionOwner) { alert("You didn't participate in this auction"); return }
+    if (buyEvents.length === 0 && userBid === highestBid) { alert("You Won! congrats! TODO: IMPLIMENT SHIPPING"); return }
+    if(buyEvents.length > 0 && buyEvents[0].returnValues.buyer === user.wallet){ alert("You bought the item! TODO: IMPLIMENT SHIPPING"); return }
     contract.methods.withdraw().send({ from: user.wallet, gas: 500000 })
       .then(res => {
         alert("Eth successfuly withdrawn")
@@ -117,27 +120,32 @@ export default function WithdrawEnglish() {
   }
 
   function auctionIsLive() {
-    return (auctionIsOver) ? null : (
-      <Redirect to={`/place/english/${auction_pk}`} />
-    )
+    return (buyEvents <= 0 && !timeExceeded) ?
+      (
+        <Redirect to={`/place/channel/${auction_pk}`} />
+      ) : null
   }
 
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {userIsSignedIn()}
       {auctionIsLive()}
-      {(auctionNotFound) ? <Error404 type={"Auction"} identifier={auction_pk}></Error404> : null}
-      <Typography variant="h2">English auction ended for: {itemDescription}</Typography>
-      <Typography>Winning Bid: {highestBid} eth</Typography>
-      <Typography>End Time: {endTime.toLocaleString()}</Typography>
+      {(auctionNotFound) ? <Error404 type={"Auction"} identifier={auction_pk}></Error404> : <>
+        <Typography variant="h2">Channel auction ended for: {itemDescription}</Typography>
+        <Typography>Winning Bid: {(buyEvents[0] && buyEvents[0].returnValues) ? buyEvents[0].returnValues.price / 1e18 : highestBid} eth</Typography>
+        <Typography>End Time: {endTime.toLocaleString()}</Typography>
+      </>}
       {(user && user.user_id !== auctionOwner) ?
         <BidderView
           winningBid={highestBid}
           userBid={userBid}
+          buyEvents={buyEvents}
+          userWallet={user.wallet}
           withdrawFunds={withdrawFunds}>
         </BidderView>
         :
-        <AuctioneerView itemDescription={itemDescription}
+        <AuctioneerView
+          itemDescription={itemDescription}
           withdrawWinnings={withdrawFunds}>
         </AuctioneerView>
       }
@@ -155,12 +163,25 @@ function AuctioneerView(props) {
 }
 
 function BidderView(props) {
-  const { withdrawFunds, userBid, winningBid } = props;
+  const { withdrawFunds, userBid, winningBid, buyEvents, userWallet } = props;
+  let userBoughtThis;
+  if (buyEvents.length > 0 && buyEvents[0].returnValues && buyEvents[0].returnValues.buyer === userWallet) {
+    userBoughtThis = true;
+  } else {
+    userBoughtThis = false;
+  }
   return (
     <>
-      <Typography>Your Bid: {userBid} eth {(userBid === winningBid) ? "☜(ﾟヮﾟ☜) You're the winner!" : null}</Typography>
-      <Button onClick={withdrawFunds}>Withdraw Funds</Button>
+      {(userBoughtThis) ?
+        <Typography>You bought this ☜(ﾟヮﾟ☜)</Typography>
+        :
+        <>
+          <Typography>Your Bid: {userBid} eth {(userBid === winningBid && buyEvents.length === 0) ? "☜(ﾟヮﾟ☜) You're the winner!" : null}</Typography>
+          <Button onClick={withdrawFunds}>Withdraw Funds</Button>
+        </>
+      }
     </>
   )
 
 }
+
