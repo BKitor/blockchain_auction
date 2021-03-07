@@ -1,0 +1,19 @@
+.MuiAppBar-colorPrimary {
+    background-color: #141D26 !important;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+.nav-title {
+    padding-left: 100px;
+}
+
+.container {
+    padding-right: 75px;
+}
+.container a {
+    padding: 20px;
+}

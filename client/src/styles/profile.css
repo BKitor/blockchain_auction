@@ -1,0 +1,25 @@
+.profile-information { 
+    margin: auto;
+    text-align: center;
+}
+
+.profile-container {
+    margin: 2% 20%;
+    padding-bottom: 50px;
+    background-color: #2f2f2f;
+    border-radius: 10px;
+}
+
+.profile-text {
+    padding: 2% 5%;
+    color: white;
+}
+
+.info-text {
+    padding-top: 25px;
+    text-align: center;
+}
+
+.spacer {
+    height: 20px;
+}
