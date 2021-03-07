@@ -1,11 +1,11 @@
 import { Button, Dialog, Typography, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import Api from '../Api';
+import Api from '../../../Api';
 import Web3 from "web3";
-import contract_artifact from "../contracts/ChannelAuction.json";
-import Error404 from './Error404.js';
-import Util from '../util.js';
+import contract_artifact from "../../../contracts/ChannelAuction.json";
+import Error404 from '../../Error404.js';
+import Util from '../../../util.js';
 
 export default function PlaceChannel() {
   let { auction_pk } = useParams();

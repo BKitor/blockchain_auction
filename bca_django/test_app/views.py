@@ -198,7 +198,9 @@ class DutchViewSet(viewsets.ModelViewSet):
         time_d = auction.end_time - now
         # time_limit = int(time_d.total_seconds())
         time_limit = int(time_d.total_seconds() / 60)
-        min_bid = auction.min_bid
+        min_bid = auction.min_bid * 1e18
+        start_price = auction.start_price * 1e18
+        rate = auction.rate * 1e18
 
         try:
             owner = Profile.objects.get(user=auction.owner)
@@ -206,7 +208,7 @@ class DutchViewSet(viewsets.ModelViewSet):
             return Response({"error": "owner of contract does not exist, the auction needs an owner"}, status=status.HTTP_404_NOT_FOUND)
 
         contract_id = bchain.launch_dutch(
-            time_limit, owner.wallet, min_bid, auction.start_price, auction.rate)
+            time_limit, owner.wallet, min_bid, start_price, rate)
 
         auction.auction_id = contract_id
         auction.save()

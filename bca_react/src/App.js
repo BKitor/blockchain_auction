@@ -10,22 +10,22 @@ import {
 import NavBar from './components/global/NavBar';
 import Home from './components/Home';
 import Signin from './components/Signin';
-import Auctions from './components/Auctions';
+import Auctions from './components/Auctions.js';
 import Profile from './components/Profile';
 import NotFound from './components/NotFound';
-import SealedBid from './components/SealedBid';
-import PlaceSealedBid from './components/PlaceSealedBid';
+import SealedBid from './components/Auctions/SealedBid/SealedBid.js';
+import PlaceSealedBid from './components/Auctions/SealedBid/PlaceSealedBid.js';
 import ProfileByUname from './components/ProfileByUname';
-import WithdrawSealedBid from './components/WithdrawSB.js'
-import PlaceEnglish from './components/PlaceEnglish.js';
-import English from './components/English.js';
-import WithdrawEnglish from './components/WithdrawEnglish';
-import Dutch from './components/Dutch.js';
-import PlaceDutch from './components/PlaceDutch.js';
-import WithdrawDutch from './components/WithdrawDutch.js'
-import Channel from './components/Channel.js'
-import PlaceChannel from './components/PlaceChannel.js'
-import WithdrawChannel from './components/WithdrawChannel.js'
+import WithdrawSealedBid from './components/Auctions/SealedBid/WithdrawSB.js';
+import PlaceEnglish from './components/Auctions/English/PlaceEnglish.js';
+import English from './components/Auctions/English/English.js';
+import WithdrawEnglish from './components/Auctions/English/WithdrawEnglish';
+import Dutch from './components/Auctions/Dutch/Dutch.js';
+import PlaceDutch from './components/Auctions/Dutch/PlaceDutch.js';
+import WithdrawDutch from './components/Auctions/Dutch/WithdrawDutch.js'
+import Channel from './components/Auctions/Channel/Channel.js'
+import PlaceChannel from './components/Auctions/Channel/PlaceChannel.js'
+import WithdrawChannel from './components/Auctions/Channel/WithdrawChannel.js'
 
 
 function App() {

@@ -2,37 +2,49 @@ import { Button, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
-import Api from '../Api';
-import Util from '../util.js';
+import Api from '../../../Api';
+import Util from '../../../util.js';
 
-export default function SealedBid() {
+export default function Dutch() {
   const [token, user] = Util.checkSignedIn();
   const [minBid, setMinBid] = useState(0);
+  const [startBid, setStartBid] = useState(0);
+  const [rate, setRate] = useState(0);
   const [itemDescription, setItemDescription] = useState('');
-  const [value, onChange] = useState(new Date());
+  const [endTime, onChange] = useState(new Date());
 
-  const handleBidChange = e => {
+  const handleMinBidChange = e => {
     setMinBid(e.target.value);
+  }
+
+  const handleRateChange = e => {
+    setRate(e.target.value);
+  }
+
+  const handleStartBidChange = e => {
+    setStartBid(e.target.value);
   }
 
   const handleItemDescription = (e) => {
     setItemDescription(e.target.value);
   }
 
-  const submitSealedBid = () => {
+  const submitDutch = () => {
     if (itemDescription === '' || minBid === 0) {
       window.alert("Invalid Inputs")
     } else {
       const body = {
         owner: parseInt(user.user_id),
-        end_time: value.toISOString(),
+        end_time: endTime.toISOString(),
         auction_id: "",
         min_bid: parseInt(minBid),
         item_description: itemDescription,
+        rate: rate,
+        start_price: startBid
       }
-      Api.auctions.newSealedBid(body, token).then(res => {
-        Api.auctions.launchSealedBid(res.data.id, token)
-        window.location = `/place/sealed-bid/${res.data.id}`
+      Api.auctions.newDutch(body, token).then(res => {
+        Api.auctions.launchDutch(res.data.id, token)
+        window.location = `/place/dutch/${res.data.id}`
       }).then(res => {
         console.log(res)
       })
@@ -50,20 +62,23 @@ export default function SealedBid() {
   }
 
   return (
-
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {isLoggedIn()}
-      <h1>Create a new Sealed Bid</h1>
-      <TextField onChange={handleBidChange} placeholder='Minimum Bid'></TextField>
+      <h1>Create a new Dutch Auction</h1>
+      <TextField onChange={handleStartBidChange} placeholder='Starting Bid'></TextField>
+      <br style={{ padding: '50px' }}></br>
+      <TextField onChange={handleMinBidChange} placeholder='Minimum Bid'></TextField>
+      <br style={{ padding: '50px' }}></br>
+      <TextField onChange={handleRateChange} placeholder='Rate'></TextField>
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleItemDescription} placeholder='Item Description'></TextField>
       <br style={{ padding: '50px' }}></br>
       <DateTimePicker
         onChange={onChange}
-        value={value}
+        value={endTime}
       />
       <br style={{ padding: '50px' }}></br>
-      <Button onClick={submitSealedBid}>Create new Sealed Bid!</Button>
+      <Button onClick={submitDutch}>Create new Dutch</Button>
 
     </div>
   )

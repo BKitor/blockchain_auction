@@ -144,12 +144,12 @@ class BChain():
 
     def launch_dutch(self, time_limit, owner, min_bid, start_price, rate):
         print(
-            f"LAUNCH DUTCH time:{time_limit}, owner:{owner}, min_bid:{min_bid}")
+            f"LAUNCH DUTCH time:{time_limit}, owner:{owner}, min_bid:{min_bid} start_price:{start_price} rate:{rate}")
         Dutch = self.w3.eth.contract(
             abi=self.dutch_abi, bytecode=self.dutch_bytecode)
 
         tx_hash = Dutch.constructor(
-            owner, time_limit, start_price, rate, min_bid).transact({'from': self.admin_public_key})
+            owner, time_limit, int(start_price), int(rate), int(min_bid)).transact({'from': self.admin_public_key})
 
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
         return tx_receipt.contractAddress
@@ -161,7 +161,7 @@ class BChain():
             abi=self.channel_abi, bytecode=self.channel_bytecode)
 
         tx_hash = Channel.constructor(
-            owner, time_limit, min_bid, buy_now_price).transact({'from': self.admin_public_key})
+            owner, time_limit, int(min_bid), int(buy_now_price)).transact({'from': self.admin_public_key})
 
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
         return tx_receipt.contractAddress

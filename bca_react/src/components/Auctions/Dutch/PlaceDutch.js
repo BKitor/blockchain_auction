@@ -1,12 +1,12 @@
 import { Button } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import Api from '../Api';
+import Api from '../../../Api';
 import Web3 from "web3"
-import contract_artifact from "../contracts/DutchAuction.json"
+import contract_artifact from "../../../contracts/DutchAuction.json"
 import Typography from '@material-ui/core/Typography';
-import Error404 from './Error404.js'
-import Util from '../util.js';
+import Error404 from '../../Error404.js'
+import Util from '../../../util.js';
 
 
 export default function PlaceDutch() {
@@ -85,7 +85,10 @@ export default function PlaceDutch() {
 
   const submitDutchBid = () => {
     // TODO: Needs Modal
-    contract.methods.bid().send({ from: user.wallet, value: currentPrice * Math.pow(10, 18), gas: 500000 })
+    console.log(contract)
+    console.log("current Price:", currentPrice)
+    contract.methods.current_price().call().then(console.log)
+    contract.methods.bid().send({ from: user.wallet, value: currentPrice * 1e18, gas: 500000 })
       .then(res => console.log(res))
       .catch(err => console.error(err))
   }

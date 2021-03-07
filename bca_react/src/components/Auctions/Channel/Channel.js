@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import Typography from '@material-ui/core/Typography';
-import Api from '../Api';
-import Util from '../util.js';
+import Api from '../../../Api';
+import Util from '../../../util.js';
 
 // English with a 'buy now' button
 export default function Channel() {

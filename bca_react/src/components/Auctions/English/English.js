@@ -1,35 +1,26 @@
+
 import { Button, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
-import Api from '../Api';
-import Util from '../util.js';
+import Api from '../../../Api';
+import Util from '../../../util.js';
 
-export default function Dutch() {
+export default function English() {
   const [token, user] = Util.checkSignedIn();
   const [minBid, setMinBid] = useState(0);
-  const [startBid, setStartBid] = useState(0);
-  const [rate, setRate] = useState(0);
   const [itemDescription, setItemDescription] = useState('');
   const [endTime, onChange] = useState(new Date());
 
-  const handleMinBidChange = e => {
+  const handleBidChange = e => {
     setMinBid(e.target.value);
-  }
-
-  const handleRateChange = e => {
-    setRate(e.target.value);
-  }
-
-  const handleStartBidChange = e => {
-    setStartBid(e.target.value);
   }
 
   const handleItemDescription = (e) => {
     setItemDescription(e.target.value);
   }
 
-  const submitDutch = () => {
+  const submitEnglish = () => {
     if (itemDescription === '' || minBid === 0) {
       window.alert("Invalid Inputs")
     } else {
@@ -39,14 +30,16 @@ export default function Dutch() {
         auction_id: "",
         min_bid: parseInt(minBid),
         item_description: itemDescription,
-        rate: rate,
-        start_price: startBid
       }
-      Api.auctions.newDutch(body, token).then(res => {
-        Api.auctions.launchDutch(res.data.id, token)
-        window.location = `/place/dutch/${res.data.id}`
-      }).then(res => {
-        console.log(res)
+      const EnglishPromise = Api.auctions.newEnglish(body, token)
+
+      EnglishPromise.then(res => {
+        return Promise.all([
+          Api.auctions.launchEnglish(res.data.id, token), 
+          Promise.resolve(res)
+        ])
+      }).then(([lres, cres]) => {
+        window.location = `/place/english/${cres.data.id}`
       })
         .catch(err => {
           console.error(err)
@@ -62,14 +55,11 @@ export default function Dutch() {
   }
 
   return (
+
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {isLoggedIn()}
-      <h1>Create a new Dutch Auction</h1>
-      <TextField onChange={handleStartBidChange} placeholder='Starting Bid'></TextField>
-      <br style={{ padding: '50px' }}></br>
-      <TextField onChange={handleMinBidChange} placeholder='Minimum Bid'></TextField>
-      <br style={{ padding: '50px' }}></br>
-      <TextField onChange={handleRateChange} placeholder='Rate'></TextField>
+      <h1>Create a new English</h1>
+      <TextField onChange={handleBidChange} placeholder='Minimum Bid'></TextField>
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleItemDescription} placeholder='Item Description'></TextField>
       <br style={{ padding: '50px' }}></br>
@@ -78,7 +68,7 @@ export default function Dutch() {
         value={endTime}
       />
       <br style={{ padding: '50px' }}></br>
-      <Button onClick={submitDutch}>Create new Dutch</Button>
+      <Button onClick={submitEnglish}>Create new English</Button>
 
     </div>
   )
