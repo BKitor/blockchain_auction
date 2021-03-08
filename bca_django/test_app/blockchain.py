@@ -15,6 +15,8 @@ class BChain():
     dutch_bytecode = None
     channel_abi = None
     channel_bytecode = None
+    squeeze_abi = None
+    squeeze_bytecode = None
     admin_public_key = None
 
     def __init__(self):
@@ -35,6 +37,9 @@ class BChain():
         with open('../bca_react/contracts/ChannelAuction.sol') as f:
             channel_contents = f.read()
 
+        with open('../bca_react/contracts/SqueezeAuction.sol') as f:
+            squeeze_contents = f.read()
+
         compiled_auctions = compile_standard({
             "language": "Solidity",
             "sources": {
@@ -52,6 +57,9 @@ class BChain():
                 },
                 "ChannelAuction.sol": {
                     "content": channel_contents
+                },
+                "SqueezeAuction.sol": {
+                    "content": squeeze_contents
                 },
             },
             "settings":
@@ -89,6 +97,11 @@ class BChain():
             'ChannelAuction.sol']['ChannelAuction']['evm']['bytecode']['object']
         self.channel_abi = json.loads(compiled_auctions['contracts']['ChannelAuction.sol']
                                       ['ChannelAuction']['metadata'])['output']['abi']
+
+        self.squeeze_bytecode = compiled_auctions['contracts'][
+            'SqueezeAuction.sol']['SqueezeAuction']['evm']['bytecode']['object']
+        self.squeeze_abi = json.loads(compiled_auctions['contracts']['SqueezeAuction.sol']
+                                      ['SqueezeAuction']['metadata'])['output']['abi']
 
     def get_w3(self):
         return self.w3

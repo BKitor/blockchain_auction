@@ -1,3 +1,4 @@
+
 import { Button, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
@@ -6,11 +7,12 @@ import Typography from '@material-ui/core/Typography';
 import Api from '../../../Api';
 import Util from '../../../util.js';
 
-// English with a 'buy now' button
-export default function Channel() {
+// Channel but the 'buy_now' price drops over time
+export default function Squeeze() {
   const [token, user] = Util.checkSignedIn();
   const [startingBid, setStartingBid] = useState(0);
-  const [buyNowPrice, setBuyNowPrice] = useState(0);
+  const [startingBuyNowPrice, setStartingBuyNowPrice] = useState(0);
+  const [rate, setRate] = useState(0);
   const [itemDescription, setItemDescription] = useState('');
   const [endTime, onChange] = useState(new Date());
 
@@ -18,16 +20,20 @@ export default function Channel() {
     setStartingBid((isNaN(e.target.value)) ? 0 : e.target.value)
   }
 
-  const handleBuyNowPriceChange = e => {
-    setBuyNowPrice((isNaN(e.target.value))?0:e.target.value);
+  const handleStartingBuyNowPriceChange = e => {
+    setStartingBuyNowPrice((isNaN(e.target.value))?0:e.target.value);
+  }
+
+  const handleRateChange = e => {
+    setRate((isNaN(e.target.value))?0:e.target.value);
   }
 
   const handleItemDescription = (e) => {
     setItemDescription(e.target.value);
   }
 
-  const submitChannel = () => {
-    if (itemDescription === '' || buyNowPrice === 0 || startingBid === 0) {
+  const submitSqueeze = () => {
+    if (itemDescription === '' || startingBid === 0 || startingBuyNowPrice === 0 || rate === 0) {
       window.alert("Invalid Inputs")
     } else {
       const body = {
@@ -35,16 +41,17 @@ export default function Channel() {
         end_time: endTime.toISOString(),
         auction_id: "",
         item_description: itemDescription,
-        min_bid: parseInt(startingBid),
-        buy_now_price: buyNowPrice
+        start_low: parseInt(startingBid),
+        start_high: parseInt(startingBuyNowPrice),
+        rate: rate
       }
-      Api.auctions.newChannel(body, token).then(res => {
+      Api.auctions.newSqueeze(body, token).then(res => {
         return Promise.all([
-          Api.auctions.launchChannel(res.data.id, token),
+          Api.auctions.launchSqueeze(res.data.id, token),
           Promise.resolve(res)
         ])
       }).then(([lres, cres]) => {
-        window.location = `/place/channel/${cres.data.id}`
+        window.location = `/place/squeeze/${cres.data.id}`
       })
         .catch(err => {
           console.error(err)
@@ -62,10 +69,12 @@ export default function Channel() {
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {isLoggedIn()}
-      <Typography variant="h3">Create a new Channel Auction</Typography>
+      <Typography variant="h3">Create a new Squeeze Auction</Typography>
       <TextField onChange={handleStartingBidChange} placeholder='Starting Bid'></TextField>
       <br style={{ padding: '50px' }}></br>
-      <TextField onChange={handleBuyNowPriceChange} placeholder='Buy Now Price'></TextField>
+      <TextField onChange={handleStartingBuyNowPriceChange} placeholder='Starting Buy Price'></TextField>
+      <br style={{ padding: '50px' }}></br>
+      <TextField onChange={handleRateChange} placeholder='Rate'></TextField>
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleItemDescription} placeholder='Item Description'></TextField>
       <br style={{ padding: '50px' }}></br>
@@ -74,7 +83,7 @@ export default function Channel() {
         value={endTime}
       />
       <br style={{ padding: '50px' }}></br>
-      <Button onClick={submitChannel}>Create new Channel</Button>
+      <Button onClick={submitSqueeze}>Create new Squeeze</Button>
 
     </div>
   )

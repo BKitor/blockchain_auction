@@ -134,19 +134,25 @@ export default function NavBar() {
     window.location = '/channel'
   }
 
+  const handleSquezeAuctions = (e) =>{
+    setAnchorAuctions(null);
+    window.location = '/squeeze'
+  }
+
   const handleCloseAuctions = () => {
     setAnchorAuctions(null);
   };
 
-  const handleViewAuctions = () => {
-    setAnchorAuctions(null);
-    window.location = '/auctions'
-  }
+  // const handleViewAuctions = () => {
+  //   setAnchorAuctions(null);
+  //   window.location = '/auctions'
+  // }
 
   /* Search Callbacks */
   const handleSearch = (e) => {
     setQuery(e.target.value);
   }
+
 
   const handleSubmit = () => {
     alert('YEET');
@@ -214,7 +220,8 @@ export default function NavBar() {
                 <MenuItem onClick={handleEnglish}>English</MenuItem>
                 <MenuItem onClick={handleDutch}>Dutch</MenuItem>
                 <MenuItem onClick={handleChannel}>Channel</MenuItem>
-                <MenuItem onClick={handleViewAuctions}>View Auctions</MenuItem>
+                {/* <MenuItem onClick={handleViewAuctions}>View Auctions</MenuItem> */}
+                <MenuItem onClick={handleSquezeAuctions}>Squeeze</MenuItem>
               </Menu>
             </div>
           </div>

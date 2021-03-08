@@ -298,6 +298,9 @@ class SqueezeViewSet(viewsets.ModelViewSet):
 
         time_d = auction.end_time - now
         time_limit = int(time_d.total_seconds() / 60)
+        start_low = int(auction.start_low * 1e18)
+        start_high = int(auction.start_high * 1e18)
+        rate = int(auction.rate * 1e18)
 
         try:
             owner = Profile.objects.get(user=auction.owner)
@@ -305,9 +308,9 @@ class SqueezeViewSet(viewsets.ModelViewSet):
             return Response({"error": "owner of contract does not exist, the auction needs an owner"}, status=status.HTTP_404_NOT_FOUND)
 
         contract_id = bchain.launch_squeeze(
-            time_limit, owner.wallet, auction.start_low, auction.start_high, auction.rate)
+            time_limit, owner.wallet, start_low, start_high, rate)
 
         auction.auction_id = contract_id
         auction.save()
 
-        return Response(ChannelSerializer(auction, context={'request': request}).data, status=status.HTTP_200_OK)
+        return Response(SqueezeSerializer(auction, context={'request': request}).data, status=status.HTTP_200_OK)

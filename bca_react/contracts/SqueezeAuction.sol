@@ -35,8 +35,8 @@ contract SqueezeAuction is Auction{
     }
 
     function bid_high() public payable ongoing_auction returns (bool) {
-        require(msg.value >= startPrice - (rate * (block.timestamp - auctionStart)) || minPrice >= startPrice - (rate * (block.timestamp - auctionStart)));
-        require(msg.value >= minPrice);
+        require(msg.value >= startPrice - (rate * (block.timestamp - auctionStart)/1 minutes) || minPrice >= startPrice - (rate * (block.timestamp - auctionStart)/1 minutes), "bad rate calc revert");
+        require(msg.value >= minPrice, "min price revert");
 
         highestBid = msg.value;
         highestBidder = msg.sender;

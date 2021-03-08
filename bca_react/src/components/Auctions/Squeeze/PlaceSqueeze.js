@@ -3,29 +3,32 @@ import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import Api from '../../../Api';
 import Web3 from "web3";
-import contract_artifact from "../../../contracts/ChannelAuction.json";
+import contract_artifact from "../../../contracts/SqueezeAuction.json";
 import Error404 from '../../Error404.js';
 import Util from '../../../util.js';
 
-export default function PlaceChannel() {
+export default function PlaceSqueeze() {
   let { auction_pk } = useParams();
   const [token, user] = Util.checkSignedIn();
-  const [loadTime,] = useState(new Date());
 
-  const [minBid, setMinBid] = useState('loading...');
   const [itemDescription, setItemDiscription] = useState('loading...');
-  const [endTime, setEndTime] = useState(new Date());
-  const [userBidSubmission, setUserBidSubmission] = useState(0);
-  const [contract, setContract] = useState(null);
-  const [auctionNotFound, setNotFound] = useState(false);
   const [auctionOwner, setAuctionOwner] = useState(null);
+  const [auctionID, setAuctionID] = useState(null)
+  const [minBid, setMinBid] = useState('loading...');
+  const [rate, setRate] = useState(0);
+  const [startHigh, setStartHigh] = useState(0);
   const [currentHighestBid, setCurrentHighestBid] = useState("Loading...");
   const [currentUserBid, setCurrentUserBid] = useState("Loading");
-  const [auctionID, setAuctionID] = useState(null)
+  const [buyNowPrice, setBuyNowPrice] = useState(Infinity);
+  const [endTime, setEndTime] = useState(new Date());
+
+  const [currentTime, setCurrentTime] = useState(new Date().getTime())
+  const [startTime, setStartTime] = useState();
+  const [contract, setContract] = useState(null);
+  const [userBidSubmission, setUserBidSubmission] = useState(0);
+  const [auctionNotFound, setNotFound] = useState(false);
   const [openBidSubmitDialog, setOpenBidSubmitDialog] = useState(false);
   const [openBuyNowDialog, setOpenBuyNowDialog] = useState(false);
-  const [auctionIsOver, setAuctionIsOver] = useState(false);
-  const [buyNowPrice, setBuyNowPrice] = useState(0);
   const [itemBought, setItemBought] = useState(false);
 
   function handleSubmitDialogOpen() {
@@ -50,63 +53,49 @@ export default function PlaceChannel() {
     }
     else {
       if (parseInt(event.returnValues.bid, 10) > parseInt(currentHighestBid, 10)) {
-        setCurrentHighestBid(event.returnValues.bid/1e18)
+        setCurrentHighestBid(event.returnValues.bid / 1e18)
+        if (parseInt(event.returnValues.bid, 10) > buyNowPrice) {
+          setItemBought(true)
+        }
       }
-    }
-  }
-
-  const onBuyEvent = (error, event) => {
-    if (error) {
-      console.log(error);
-    }
-    else {
-      setItemBought(true);
     }
   }
 
   function getEthData() {
     if (!auctionID) { return }
     const web3 = new Web3(Util.bcURL)
-    const channelContract = new web3.eth.Contract(contract_artifact.abi, auctionID)
-    setContract(channelContract)
-    const subsription = channelContract.events.BidEvent({}, onBidEvent)
-    const buySub = channelContract.events.BuyEvent({}, onBuyEvent)
+    const squeezeContract = new web3.eth.Contract(contract_artifact.abi, auctionID)
+    setContract(squeezeContract)
+    const subsription = squeezeContract.events.BidEvent({}, onBidEvent)
 
-    channelContract.getPastEvents('BidEvent', { fromBlock: "earliest" }).then(be => {
+    squeezeContract.getPastEvents('BidEvent', { fromBlock: "earliest" }).then(be => {
       if (be.length > 0) {
         const highestBid = be[be.length - 1].returnValues.bid / 1e18
         setCurrentHighestBid(highestBid)
       }
-      else{
+      else {
         setCurrentHighestBid(0)
       }
     })
 
-    channelContract.getPastEvents('BuyEvent', { fromBlock: "earliest" }).then(be => {
-      if (be.length > 0) {
-        setItemBought(true)
-      }
-    })
-
-    channelContract.methods.get_bid().call({ from: user.wallet }).then(cb => { setCurrentUserBid(cb) })
+    squeezeContract.methods.get_bid().call({ from: user.wallet }).then(cb => { setCurrentUserBid(cb) })
+    squeezeContract.methods.auctionStart().call().then(st => setStartTime(new Date(st * 1000)))
 
     return function cleanup() {
       subsription.unsubscribe()
-      buySub.unsubscribe()
     }
   }
 
   function getDjangoData() {
-    Api.auctions.getChannelByPK(auction_pk, token)
+    Api.auctions.getSqueezeByPK(auction_pk, token)
       .then(res => {
-        const d = new Date(res.data.end_time)
         setAuctionID(res.data.auction_id)
-        setMinBid(`${res.data.min_bid}`);
+        setMinBid(`${res.data.start_low}`);
+        setStartHigh(res.data.start_high)
+        setRate(res.data.rate)
         setItemDiscription(`${res.data.item_description}`);
         setEndTime(new Date(res.data.end_time));
         setAuctionOwner(res.data.owner);
-        setBuyNowPrice(res.data.buy_now_price)
-        setAuctionIsOver((d.getTime() < loadTime.getTime()))
       })
       .catch(e => {
         if (e.response && e.response.status === 404) {
@@ -116,8 +105,21 @@ export default function PlaceChannel() {
       })
   }
 
+  Util.useInterval(() => {
+    console.log("benis")
+    setCurrentTime(currentTime + 1000)
+  }, 1000)
+
+
+  function updateBuyNowPrice() {
+    if (!startTime) { return }
+    const newPrice = startHigh - rate * (currentTime - startTime.getTime()) / 1000 / 60
+    setBuyNowPrice((newPrice > minBid) ? newPrice : minBid)
+  }
+
   useEffect(getDjangoData, [auction_pk, token])
   useEffect(getEthData, [auctionID, currentHighestBid])
+  useEffect(updateBuyNowPrice, [currentTime])
 
   const handleBidChange = (e) => {
     console.log(e)
@@ -129,7 +131,7 @@ export default function PlaceChannel() {
     }
   }
 
-  const submitChannelBid = () => {
+  const submitSqueezeBid = () => {
     if (userBidSubmission === 0
       || parseInt(userBidSubmission) < parseInt(minBid)
       || (parseInt(userBidSubmission) * 1e18) <= parseInt(currentHighestBid)) {
@@ -151,19 +153,23 @@ export default function PlaceChannel() {
   }
 
   function submitBuyNowToBlockchain() {
-    contract.methods.buy_now().send({ from: user.wallet, value: calcBuyNowSubmission() * 1e18, gas: 500000 })
+    contract.methods.startPrice().call().then(console.log)
+    contract.methods.minPrice().call().then(console.log)
+    console.log(calcBuyNowSubmission(), calcBuyNowSubmission()*1e18)
+    contract.methods.bid_high().send({ from: user.wallet, value: calcBuyNowSubmission() * 1e18, gas: 500000 })
       .then(res => { handleBuyNowDialogClose() })
       .catch(err => console.log(err))
   }
-
 
   function isSignedIn() {
     return (!token && !user) ? < Redirect to='/signin' /> : null;
   }
 
   function auctionIsLive() {
-    return (auctionIsOver || itemBought) ?
-      <Redirect to={`/withdraw/channel/${auction_pk}`} />
+    const timeExceeded = currentTime > endTime.getTime();
+    const bidPassBuyNow =  currentHighestBid >= buyNowPrice;
+    return (itemBought || timeExceeded || bidPassBuyNow) ?
+      <Redirect to={`/withdraw/squeeze/${auction_pk}`} />
       : null;
   }
 
@@ -172,7 +178,7 @@ export default function PlaceChannel() {
   }
 
   function calcBuyNowSubmission() {
-    return (parseInt(buyNowPrice) - parseInt(currentUserBid) / 1e18)
+    return (buyNowPrice - currentUserBid / 1e18)
   }
 
   function handleBuyNowClick() {
@@ -191,7 +197,7 @@ export default function PlaceChannel() {
           <Typography>Item : {itemDescription}</Typography>
           <Typography>Starting Bid: {minBid} eth</Typography>
           <Typography variant="h4">Highest Bid: {currentHighestBid} eth</Typography>
-          <Typography>Buy Now Price : {buyNowPrice} eth</Typography>
+          <Typography variant="h5">Buy Now Price : {(buyNowPrice.toFixed) ? buyNowPrice.toFixed(4):buyNowPrice} eth</Typography>
           <Typography>End Time: {endTime.toLocaleString()}</Typography>
         </>
       }
@@ -199,7 +205,7 @@ export default function PlaceChannel() {
         (user && user.user_id !== auctionOwner && !auctionNotFound) ?
           <BidderView
             handleBidChange={handleBidChange}
-            submitChannelBid={submitChannelBid}
+            submitSqueezeBid={submitSqueezeBid}
             currentHighestBid={currentHighestBid}
             userBid={currentUserBid}
             handleBuyNowClick={handleBuyNowClick}
@@ -231,12 +237,12 @@ export default function PlaceChannel() {
 
 
 function BidderView(props) {
-  const { currentHighestBid, handleBidChange, submitChannelBid, userBid, handleBuyNowClick } = props;
+  const { currentHighestBid, handleBidChange, submitSqueezeBid, userBid, handleBuyNowClick } = props;
   return (
     <>
-      <Typography variant="h4">Your Bid: {userBid / 1e18} eth {(userBid/1e18 === currentHighestBid) ? "☜(ﾟヮﾟ☜) You're the highest bidder" : ''}</Typography>
+      <Typography variant="h4">Your Bid: {userBid / 1e18} eth {(userBid / 1e18 === currentHighestBid) ? "☜(ﾟヮﾟ☜) You're the highest bidder" : ''}</Typography>
       <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>
-      <Button onClick={submitChannelBid}>Place Bid</Button>
+      <Button onClick={submitSqueezeBid}>Place Bid</Button>
       <Button onClick={handleBuyNowClick}>Buy Now</Button>
     </>
   )
@@ -253,7 +259,7 @@ function BuyNowDialog(props) {
       <DialogContentText>
         {(parseInt(currentUserBid) === 0) ? `Buy now for ${calcBuyNowSubmission()} eth`
           : `You've already placed ${currentUserBid / 1e18} eth,
-             submit another ${calcBuyNowSubmission()} eth to total ${buyNowPrice} eth`}
+             submit another ${calcBuyNowSubmission().toFixed(4)} eth to total ${buyNowPrice.toFixed(4)} eth`}
       </DialogContentText>
     </DialogContent>
     <DialogActions>

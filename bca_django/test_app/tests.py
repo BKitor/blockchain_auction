@@ -429,7 +429,7 @@ class SqueezeTests(APITestCase):
         self.assertEqual(response.data['auction_id'], 'sdfkj3')
         self.assertEqual(response.data['start_low'], 10)
 
-    def test_suqeeze_post(self):
+    def test_squeeze_post(self):
         url = '/auction/squeeze_auction/'
         self._auth()
 

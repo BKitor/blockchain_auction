@@ -26,6 +26,9 @@ import WithdrawDutch from './components/Auctions/Dutch/WithdrawDutch.js'
 import Channel from './components/Auctions/Channel/Channel.js'
 import PlaceChannel from './components/Auctions/Channel/PlaceChannel.js'
 import WithdrawChannel from './components/Auctions/Channel/WithdrawChannel.js'
+import Squeeze from './components/Auctions/Squeeze/Squeeze.js'
+import PlaceSqueeze from './components/Auctions/Squeeze/PlaceSqueeze.js'
+import WithdrawSqueeze from './components/Auctions/Squeeze/WithdrawSqueeze.js'
 
 
 function App() {
@@ -57,6 +60,10 @@ function App() {
           <Route exact path='/channel' component={Channel} />
           <Route exact path='/place/channel/:auction_pk' component={PlaceChannel} />
           <Route exact path='/withdraw/channel/:auction_pk' component={WithdrawChannel} />
+
+          <Route exact path='/squeeze' component={Squeeze} />
+          <Route exact path='/place/squeeze/:auction_pk' component={PlaceSqueeze} />
+          <Route exact path='/withdraw/squeeze/:auction_pk' component={WithdrawSqueeze} />
 
           <Route exact path="/auctions" component={Auctions} />
 
