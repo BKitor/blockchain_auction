@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.7.5;
 
 import "./Auction.sol";
@@ -7,7 +8,7 @@ contract SqueezeAuction is Auction{
     uint public rate;
     uint public startPrice;
 
-    constructor (address payable _owner, uint _biddingTime, uint _startLow, uint _startHigh, uint _rate) public {
+    constructor (address payable _owner, uint _biddingTime, uint _startLow, uint _startHigh, uint _rate) {
         auctionOwner = _owner;
         auctionStart = block.timestamp; 
         auctionEnd = auctionStart + _biddingTime * 1 minutes;
@@ -35,7 +36,8 @@ contract SqueezeAuction is Auction{
     }
 
     function bid_high() public payable ongoing_auction returns (bool) {
-        require(msg.value >= startPrice - (rate * (block.timestamp - auctionStart)/1 minutes) || minPrice >= startPrice - (rate * (block.timestamp - auctionStart)/1 minutes), "bad rate calc revert");
+        // $ - dt(s) * m/s * $/m
+        require(msg.value + bids[msg.sender].value >= startPrice - (rate * (block.timestamp - auctionStart)/60) || minPrice >= startPrice - (rate * (block.timestamp - auctionStart)/1 minutes), "bad rate calc revert");
         require(msg.value >= minPrice, "min price revert");
 
         highestBid = msg.value;

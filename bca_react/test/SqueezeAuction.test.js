@@ -46,7 +46,7 @@ contract('Squeeze', (accounts)=> {
         })
         it('can be won via high bid', async () => {
             await time.increase(0.1);
-			await squeeze_buy.bid_high({from: accounts[1], value: 999})
+			await squeeze_buy.bid_high({from: accounts[1], value: 99900})
         })
 	})
 
