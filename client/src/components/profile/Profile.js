@@ -6,8 +6,6 @@ import { Typography } from '@material-ui/core';
 import Api from '../../Api.js';
 import Util from '../../util.js'
 
-const drawerWidth = 240;
-
 export default function Profile(props) {
   console.log(props);
   const [token] = props?.location?.state?.tokenP || Util.checkSignedIn();
@@ -38,7 +36,7 @@ export default function Profile(props) {
         })
     }
     getUserInfo()
-  }, [])
+  }, [token, uname])
 
   return (
     <div>
