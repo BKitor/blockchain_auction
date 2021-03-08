@@ -80,16 +80,16 @@ export default function Dutch() {
     <div>
       {/* Redirect bad pages */}
       {isLoggedIn()}
-      <div className="title">
+      <div className="title page-title">
         <Typography variant="h4">Dutch Bid</Typography>
       </div>
       <div className="auction-container">
         {/* Left Side - Auction Creation Dialog */}
         <div className="auction-left">
-          <div className="title">
+          <div className="title page-title">
             <Typography variant="h4">Create a Dutch Bid</Typography>
           </div>
-          <div className="auction-box">
+          <div className="grey-container auction-box">
             <div className="spacer" />
             <TextField onChange={handleStartBidChange} color="primary" placeholder='Starting Bid'></TextField>
             <div className="spacer" />
@@ -112,10 +112,10 @@ export default function Dutch() {
 
         {/* Right Side - About the type of bid */}
         <div className="auction-right">
-          <div className="title">
+          <div className="title page-title">
             <Typography variant="h4">What is a Dutch Bid?</Typography>
           </div>
-          <div className="auction-box">
+          <div className="grey-container auction-box">
             <p>
               {
                 textBoxes.map(info =>
@@ -131,7 +131,7 @@ export default function Dutch() {
       </div>
 
       <div className="auction-all">
-        <Typography variant="h5">
+        <Typography variant="h6">
           <Link to="/auctions">&#8592; View all auctions</Link>
         </Typography>
       </div>

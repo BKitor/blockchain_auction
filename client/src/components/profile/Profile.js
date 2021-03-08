@@ -8,9 +8,10 @@ import Util from '../../util.js'
 
 const drawerWidth = 240;
 
-export default function Profile() {
-  const [token,] = Util.checkSignedIn();
-  const uname = 'admin'; // TODO: Dynamically get this username
+export default function Profile(props) {
+  console.log(props);
+  const [token] = props?.location?.state?.tokenP || Util.checkSignedIn();
+  const uname = props?.location?.state?.userP || 'qwerty'; // TODO: Dynamically get this username
 
   let [wallet, setWallet] = useState('loading...');
   let [email, setEmail] = useState('loading...');
@@ -37,15 +38,15 @@ export default function Profile() {
         })
     }
     getUserInfo()
-  })
+  }, [])
 
   return (
     <div>
-      <div className="title">
+      <div className="title page-title">
         <Typography variant="h4">Profile Information</Typography>
       </div>
 
-      <div className="profile-container">
+      <div className="grey-container">
         <div className="profile-text">
           <p>
             Welcome to BlockChain Auctions, an easy way to immerse yourself in the
@@ -54,7 +55,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="profile-container">
+      <div className="grey-container">
         <div className="profile-text">
 
           <div className="info-text">

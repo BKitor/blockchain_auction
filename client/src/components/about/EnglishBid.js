@@ -7,16 +7,16 @@ import { Link } from 'react-router-dom';
 const topText = "Blah blah blah";
 const workflowText = "Blah blah";
 
-export default function AboutSealedBid() {
+export default function AboutEnglishBid() {
   return (
     <div className="about">
       <div className="title page-title">
-        <Typography variant="h4">About Sealed Bid Auctions</Typography>
+        <Typography variant="h4">About English Bid Auctions</Typography>
       </div>
 
       <div className="grey-container">
         <div className="about-title">
-          <Typography variant="h5">What is a Sealed Bid Auction?</Typography>
+          <Typography variant="h5">What is an English Bid Auction?</Typography>
         </div>
 
         <p>

@@ -32,8 +32,12 @@ import WithdrawDutch from './components/WithdrawDutch.js';
 import './styles/global.css';
 import About from './components/about/About';
 import AboutSealedBid from './components/about/SealedBid';
+import AboutDutchBid from './components/about/DutchBid';
+import AboutEnglishBid from './components/about/EnglishBid';
 
 function App() {
+document.documentElement.setAttribute('data-theme', 'dark');
+
   return (
     <div>
       {/* Move NavBar and Footer to be global (not included in router switch) */}
@@ -47,6 +51,8 @@ function App() {
           {/* About Pages */}
           <Route exact path="/about" component={About} />
           <Route exact path="/about/sealed-bid" component={AboutSealedBid} />
+          <Route exact path="/about/dutch-bid" component={AboutDutchBid} />
+          <Route exact path="/about/english-bid" component={AboutEnglishBid} />
 
           {/* Profile Pages */}
           <Route exact path="/sign-in" component={Signin} />

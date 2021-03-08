@@ -23,3 +23,14 @@
 .spacer {
     height: 20px;
 }
+
+.MuiPaper-root {
+    background-color: var(--surface-color) !important;
+    text-align: center;
+    /* max-width: 450px !important; */
+}
+
+.MuiDialog-paper {
+    width: 350px !important;
+    height: 400px;
+}

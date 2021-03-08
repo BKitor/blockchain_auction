@@ -1,7 +1,4 @@
 import React from 'react';
-
-import Link from '@material-ui/core/Link';
-import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -25,15 +22,12 @@ const rows = [
   createData(4, '15 Nov, 2020', 'Shirt', 'Long Branch, NJ', '$20', 35),
 ];
 
-function preventDefault(event) {
-  event.preventDefault();
-}
 
 export default function Orders() {
   return (
     <React.Fragment>
       <div className="home-container">
-        <div className="title">
+        <div className="title page-title">
           <Typography variant="h4">Live Auctions</Typography>
         </div>
         <Table size="small">

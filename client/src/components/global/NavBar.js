@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import SearchIcon from '@material-ui/icons/Search';
 import Fade from '@material-ui/core/Fade';
 import Util from '../../util.js'
 
@@ -85,10 +83,10 @@ export default function NavBar() {
   const handleAuth = () => {
     if (!token) {
       setAnchorProfile(null);
-      window.location = '/signin'
+      window.location = '/sign-in'
     } else {
       Util.singOut();
-      window.location = '/signin'
+      window.location = '/sign-in'
     }
   }
 
@@ -116,11 +114,6 @@ export default function NavBar() {
     window.location = '/auctions'
   }
 
-  const handleSubmit = () => {
-    alert('YEET');
-  }
-
-
   return (
     <div className={classes.grow}>
       <AppBar position="static" color="primary">
@@ -132,34 +125,33 @@ export default function NavBar() {
           <div className={classes.sectionDesktop}>
             <div className="container">
               {/* About Link */}
-            <Button variant='text'>
+              <Button variant='text'>
                 <div>
                   <Link to="/about">
                     About
                   </Link>
-                  </div>
+                </div>
               </Button>
-
-              {/* Auctions Dropdown */}
-              <Button variant='text' onClick={openAuctionMenu}>
-                <div><a>Auctions</a></div>
-              </Button>
-              <Menu
-                id="fade-menu"
-                anchorEl={anchorAuctions}
-                keepMounted
-                open={openAuctions}
-                onClose={handleCloseAuctions}
-                TransitionComponent={Fade}
-              >
-                <MenuItem onClick={handleSealed}>Sealed Bid</MenuItem>
-                <MenuItem onClick={handleEnglish}>English</MenuItem>
-                <MenuItem onClick={handleDutch}>Dutch</MenuItem>
-                <MenuItem onClick={handleViewAuctions}>View Auctions</MenuItem>
-              </Menu>
-              {/* Check if signed in, display profile if they are, or Sign In if not */}
               {user ?
                 <>
+                  {/* Auctions Dropdown */}
+                  <Button variant='text' onClick={openAuctionMenu}>
+                    <div><a>Auctions</a></div>
+                  </Button>
+                  <Menu
+                    id="fade-menu"
+                    anchorEl={anchorAuctions}
+                    keepMounted
+                    open={openAuctions}
+                    onClose={handleCloseAuctions}
+                    TransitionComponent={Fade}
+                  >
+                    <MenuItem onClick={handleViewAuctions}><a>All Auctions</a></MenuItem>
+                    <MenuItem onClick={handleSealed}><a>Sealed Bid</a></MenuItem>
+                    <MenuItem onClick={handleEnglish}><a>English Bid</a></MenuItem>
+                    <MenuItem onClick={handleDutch}><a>Dutch Bid</a></MenuItem>
+                  </Menu>
+                  {/* Check if signed in, display profile if they are, or Sign In if not */}
                   {/* Profile Dropdown */}
                   <Button variant='text' onClick={openProfileMenu}>
                     <div><a>Profile</a></div>
@@ -175,12 +167,14 @@ export default function NavBar() {
                     {
                       user &&
                       <>
-                        <MenuItem>Logged in as {user.username}</MenuItem>
-                        <MenuItem onClick={handleEditProfile}>Edit Profile</MenuItem>
+                        <MenuItem><a>Logged in as {user.username}</a></MenuItem>
+                        <MenuItem onClick={handleEditProfile}><a>Edit Profile</a></MenuItem>
                       </>
                     }
                     <MenuItem onClick={handleAuth}>
+                    <a>
                       {!token ? 'Sign In' : 'Sign Out'}
+                      </a>
                     </MenuItem>
                   </Menu>
                 </>

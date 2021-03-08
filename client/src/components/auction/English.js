@@ -69,7 +69,7 @@ export default function English() {
           <div className="title">
             <Typography variant="h4">Create an English Bid</Typography>
           </div>
-          <div className="auction-box">
+          <div className="grey-container auction-box">
             <div className="spacer" />
             <TextField onChange={handleBidChange} color="primary" placeholder='Minimum Bid'></TextField>
             <div className="spacer" />
@@ -92,7 +92,7 @@ export default function English() {
           <div className="title">
             <Typography variant="h4">What is an English Bid?</Typography>
             </div>
-            <div className="auction-box">
+            <div className="grey-container auction-box">
               <p>
               An English Auction, also referred to as an open cry ascending auction, starts by an auctioneer announcing the suggested opening bid or reserve price for the item on sale. The buyers with interest in the item start placing bids on the item on sale, with the auctioneer accepting higher bids as they come.
               <br/>

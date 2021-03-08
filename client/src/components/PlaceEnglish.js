@@ -6,7 +6,7 @@ import Api from '../Api';
 import Web3 from "web3"
 import contract_artifact from "../contracts/EnglishAuction.json"
 import Typography from '@material-ui/core/Typography';
-import Error404 from './global/Error404.js'
+import NotFound from './global/NotFound.js'
 import Util from '../util.js';
 
 export default function PlaceEnglish() {
@@ -97,7 +97,7 @@ export default function PlaceEnglish() {
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {isSignedIn()}
       {(auctionNotFound) ?
-        <Error404 type={"Auction"} identifier={auction_pk}></Error404>
+        <NotFound type={"Auction"} identifier={auction_pk}></NotFound>
         :
         (user && user.user_id !== auctionOwner) ?
           <BidderView itemDescription={itemDescription}

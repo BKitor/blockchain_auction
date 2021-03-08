@@ -5,7 +5,7 @@ import Api from '../Api';
 import Web3 from "web3"
 import contract_artifact from "../contracts/DutchAuction.json"
 import Typography from '@material-ui/core/Typography';
-import Error404 from './global/Error404.js'
+import NotFound from './global/NotFound.js'
 import Util from '../util.js';
 
 
@@ -107,7 +107,7 @@ export default function PlaceDutch() {
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {isSignedIn()}
       {redirectIfOver()}
-      {(auctionNotFound) ? <Error404 type={"Auction"} identifier={auction_pk}></Error404> : null}
+      {(auctionNotFound) ? <NotFound type={"Auction"} identifier={auction_pk}></NotFound> : null}
       <Typography variant="h4">Place Bid on: {itemDescription}</Typography>
       <Typography>Start Price: {startPrice}</Typography>
       <Typography variant="h4">Current Price: {(currentPrice.toFixed) ? currentPrice.toFixed(4) : currentPrice} eth</Typography>

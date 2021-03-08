@@ -26,7 +26,7 @@ export default function Auctions() {
 
     return (
         <div className='home'>
-            <div className="title">
+            <div className="title page-title">
                 <Typography variant="h4">Auctions</Typography>
             </div>
             {
