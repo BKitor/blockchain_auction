@@ -194,5 +194,42 @@
       "item_description": "this is an item test",
       "buy_now_price":90
     }
+  },
+  {
+    "model": "test_app.Squeeze",
+    "pk": 1,
+    "fields": {
+      "owner": 1,
+      "end_time": "2002-08-02T00:00:00Z",
+      "auction_id": "sdfkj3",
+      "min_bid": 5,
+      "item_description": "this is an item test",
+      "rate":2,
+      "start_price":97
+    }
+  },
+  {
+    "model": "test_app.Squeeze",
+    "pk": 2,
+    "fields": {
+      "owner": 1,
+      "end_time": "2020-11-21T21:00:00Z",
+      "auction_id": "",
+      "min_bid": 10,
+      "item_description": "this is an item test",
+      "rate":2,
+      "start_price":97
+    }
+  },
+  {
+    "model": "test_app.Squeeze",
+    "pk": 3,
+    "fields": {
+      "owner": 1,
+      "min_bid": 10,
+      "item_description": "this is an item test",
+      "rate":2,
+      "start_price":97
+    }
   }
 ]

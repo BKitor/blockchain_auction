@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from test_app.models import Profile, User, SealedBid, English, Dutch, Channel
+from test_app.models import Profile, User, SealedBid, English, Dutch, Channel, Squeeze
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -151,3 +151,29 @@ class ChannelSerializer(serializers.HyperlinkedModelSerializer):
         channel_auction.buy_now_price = validated_data['buy_now_price']
         channel_auction.save()
         return channel_auction
+
+
+class SqueezeSerializer(serializers.HyperlinkedModelSerializer):
+
+    owner = serializers.PrimaryKeyRelatedField(
+        many=False, queryset=Profile.objects.all())
+    auction_id = serializers.CharField(allow_blank=True)
+    end_time = serializers.DateTimeField(allow_null=True)
+
+    class Meta:
+        model = Squeeze
+        fields = ['url', 'id', 'owner', 'end_time',
+                  'auction_id', 'min_bid', 'item_description',
+                  'start_price', 'rate']
+
+    def create(self, validated_data):
+        squeeze_auction = Squeeze()
+        squeeze_auction.owner = validated_data['owner']
+        squeeze_auction.end_time = validated_data.get('end_time')
+        squeeze_auction.auction_id = validated_data.get('auction_id')
+        squeeze_auction.min_bid = validated_data['min_bid']
+        squeeze_auction.item_description = validated_data['item_description']
+        squeeze_auction.start_price = validated_data['start_price']
+        squeeze_auction.rate = validated_data['rate']
+        squeeze_auction.save()
+        return squeeze_auction

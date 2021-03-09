@@ -15,6 +15,8 @@ class BChain():
     dutch_bytecode = None
     channel_abi = None
     channel_bytecode = None
+    squeeze_abi = None
+    squeeze_bytecode = None
     admin_public_key = None
 
     def __init__(self):
@@ -35,6 +37,9 @@ class BChain():
         with open('../bca_react/contracts/ChannelAuction.sol') as f:
             channel_contents = f.read()
 
+        with open('../bca_react/contracts/SqueezeAuction.sol') as f:
+            squeeze_contents = f.read()
+
         compiled_auctions = compile_standard({
             "language": "Solidity",
             "sources": {
@@ -52,6 +57,9 @@ class BChain():
                 },
                 "ChannelAuction.sol": {
                     "content": channel_contents
+                },
+                "SqueezeAuction.sol": {
+                    "content": squeeze_contents
                 },
             },
             "settings":
@@ -90,6 +98,11 @@ class BChain():
         self.channel_abi = json.loads(compiled_auctions['contracts']['ChannelAuction.sol']
                                     ['ChannelAuction']['metadata'])['output']['abi']
 
+        self.squeeze_bytecode = compiled_auctions['contracts'][
+            'SqueezeAuction.sol']['SqueezeAuction']['evm']['bytecode']['object']
+        self.squeeze_abi = json.loads(compiled_auctions['contracts']['SqueezeAuction.sol']
+                                    ['SqueezeAuction']['metadata'])['output']['abi']
+
     def get_w3(self):
         return self.w3
 
@@ -116,6 +129,12 @@ class BChain():
 
     def get_channel_bytecode(self):
         return self.channel_bytecode
+
+    def get_squeeze_abi(self):
+        return self.squeeze_abi
+
+    def get_squeeze_bytecode(self):
+        return self.squeeze_bytecode
 
     def launch_sealed_bid(self, time_limit, owner, min_bid):
         print(
@@ -162,6 +181,19 @@ class BChain():
 
         tx_hash = Channel.constructor(
             owner, time_limit, buy_now_price, min_bid).transact({'from': self.admin_public_key})
+
+        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+        return tx_receipt.contractAddress
+
+
+    def launch_squeeze(self, time_limit, owner, min_bid, start_price, rate):
+        print(
+            f"LAUNCH SQUEEZE time:{time_limit}, owner:{owner}, min_bid:{min_bid}")
+        Squeeze = self.w3.eth.contract(
+            abi=self.squeeze_abi, bytecode=self.squeeze_bytecode) 
+
+        tx_hash = Squeeze.constructor(
+            owner, time_limit, start_price, rate, min_bid).transact({'from': self.admin_public_key})
 
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
         return tx_receipt.contractAddress
