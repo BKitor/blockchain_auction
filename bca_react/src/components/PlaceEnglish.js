@@ -170,10 +170,15 @@ function AuctioneerView(props) {
   const { itemDescription, minBid, endTime, currentBid } = props;
   return (
     <>
-      <Typography>Item : {itemDescription}</Typography>
-      <Typography>Starting Bid: {minBid} eth</Typography>
-      <Typography>Highest Bid: {currentBid / 1e18} eth</Typography>
-      <Typography>End Time: {endTime.toLocaleString()}</Typography>
+      <Typography variant="h2">Item : {itemDescription}</Typography>
+      <br />
+      <br />
+      <br />
+      <Typography variant="h5">Starting Bid: {minBid} eth</Typography>
+      <br />
+      <Typography variant="h5">Highest Bid: {currentBid / 1e18} eth</Typography>
+      <br />
+      <Typography variant="h5">End Time: {endTime.toLocaleString()}</Typography>
     </>
   )
 }
@@ -183,11 +188,17 @@ function BidderView(props) {
   return (
     <>
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
+      <br />
+      <br />
+      <br />
       <br style={{ padding: '50px' }}></br>
-      <Typography variant="h4">Minimum Bid: {minBid} eth</Typography>
-      <Typography variant="h4">Current Highest Bid: {currentBid / 1e18} eth</Typography>
-      <Typography variant="h4">Your Bid: {userBid / 1e18} eth {(userBid===currentBid)?"☜(ﾟヮﾟ☜) You're the highest bidder":''}</Typography>
-      <Typography variant="h4">End Time: {endTime.toLocaleString()} </Typography>
+      <Typography variant="h5">Minimum Bid: {minBid} eth</Typography>
+      <br />
+      <Typography variant="h5">Current Highest Bid: {currentBid / 1e18} eth</Typography>
+      <br />
+      <Typography variant="h5">Your Bid: {userBid / 1e18} eth {(userBid===currentBid)}</Typography>
+      <br />
+      <Typography variant="h5">End Time: {endTime.toLocaleString()} </Typography>
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>
       <Button onClick={submitEnglishBid}>Place Bid</Button>

@@ -60,13 +60,13 @@ export default function English() {
     <div>
       {/* Redirect bad pages */}
       {isLoggedIn()}
-      <div className="title">
+      <div className="title page-title">
         <Typography variant="h4">English Bid</Typography>
       </div>
       <div className="auction-container">
         {/* Left Side - Auction Creation Dialog */}
         <div className="auction-left">
-          <div className="title">
+          <div className="title page-title">
             <Typography variant="h4">Create an English Bid</Typography>
           </div>
           <div className="grey-container auction-box">
@@ -89,7 +89,7 @@ export default function English() {
 
         {/* Right Side - About the type of bid */}
         <div className="auction-right">
-          <div className="title">
+          <div className="title page-title">
             <Typography variant="h4">What is an English Bid?</Typography>
             </div>
             <div className="grey-container auction-box">

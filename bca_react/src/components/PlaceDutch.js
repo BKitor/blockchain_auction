@@ -109,10 +109,15 @@ export default function PlaceDutch() {
       {redirectIfOver()}
       {(auctionNotFound) ? <NotFound type={"Auction"} identifier={auction_pk}></NotFound> : null}
       <Typography variant="h4">Place Bid on: {itemDescription}</Typography>
+      <br />
+      <br />
+      <br />
       <Typography>Start Price: {startPrice}</Typography>
-      <Typography variant="h4">Current Price: {(currentPrice.toFixed) ? currentPrice.toFixed(4) : currentPrice} eth</Typography>
+      <Typography variant="h5">Current Price: {(currentPrice.toFixed) ? currentPrice.toFixed(4) : currentPrice} eth</Typography>
+      <br />
       <Typography>Rate: {rate}</Typography>
-      <Typography variant="h6">End Time: {(endTime) ? endTime.toLocaleString() : "Loading..."} </Typography>
+      <Typography variant="h5">End Time: {(endTime) ? endTime.toLocaleString() : "Loading..."} </Typography>
+      <br />
       {(user && user.user_id !== auctionOwner) ?
         <BidderView itemDescription={itemDescription}
           currentPrice={currentPrice}
