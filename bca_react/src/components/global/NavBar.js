@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import SearchIcon from '@material-ui/icons/Search';
 import Fade from '@material-ui/core/Fade';
 import Util from '../../util.js'
 
 import '../../styles/nav.css';
 import { Button } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
+  colorPrimary: {
+    color: '#141D26'
+  },
   grow: {
     flexGrow: 1,
   },
@@ -25,30 +26,6 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('sm')]: {
       display: 'block',
     },
-  },
-  search: {
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(3),
-      width: 'auto',
-    },
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   inputRoot: {
     color: 'inherit',
@@ -80,7 +57,6 @@ const useStyles = makeStyles((theme) => ({
 export default function NavBar() {
   const [token, user] = Util.checkSignedIn();
   const classes = useStyles();
-  const [setQuery] = useState('');
   const [anchorAuctions, setAnchorAuctions] = useState(null);
   const [anchorProfile, setAnchorProfile] = useState(null);
   const openAuctions = Boolean(anchorAuctions);
@@ -107,26 +83,26 @@ export default function NavBar() {
   const handleAuth = () => {
     if (!token) {
       setAnchorProfile(null);
-      window.location = '/signin'
+      window.location = '/sign-in'
     } else {
       Util.singOut();
-      window.location = '/signin'
+      window.location = '/sign-in'
     }
   }
 
   const handleSealed = () => {
     setAnchorAuctions(null);
-    window.location = '/sealed-bid'
+    window.location = '/auctions/sealed-bid'
   }
 
   const handleEnglish = () => {
     setAnchorAuctions(null);
-    window.location = '/english'
+    window.location = '/auctions/english-bid'
   }
 
-  const handleDutch = () =>{
+  const handleDutch = () => {
     setAnchorAuctions(null);
-    window.location = '/dutch'
+    window.location = '/auctions/dutch-bid'
   }
 
   const handleCloseAuctions = () => {
@@ -138,78 +114,75 @@ export default function NavBar() {
     window.location = '/auctions'
   }
 
-  /* Search Callbacks */
-  const handleSearch = (e) => {
-    setQuery(e.target.value);
-  }
-
-  const handleSubmit = () => {
-    alert('YEET');
-  }
-
-
   return (
     <div className={classes.grow}>
-      <AppBar position="static">
+      <AppBar position="static" color="primary">
         <Toolbar>
-          <Typography className={classes.title} variant="h6" noWrap>
-            <Link to='/'>BlockChain Auctions</Link>
+          <Typography variant="h6" noWrap>
+            <Link to='/' className="nav-title">BlockChain Auctions</Link>
           </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              onChange={handleSearch}
-
-              onSubmit={() => { handleSubmit() }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Typography variant="overline" style={{ padding: 4 }}>{(user && user.username) ? `Logged in as ${user.username}` : ""}</Typography>
             <div className="container">
-              {/* Profile Dropdown */}
-              <Button variant='text' onClick={openProfileMenu}>
-                <div>Profile</div>
+              {/* About Link */}
+              <Button variant='text'>
+                <div>
+                  <Link to="/about">
+                    About
+                  </Link>
+                </div>
               </Button>
-              <Menu
-                id="fade-menu"
-                anchorEl={anchorProfile}
-                keepMounted
-                open={openProfile}
-                onClose={handleCloseProfile}
-                TransitionComponent={Fade}
-              >
-                <MenuItem onClick={handleEditProfile}>Edit Profile</MenuItem>
-                <MenuItem onClick={handleAuth}>
-                  {!token ? 'Sign In' : 'Sign Out'}
-                </MenuItem>
-              </Menu>
-
-              {/* Auctions Dropdown */}
-              <Button variant='text' onClick={openAuctionMenu}>
-                <div>Auctions</div>
-              </Button>
-              <Menu
-                id="fade-menu"
-                anchorEl={anchorAuctions}
-                keepMounted
-                open={openAuctions}
-                onClose={handleCloseAuctions}
-                TransitionComponent={Fade}
-              >
-                <MenuItem onClick={handleSealed}>Sealed Bid</MenuItem>
-                <MenuItem onClick={handleEnglish}>English</MenuItem>
-                <MenuItem onClick={handleDutch}>Dutch</MenuItem>
-                <MenuItem onClick={handleViewAuctions}>View Auctions</MenuItem>
-              </Menu>
+              {user ?
+                <>
+                  {/* Auctions Dropdown */}
+                  <Button variant='text' onClick={openAuctionMenu}>
+                    <div><a>Auctions</a></div>
+                  </Button>
+                  <Menu
+                    id="fade-menu"
+                    anchorEl={anchorAuctions}
+                    keepMounted
+                    open={openAuctions}
+                    onClose={handleCloseAuctions}
+                    TransitionComponent={Fade}
+                  >
+                    <MenuItem onClick={handleViewAuctions}><a>All Auctions</a></MenuItem>
+                    <MenuItem onClick={handleSealed}><a>Sealed Bid</a></MenuItem>
+                    <MenuItem onClick={handleEnglish}><a>English Bid</a></MenuItem>
+                    <MenuItem onClick={handleDutch}><a>Dutch Bid</a></MenuItem>
+                  </Menu>
+                  {/* Check if signed in, display profile if they are, or Sign In if not */}
+                  {/* Profile Dropdown */}
+                  <Button variant='text' onClick={openProfileMenu}>
+                    <div><a>Profile</a></div>
+                  </Button>
+                  <Menu
+                    id="fade-menu"
+                    anchorEl={anchorProfile}
+                    keepMounted
+                    open={openProfile}
+                    onClose={handleCloseProfile}
+                    TransitionComponent={Fade}
+                  >
+                    {
+                      user &&
+                      <>
+                        <MenuItem><a>Logged in as {user.username}</a></MenuItem>
+                        <MenuItem onClick={handleEditProfile}><a>Edit Profile</a></MenuItem>
+                      </>
+                    }
+                    <MenuItem onClick={handleAuth}>
+                    <a>
+                      {!token ? 'Sign In' : 'Sign Out'}
+                      </a>
+                    </MenuItem>
+                  </Menu>
+                </>
+                :
+                <Button variant='text' onClick={openProfileMenu}>
+                  <div><a href="/sign-in">Sign In</a></div>
+                </Button>
+              }
             </div>
           </div>
         </Toolbar>

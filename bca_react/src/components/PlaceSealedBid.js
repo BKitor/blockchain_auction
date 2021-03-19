@@ -5,7 +5,7 @@ import Api from '../Api';
 import Web3 from "web3"
 import contract_artifact from "../contracts/SealedBid.json"
 import Typography from '@material-ui/core/Typography';
-import Error404 from '../components/Error404.js'
+import NotFound from '../components/global/NotFound.js'
 import Util from '../util.js';
 
 export default function PlaceSealedBid() {
@@ -77,7 +77,7 @@ export default function PlaceSealedBid() {
       {userIsSignedIn()}
       {auctionIsLive()}
       {(auctionNotFound) ?
-        <Error404 type={"Auction"} identifier={auction_pk}></Error404>
+        <NotFound type={"Auction"} identifier={auction_pk}></NotFound>
         :
         (user && user.user_id !== auctionOwner) ?
           <BidderView itemDescription={itemDescription}
@@ -98,9 +98,13 @@ function AuctioneerView(props) {
   const { itemDescription, minBid, endTime } = props;
   return (
     <>
-      <Typography>Item : {itemDescription}</Typography>
-      <Typography>Minimum Bid: {minBid} eth</Typography>
-      <Typography>End Time: {endTime.toLocaleString()}</Typography>
+      <Typography variant="h2">Item : {itemDescription}</Typography>
+      <br />
+      <br />
+      <br />
+      <Typography variant="h5">Minimum Bid: {minBid} eth</Typography>
+      <br style={{ padding: '50px' }}></br>
+      <Typography variant="h5">End Time: {endTime.toLocaleString()}</Typography>
     </>
   )
 }
@@ -110,9 +114,14 @@ function BidderView(props) {
   return (
     <>
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
+      <br />
+      <br />
+      <br />
       <br style={{ padding: '50px' }}></br>
-      <Typography variant="h4">Minimum Bid: {minBid} eth</Typography>
-      <Typography variant="h4">End Time: {endTime.toLocaleString()} </Typography>
+      <Typography variant="h5">Minimum Bid: {minBid} eth</Typography>
+      <br />
+      <Typography variant="h5">End Time: {endTime.toLocaleString()} </Typography>
+      <br />
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>
       <Button onClick={submitSealedBid}>Place Bid</Button>

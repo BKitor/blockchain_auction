@@ -1,0 +1,85 @@
+
+/* Light Mode */
+:root {
+  --font-color: black;
+  --inversion: white;
+  --surface-color: rgb(250, 250, 250);
+  --bg-color: #fff;
+  --heading-color: #292922;
+  --card-color: rgb(250, 250, 250);
+  --tag-color: rgb(255, 230, 230);
+  --tag-hover: black;
+  --invert: 0;
+}
+/* Dark Mode */
+[data-theme="dark"] {
+  --font-color: white;
+  --inversion: black;
+  --surface-color: #272727;
+  --bg-color: #142634;
+  --heading-color: #818cab;
+  --tag-color: #79E2F2;
+  --tag-hover: #FF9F00;
+  --invert: 1;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--font-color);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--font-color);
+}
+
+p {
+  color: var(--font-color);
+}
+
+a {
+  text-decoration: none;
+  color: var(--font-color);
+}
+
+.title {
+    text-align: center;
+}
+
+.back {
+  text-align: center;
+}
+
+.page-title {
+  padding: 75px 0 50px 0;
+}
+
+.MuiInputBase-input {
+  color: white !important
+}
+
+.grey-container {
+  margin: 2% 20%;
+  padding: 50px 50px;
+  background-color: #2f2f2f;
+  border-radius: 10px;
+  box-shadow: 2px 2px 8px 0 #969696;
+}
+
+.auction-list {
+  font-size: large;
+  text-decoration: underline;
+  font-weight: 400;
+}
+
+.about-title {
+  text-align: center;
+}

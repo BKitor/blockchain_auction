@@ -5,7 +5,7 @@ import Api from '../Api';
 import Web3 from "web3"
 import contract_artifact from "../contracts/DutchAuction.json"
 import Typography from '@material-ui/core/Typography';
-import Error404 from './Error404.js'
+import NotFound from './global/NotFound.js'
 import Util from '../util.js';
 
 export default function WithdrawDutch() {
@@ -114,7 +114,7 @@ export default function WithdrawDutch() {
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {userIsSignedIn()}
       {redirectifNotOver()}
-      {(auctionNotFound) ? <Error404 type={"Auction"} identifier={auction_pk}></Error404> : null}
+      {(auctionNotFound) ? <NotFound type={"Auction"} identifier={auction_pk}></NotFound> : null}
       <Typography variant="h4">Auction over for : {itemDescription}</Typography>
       <Typography>Start Price: {startPrice}</Typography>
       <Typography variant="h4">Winning Bid: {winningBid.toFixed(4)} eth</Typography>

@@ -1,16 +1,15 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
-import App from './App';
-import Error404 from './components/Error404.js'
+import App from '../App';
 import Signin from './components/Signin.js';
-import NavBar from './components/global/NavBar.js'
-import English from './components/English.js'
-import WithdrawSealedBid from './components/WithdrawSB.js'
-import PlaceEnglish from './components/PlaceEnglish.js'
-import PlaceSealedBid from './components/PlaceSealedBid.js'
+import NavBar from '../components/global/NavBar.js'
+import English from '../components/English.js'
+import WithdrawSealedBid from '../components/WithdrawSB.js'
+import PlaceEnglish from '../components/PlaceEnglish.js'
+import PlaceSealedBid from '../components/PlaceSealedBid.js'
 import { BrowserRouter as Router } from "react-router-dom";
-import { server } from './mockServer.js'
+import { server } from '../mockServer.js'
 import 'jest-canvas-mock'
 
 
@@ -19,12 +18,6 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 describe('Unit tests', () => {
-  test('Error404 Component', () => {
-    const { getByText } = render(<Error404 type={'User'} identifier={'Tester'}></Error404>)
-    const linkElement = getByText(/User Tester/i)
-    expect(linkElement).toBeInTheDocument();
-  });
-
   test('User Sign Up', async () => {
     render(<Signin />);
 

@@ -1,0 +1,14 @@
+
+.home-container {
+    margin: 0 10%;
+}
+
+.home-more {
+    text-align: center;
+    padding: 100px;
+    color: white;
+}
+
+.MuiTableCell-head, .MuiTableCell-body {
+    color: white !important;
+}

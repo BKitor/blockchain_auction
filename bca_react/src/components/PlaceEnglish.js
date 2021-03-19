@@ -3,9 +3,9 @@ import { Button, Dialog, Typography, DialogActions, DialogContent, DialogContent
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import Api from '../Api';
-import Web3 from "web3";
-import contract_artifact from "../contracts/EnglishAuction.json";
-import Error404 from './Error404.js';
+import Web3 from "web3"
+import contract_artifact from "../contracts/EnglishAuction.json"
+import NotFound from './global/NotFound.js'
 import Util from '../util.js';
 
 export default function PlaceEnglish() {
@@ -128,7 +128,7 @@ export default function PlaceEnglish() {
       {isSignedIn()}
       {auctionIsLive()}
       {(auctionNotFound) ?
-        <Error404 type={"Auction"} identifier={auction_pk}></Error404>
+        <NotFound type={"Auction"} identifier={auction_pk}></NotFound>
         :
         (user && user.user_id !== auctionOwner) ?
           <BidderView itemDescription={itemDescription}
@@ -170,10 +170,15 @@ function AuctioneerView(props) {
   const { itemDescription, minBid, endTime, currentBid } = props;
   return (
     <>
-      <Typography>Item : {itemDescription}</Typography>
-      <Typography>Starting Bid: {minBid} eth</Typography>
-      <Typography>Highest Bid: {currentBid / 1e18} eth</Typography>
-      <Typography>End Time: {endTime.toLocaleString()}</Typography>
+      <Typography variant="h2">Item : {itemDescription}</Typography>
+      <br />
+      <br />
+      <br />
+      <Typography variant="h5">Starting Bid: {minBid} eth</Typography>
+      <br />
+      <Typography variant="h5">Highest Bid: {currentBid / 1e18} eth</Typography>
+      <br />
+      <Typography variant="h5">End Time: {endTime.toLocaleString()}</Typography>
     </>
   )
 }
@@ -183,11 +188,17 @@ function BidderView(props) {
   return (
     <>
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
+      <br />
+      <br />
+      <br />
       <br style={{ padding: '50px' }}></br>
-      <Typography variant="h4">Minimum Bid: {minBid} eth</Typography>
-      <Typography variant="h4">Current Highest Bid: {currentBid / 1e18} eth</Typography>
-      <Typography variant="h4">Your Bid: {userBid / 1e18} eth {(userBid===currentBid)?"☜(ﾟヮﾟ☜) You're the highest bidder":''}</Typography>
-      <Typography variant="h4">End Time: {endTime.toLocaleString()} </Typography>
+      <Typography variant="h5">Minimum Bid: {minBid} eth</Typography>
+      <br />
+      <Typography variant="h5">Current Highest Bid: {currentBid / 1e18} eth</Typography>
+      <br />
+      <Typography variant="h5">Your Bid: {userBid / 1e18} eth {(userBid===currentBid)}</Typography>
+      <br />
+      <Typography variant="h5">End Time: {endTime.toLocaleString()} </Typography>
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>
       <Button onClick={submitEnglishBid}>Place Bid</Button>
