@@ -1,15 +1,9 @@
-import { Button, TextField, Typography } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import Api from '../../../Api';
 import Util from '../../../util.js';
-import '../../styles/auctions.css';
-import { Link } from 'react-router-dom';
-
-const sealedBidText = "A sealed-bid auction is a type of auction process in \
-  which all bidders simultaneously submit sealed bids to the auctioneer so that \
-  no bidder knows how much the other auction participants have bid."
 
 export default function SealedBid() {
   const [token, user] = Util.checkSignedIn();
@@ -52,61 +46,25 @@ export default function SealedBid() {
   }
 
   function isLoggedIn() {
-    return (!user && !token) ? <Redirect to='/sign-in' /> : null;
+    return (!user && !token) ? <Redirect to='/signin' /> : null;
   }
 
   return (
-    <div>
-      {/* Redirect bad pages */}
+
+    <div style={{ textAlign: 'center', padding: '20px' }}>
       {isLoggedIn()}
-      <div className="title page-title">
-        <Typography variant="h4">Sealed Bid</Typography>
-      </div>
-      <div className="auction-container">
-        {/* Left Side - Auction Creation Dialog */}
-        <div className="auction-left">
-          <div className="title page-title">
-            <Typography variant="h4">Create a Sealed Bid</Typography>
-          </div>
-          <div className="grey-container auction-box">
-            <div className="spacer" />
-            <TextField onChange={handleBidChange} color="primary" placeholder='Minimum Bid'></TextField>
-            <div className="spacer" />
-            
-            <TextField onChange={handleItemDescription} placeholder='Item Description'></TextField>
-            <div className="spacer" />
-            
-            <DateTimePicker
-              onChange={onChange}
-              value={value}
-            />
-            <div className="spacer" />
+      <h1>Create a new Sealed Bid</h1>
+      <TextField onChange={handleBidChange} placeholder='Minimum Bid'></TextField>
+      <br style={{ padding: '50px' }}></br>
+      <TextField onChange={handleItemDescription} placeholder='Item Description'></TextField>
+      <br style={{ padding: '50px' }}></br>
+      <DateTimePicker
+        onChange={onChange}
+        value={value}
+      />
+      <br style={{ padding: '50px' }}></br>
+      <Button onClick={submitSealedBid}>Create new Sealed Bid!</Button>
 
-            <Button className="auction-button" onClick={submitSealedBid}>Create new Sealed Bid!</Button>
-          </div>
-        </div>
-
-        {/* Right Side - About the type of bid */}
-        <div className="auction-right">
-          <div className="title page-title">
-            <Typography variant="h4">What is a Sealed Bid?</Typography>
-            </div>
-            <div className="grey-container auction-box">
-              <p>
-                {sealedBidText}
-              </p>
-          <p>
-            Read more information about sealed bids <a href="/about/sealed-bid">here!</a>
-          </p>
-          </div>
-        </div>
-      </div>
-      <br/>
-      <br/>
-      <br/>
-      <div className="back">
-        <Typography variant="h6"><Link to="/auctions">&#8592; Auctions</Link></Typography>
-      </div>
     </div>
   )
 }

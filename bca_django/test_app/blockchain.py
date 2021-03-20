@@ -13,6 +13,10 @@ class BChain():
     english_bytecode = None
     dutch_abi = None
     dutch_bytecode = None
+    channel_abi = None
+    channel_bytecode = None
+    squeeze_abi = None
+    squeeze_bytecode = None
     admin_public_key = None
 
     def __init__(self):
@@ -30,6 +34,12 @@ class BChain():
         with open('../bca_react/contracts/DutchAuction.sol') as f:
             dutch_contents = f.read()
 
+        with open('../bca_react/contracts/ChannelAuction.sol') as f:
+            channel_contents = f.read()
+
+        with open('../bca_react/contracts/SqueezeAuction.sol') as f:
+            squeeze_contents = f.read()
+
         compiled_auctions = compile_standard({
             "language": "Solidity",
             "sources": {
@@ -44,6 +54,12 @@ class BChain():
                 },
                 "DutchAuction.sol": {
                     "content": dutch_contents
+                },
+                "ChannelAuction.sol": {
+                    "content": channel_contents
+                },
+                "SqueezeAuction.sol": {
+                    "content": squeeze_contents
                 },
             },
             "settings":
@@ -77,6 +93,16 @@ class BChain():
         self.dutch_abi = json.loads(compiled_auctions['contracts']['DutchAuction.sol']
                                     ['DutchAuction']['metadata'])['output']['abi']
 
+        self.channel_bytecode = compiled_auctions['contracts'][
+            'ChannelAuction.sol']['ChannelAuction']['evm']['bytecode']['object']
+        self.channel_abi = json.loads(compiled_auctions['contracts']['ChannelAuction.sol']
+                                      ['ChannelAuction']['metadata'])['output']['abi']
+
+        self.squeeze_bytecode = compiled_auctions['contracts'][
+            'SqueezeAuction.sol']['SqueezeAuction']['evm']['bytecode']['object']
+        self.squeeze_abi = json.loads(compiled_auctions['contracts']['SqueezeAuction.sol']
+                                      ['SqueezeAuction']['metadata'])['output']['abi']
+
     def get_w3(self):
         return self.w3
 
@@ -97,6 +123,12 @@ class BChain():
 
     def get_dutch_bytecode(self):
         return self.dutch_bytecode
+
+    def get_channel_abi(self):
+        return self.channel_abi
+
+    def get_channel_bytecode(self):
+        return self.channel_bytecode
 
     def launch_sealed_bid(self, time_limit, owner, min_bid):
         print(
@@ -125,12 +157,36 @@ class BChain():
 
     def launch_dutch(self, time_limit, owner, min_bid, start_price, rate):
         print(
-            f"LAUNCH DUTCH time:{time_limit}, owner:{owner}, min_bid:{min_bid}")
+            f"LAUNCH DUTCH time:{time_limit}, owner:{owner}, min_bid:{min_bid} start_price:{start_price} rate:{rate}")
         Dutch = self.w3.eth.contract(
-            abi=self.dutch_abi, bytecode=self.english_bytecode)
+            abi=self.dutch_abi, bytecode=self.dutch_bytecode)
 
         tx_hash = Dutch.constructor(
-            owner, time_limit, start_price, rate, min_bid).transact({'from': self.admin_public_key})
+            owner, time_limit, int(start_price), int(rate), int(min_bid)).transact({'from': self.admin_public_key})
+
+        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+        return tx_receipt.contractAddress
+
+    def launch_channel(self, time_limit, owner, min_bid, buy_now_price):
+        print(
+            f"LAUNCH CHANNEL time:{time_limit}, owner:{owner}, min_bid:{min_bid}")
+        Channel = self.w3.eth.contract(
+            abi=self.channel_abi, bytecode=self.channel_bytecode)
+
+        tx_hash = Channel.constructor(
+            owner, time_limit, int(min_bid), int(buy_now_price)).transact({'from': self.admin_public_key})
+
+        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+        return tx_receipt.contractAddress
+
+    def launch_squeeze(self, time_limit, owner, start_low, start_high, rate):
+        print(
+            f"LAUNCH SQUEEZE time:{time_limit}, owner:{owner}, start_low:{start_low} start_high:{start_high} rate:{rate}")
+        Squeeze = self.w3.eth.contract(
+            abi=self.squeeze_abi, bytecode=self.squeeze_bytecode)
+
+        tx_hash = Squeeze.constructor(
+            owner, time_limit, start_low, start_high, rate).transact({'from': self.admin_public_key})
 
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
         return tx_receipt.contractAddress

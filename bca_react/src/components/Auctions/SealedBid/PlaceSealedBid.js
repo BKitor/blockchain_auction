@@ -1,9 +1,9 @@
 import { Button, TextField } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import Api from '../Api';
+import Api from '../../../Api';
 import Web3 from "web3"
-import contract_artifact from "../contracts/SealedBid.json"
+import contract_artifact from "../../../contracts/SealedBid.json"
 import Typography from '@material-ui/core/Typography';
 import NotFound from '../components/global/NotFound.js'
 import Util from '../util.js';

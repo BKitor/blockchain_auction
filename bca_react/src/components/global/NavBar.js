@@ -105,13 +105,14 @@ export default function NavBar() {
     window.location = '/auctions/dutch-bid'
   }
 
-  const handleCloseAuctions = () => {
+  const handleChannel = ()=>{
     setAnchorAuctions(null);
-  };
+    window.location = '/channel'
+  }
 
-  const handleViewAuctions = () => {
+  const handleSquezeAuctions = (e) =>{
     setAnchorAuctions(null);
-    window.location = '/auctions'
+    window.location = '/squeeze'
   }
 
   return (

@@ -4,10 +4,10 @@ import userEvent from '@testing-library/user-event'
 import App from './App';
 import Signin from './components/Signin.js.js.js';
 import NavBar from './components/global/NavBar.js'
-import English from '../components/English.js'
-import WithdrawSealedBid from './components/WithdrawSB.js'
-import PlaceEnglish from './components/PlaceEnglish.js'
-import PlaceSealedBid from './components/PlaceSealedBid.js'
+import English from './components/Auctions/English/English.js'
+import WithdrawSealedBid from './components/Auctions/SealedBid/WithdrawSB.js'
+import PlaceEnglish from './components/Auctions/English/PlaceEnglish.js'
+import PlaceSealedBid from './components/Auctions/SealedBid/PlaceSealedBid.js'
 import { BrowserRouter as Router } from "react-router-dom";
 import { server } from './mockServer.js'
 import 'jest-canvas-mock'
