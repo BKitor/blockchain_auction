@@ -5,7 +5,7 @@ import Api from '../../../Api';
 import Web3 from "web3"
 import contract_artifact from "../../../contracts/DutchAuction.json"
 import Typography from '@material-ui/core/Typography';
-import Error404 from '../../Error404.js'
+import NotFound from '../../global/NotFound.js';
 import Util from '../../../util.js';
 
 export default function WithdrawDutch() {

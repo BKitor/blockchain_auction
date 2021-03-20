@@ -4,7 +4,7 @@ import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import Api from '../../../Api';
 import Web3 from "web3";
 import contract_artifact from "../../../contracts/EnglishAuction.json";
-import Error404 from '../../Error404.js';
+import NotFound from '../../global/NotFound.js';
 import Util from '../../../util.js';
 
 export default function PlaceEnglish() {
@@ -20,7 +20,7 @@ export default function PlaceEnglish() {
   const [auctionNotFound, setNotFound] = useState(false);
   const [auctionOwner, setAuctionOwner] = useState(null);
   const [currentHighestBid, setCurrentHighestBid] = useState("Loading...");
-  const [currentUserBid, setCurrentUserBid] = useState("Loading");
+  const [currentUserBid, setCurrentUserBid] = useState("Loading...");
   const [auctionID, setAuctionID] = useState(null)
   const [openBidSubmitDialog, setOpenBidSubmitDialog] = useState(false);
   const [auctionIsOver, setAuctionIsOver] = useState(false);
@@ -150,7 +150,7 @@ export default function PlaceEnglish() {
       >
         <DialogTitle>Confirm Bid Submission</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText color="white">
             {(currentHighestBid === 0 || parseInt(currentUserBid) === 0)?`Place bet of ${userBidSumbission}`
             :`You've already placed ${currentUserBid/1e18} eth,
              submit another ${calcNewSubmission()} eth to total ${userBidSumbission} eth`}
@@ -184,6 +184,8 @@ function AuctioneerView(props) {
 
 function BidderView(props) {
   const { itemDescription, minBid, currentBid, endTime, handleBidChange, submitEnglishBid, userBid } = props;
+  console.log(userBid)
+  console.log(currentBid)
   return (
     <>
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
@@ -195,7 +197,7 @@ function BidderView(props) {
       <br />
       <Typography variant="h5">Current Highest Bid: {currentBid / 1e18} eth</Typography>
       <br />
-      <Typography variant="h5">Your Bid: {userBid / 1e18} eth {(userBid===currentBid)}</Typography>
+      <Typography variant="h5">Your Bid: {userBid / 1e18} eth {(userBid===currentBid && currentBid !== 0)?"☜(ﾟヮﾟ☜) You're the highest bidder":''}</Typography>
       <br />
       <Typography variant="h5">End Time: {endTime.toLocaleString()} </Typography>
       <br style={{ padding: '50px' }}></br>

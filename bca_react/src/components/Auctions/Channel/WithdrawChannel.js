@@ -5,7 +5,7 @@ import Api from '../../../Api';
 import Web3 from "web3"
 import contract_artifact from "../../../contracts/ChannelAuction.json"
 import Typography from '@material-ui/core/Typography';
-import Error404 from '../../Error404.js'
+import NotFound from '../../global/NotFound.js'
 import Util from '../../../util.js';
 
 export default function WithdrawChannel() {
@@ -130,7 +130,7 @@ export default function WithdrawChannel() {
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {userIsSignedIn()}
       {auctionIsLive()}
-      {(auctionNotFound) ? <Error404 type={"Auction"} identifier={auction_pk}></Error404> : <>
+      {(auctionNotFound) ? <NotFound type={"Auction"} identifier={auction_pk}></NotFound> : <>
         <Typography variant="h2">Channel auction ended for: {itemDescription}</Typography>
         <Typography>Winning Bid: {(buyEvents[0] && buyEvents[0].returnValues) ? buyEvents[0].returnValues.price / 1e18 : highestBid} eth</Typography>
         <Typography>End Time: {endTime.toLocaleString()}</Typography>

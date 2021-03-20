@@ -11,13 +11,12 @@ import NotFound from './components/global/NotFound';
 
 // Pages
 import Home from './components/Home';
-import Signin from './components/Signin';
-import Auctions from './components/Auctions.js';
-import Profile from './components/Profile';
-import NotFound from './components/NotFound';
+import Signin from './components/profile/Signin';
+import Auctions from './components/Auctions/Auctions.js';
+import Profile from './components/profile/Profile';
 import SealedBid from './components/Auctions/SealedBid/SealedBid.js';
 import PlaceSealedBid from './components/Auctions/SealedBid/PlaceSealedBid.js';
-import ProfileByUname from './components/ProfileByUname';
+import ProfileByUname from './components/profile/ProfileByUname';
 import WithdrawSealedBid from './components/Auctions/SealedBid/WithdrawSB.js';
 import PlaceEnglish from './components/Auctions/English/PlaceEnglish.js';
 import English from './components/Auctions/English/English.js';
@@ -69,19 +68,19 @@ document.documentElement.setAttribute('data-theme', 'dark');
           <Route exact path="/place/sealed-bid/:auction_pk" component={PlaceSealedBid} />
           <Route exact path="/withdraw/sealed-bid/:auction_pk" component={WithdrawSealedBid} />
 
-          <Route exact path='/auctions/english-bid' component={English} />
+          <Route exact path='/auctions/english' component={English} />
           <Route exact path="/place/english/:auction_pk" component={PlaceEnglish} />
           <Route exact path="/withdraw/english/:auction_pk" component={WithdrawEnglish} />
 
-          <Route exact path='/auctions/dutch-bid' component={Dutch} />
+          <Route exact path='/auctions/dutch' component={Dutch} />
           <Route exact path="/place/dutch/:auction_pk" component={PlaceDutch} />
           <Route exact path="/withdraw/dutch/:auction_pk" component={WithdrawDutch} />
 
-          <Route exact path='/channel' component={Channel} />
+          <Route exact path='/auctions/channel' component={Channel} />
           <Route exact path='/place/channel/:auction_pk' component={PlaceChannel} />
           <Route exact path='/withdraw/channel/:auction_pk' component={WithdrawChannel} />
 
-          <Route exact path='/squeeze' component={Squeeze} />
+          <Route exact path='/auctions/squeeze' component={Squeeze} />
           <Route exact path='/place/squeeze/:auction_pk' component={PlaceSqueeze} />
           <Route exact path='/withdraw/squeeze/:auction_pk' component={WithdrawSqueeze} />
 

@@ -3,9 +3,9 @@ import { Button, Typography } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
+import Link from '@material-ui/core/Link'
 import '../../styles/profile.css';
 
-import { createMuiTheme } from '@material-ui/core/styles';
 import Api from '../../Api';
 import Util from '../../util.js';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
@@ -33,14 +33,11 @@ export default function Signin() {
 
   const handleSignIn = () => {
     Api.user.getToken(username, password).then(res => {
-      if (res.data) {
-        setToken(res.data.token)
-      }
-      return [username, res.data.token]
+      return Promise.all([username, res.data.token])
     }).then(([uname, token]) => {
       Api.user.getByUname(uname, token).then(res => {
-        setUser(res.data)
         Util.signIn(token, res.data)
+        window.location = '/profile'
       })
     })
       .catch(err => {
@@ -59,7 +56,7 @@ export default function Signin() {
 
   return (
     <div className="home">
-      { !(user && token) ?
+      { !(tmp_user && tmp_token) ?
         <div>
           <div className="title page-title">
             <Typography variant="h4">Welcome to BlockChain Auctions!</Typography>
@@ -70,7 +67,7 @@ export default function Signin() {
           <br />
           <br />
 
-            <TextField placeholder='Email' onChange={handleUserNameChange} type="email" />
+            <TextField placeholder='Username' onChange={handleUserNameChange} type="email" />
             <br />
               <br />
             <br />
@@ -86,10 +83,8 @@ export default function Signin() {
 
               <br />
               <br />
-
-              <div onClick={handleSignUpClick} >
-                <a style={{textDecoration: 'underline'}}>Create an account?</a>
-              </div>
+                <Link onClick={handleSignUpClick} style={{textDecoration: 'underline', color:'white', cursor:'pointer'}}>Create an account?</Link>
+                
           </div>
 
           <SignupPopUp selectedValue={selectedValue} open={signupOpen} setUser={setUser} setToken={setToken} onClose={handleClose} />

@@ -4,8 +4,9 @@ import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import Api from '../../../Api';
 import Web3 from "web3";
 import contract_artifact from "../../../contracts/ChannelAuction.json";
-import Error404 from '../../Error404.js';
+import NotFound from '../../global/NotFound'
 import Util from '../../../util.js';
+import '../../../styles/react-datepicker.css'
 
 export default function PlaceChannel() {
   let { auction_pk } = useParams();
@@ -185,7 +186,7 @@ export default function PlaceChannel() {
       {isSignedIn()}
       {auctionIsLive()}
       {(auctionNotFound) ?
-        <Error404 type={"Auction"} identifier={auction_pk}></Error404>
+        <NotFound type={"Auction"} identifier={auction_pk}></NotFound>
         :
         <>
           <Typography>Item : {itemDescription}</Typography>

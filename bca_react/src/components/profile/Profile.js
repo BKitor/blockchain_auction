@@ -7,21 +7,19 @@ import Api from '../../Api.js';
 import Util from '../../util.js'
 
 export default function Profile(props) {
-  console.log(props);
-  const [token] = props?.location?.state?.tokenP || Util.checkSignedIn();
-  const uname = props?.location?.state?.userP || 'qwerty'; // TODO: Dynamically get this username
+  const [token, user] = Util.checkSignedIn();
+  const uname = user?.username; // TODO: Dynamically get this username
 
   let [wallet, setWallet] = useState('loading...');
   let [email, setEmail] = useState('loading...');
   let [fname, setfname] = useState('loading...')
   let [lname, setlname] = useState('loading...')
-  let [userNotFound, setNotFound] = useState(false)
+  let [, setNotFound] = useState(false)
 
   useEffect(() => {
     function getUserInfo() {
       Api.user.getByUname(uname, token)
         .then(res => {
-          console.log(res.data)
           setWallet(res.data.wallet)
           setEmail(res.data.email)
           setfname(res.data.first_name)

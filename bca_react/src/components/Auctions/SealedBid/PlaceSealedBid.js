@@ -5,8 +5,8 @@ import Api from '../../../Api';
 import Web3 from "web3"
 import contract_artifact from "../../../contracts/SealedBid.json"
 import Typography from '@material-ui/core/Typography';
-import NotFound from '../components/global/NotFound.js'
-import Util from '../util.js';
+import NotFound from '../../global/NotFound.js'
+import Util from '../../../util.js';
 
 export default function PlaceSealedBid() {
   let { auction_pk } = useParams();

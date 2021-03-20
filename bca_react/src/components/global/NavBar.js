@@ -97,22 +97,31 @@ export default function NavBar() {
 
   const handleEnglish = () => {
     setAnchorAuctions(null);
-    window.location = '/auctions/english-bid'
+    window.location = '/auctions/english'
   }
 
   const handleDutch = () => {
     setAnchorAuctions(null);
-    window.location = '/auctions/dutch-bid'
+    window.location = '/auctions/dutch'
   }
 
-  const handleChannel = ()=>{
+  const handleChannel = () => {
     setAnchorAuctions(null);
-    window.location = '/channel'
+    window.location = '/auctions/channel'
   }
 
-  const handleSquezeAuctions = (e) =>{
+  const handleSqueeze = (e) => {
     setAnchorAuctions(null);
-    window.location = '/squeeze'
+    window.location = '/auctions/squeeze'
+  }
+
+  const handleCloseAuctions = () => {
+    setAnchorAuctions(null);
+  };
+
+  const handleViewAuctions = () => {
+    setAnchorAuctions(null);
+    window.location = '/auctions'
   }
 
   return (
@@ -137,7 +146,8 @@ export default function NavBar() {
                 <>
                   {/* Auctions Dropdown */}
                   <Button variant='text' onClick={openAuctionMenu}>
-                    <div><a>Auctions</a></div>
+                    {/* <div><a>Auctions</a></div> */}
+                    Auctions
                   </Button>
                   <Menu
                     id="fade-menu"
@@ -147,15 +157,17 @@ export default function NavBar() {
                     onClose={handleCloseAuctions}
                     TransitionComponent={Fade}
                   >
-                    <MenuItem onClick={handleViewAuctions}><a>All Auctions</a></MenuItem>
-                    <MenuItem onClick={handleSealed}><a>Sealed Bid</a></MenuItem>
-                    <MenuItem onClick={handleEnglish}><a>English Bid</a></MenuItem>
-                    <MenuItem onClick={handleDutch}><a>Dutch Bid</a></MenuItem>
+                    <MenuItem onClick={handleViewAuctions} style={{ color: "white" }}>All Auctions</MenuItem>
+                    <MenuItem onClick={handleSealed} style={{ color: "white" }}>Sealed Bid</MenuItem>
+                    <MenuItem onClick={handleEnglish} style={{ color: "white" }}>English</MenuItem>
+                    <MenuItem onClick={handleDutch} style={{ color: "white" }}>Dutch</MenuItem>
+                    <MenuItem onClick={handleChannel} style={{ color: "white" }}>Channel</MenuItem>
+                    <MenuItem onClick={handleSqueeze} style={{ color: "white" }}>Squeeze</MenuItem>
                   </Menu>
                   {/* Check if signed in, display profile if they are, or Sign In if not */}
                   {/* Profile Dropdown */}
                   <Button variant='text' onClick={openProfileMenu}>
-                    <div><a>Profile</a></div>
+                    <div>Profile</div>
                   </Button>
                   <Menu
                     id="fade-menu"
@@ -168,14 +180,12 @@ export default function NavBar() {
                     {
                       user &&
                       <>
-                        <MenuItem><a>Logged in as {user.username}</a></MenuItem>
-                        <MenuItem onClick={handleEditProfile}><a>Edit Profile</a></MenuItem>
+                        <MenuItem style={{color:"white"}}>Logged in as {user.username}</MenuItem>
+                        <MenuItem onClick={handleEditProfile} style={{color:"white"}}>Edit Profile</MenuItem>
                       </>
                     }
-                    <MenuItem onClick={handleAuth}>
-                    <a>
-                      {!token ? 'Sign In' : 'Sign Out'}
-                      </a>
+                    <MenuItem onClick={handleAuth} style={{color:"white"}}>
+                        {!token ? 'Sign In' : 'Sign Out'}
                     </MenuItem>
                   </Menu>
                 </>

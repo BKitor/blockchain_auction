@@ -5,6 +5,7 @@ import DateTimePicker from 'react-datetime-picker';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import Api from '../../../Api';
 import Util from '../../../util.js';
+import '../../../styles/react-datepicker.css'
 
 export default function English() {
   const [token, user] = Util.checkSignedIn();
@@ -63,10 +64,10 @@ export default function English() {
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleItemDescription} placeholder='Item Description'></TextField>
       <br style={{ padding: '50px' }}></br>
-      <DateTimePicker
-        onChange={onChange}
-        value={endTime}
-      />
+        <DateTimePicker
+          onChange={onChange}
+          value={endTime}
+        />
       <br style={{ padding: '50px' }}></br>
       <Button onClick={submitEnglish}>Create new English</Button>
 
