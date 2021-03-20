@@ -1,15 +1,15 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
-import App from '../App';
-import Signin from './components/Signin.js';
-import NavBar from '../components/global/NavBar.js'
+import App from './App';
+import Signin from './components/Signin.js.js.js';
+import NavBar from './components/global/NavBar.js'
 import English from '../components/English.js'
-import WithdrawSealedBid from '../components/WithdrawSB.js'
-import PlaceEnglish from '../components/PlaceEnglish.js'
-import PlaceSealedBid from '../components/PlaceSealedBid.js'
+import WithdrawSealedBid from './components/WithdrawSB.js'
+import PlaceEnglish from './components/PlaceEnglish.js'
+import PlaceSealedBid from './components/PlaceSealedBid.js'
 import { BrowserRouter as Router } from "react-router-dom";
-import { server } from '../mockServer.js'
+import { server } from './mockServer.js'
 import 'jest-canvas-mock'
 
 

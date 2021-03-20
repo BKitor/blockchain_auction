@@ -18,10 +18,10 @@ import Profile from './components/profile/Profile';
 import ProfileByUname from './components/profile/ProfileByUname';
 
 // Auction Pages
-import Auctions from './components/auction/Auctions';
-import SealedBid from './components/auction/SealedBid';
-import English from './components/auction/English.js';
-import Dutch from './components/auction/Dutch.js';
+import Auctions from './components/Auctions/Auctions';
+import SealedBid from './components/Auctions/SealedBid/SealedBid';
+import English from './components/Auctions/English/English.js';
+import Dutch from './components/Auctions/Dutch/Dutch.js';
 
 import PlaceSealedBid from './components/PlaceSealedBid';
 import WithdrawSealedBid from './components/WithdrawSB.js'

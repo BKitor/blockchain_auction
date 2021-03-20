@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
-import Api from '../../Api';
-import Util from '../../util.js';
+import Api from '../../../Api';
+import Util from '../../../util.js';
 
 const textBoxes = [
   "A Dutch auction is a market structure in which the price of something offered \
