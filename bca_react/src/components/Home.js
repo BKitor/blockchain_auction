@@ -5,6 +5,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Typography } from '@material-ui/core';
+import '../styles/global.css';
 
 import '../styles/global.css'
 import '../styles/home.css';
@@ -45,7 +46,7 @@ export default function Orders() {
             {rows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.date}</TableCell>
-                <TableCell>{row.name}</TableCell>
+                <TableCell><a href={`${row.name}`}>{row.name}</a></TableCell>
                 <TableCell>{row.shipTo}</TableCell>
                 <TableCell>{row.paymentMethod}</TableCell>
                 <TableCell align="right">{row.amount}</TableCell>

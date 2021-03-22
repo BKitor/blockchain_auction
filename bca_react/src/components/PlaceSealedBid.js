@@ -7,6 +7,7 @@ import contract_artifact from "../contracts/SealedBid.json"
 import Typography from '@material-ui/core/Typography';
 import NotFound from '../components/global/NotFound.js'
 import Util from '../util.js';
+import '../styles/global.css';
 
 export default function PlaceSealedBid() {
   let { auction_pk } = useParams();
@@ -97,7 +98,7 @@ export default function PlaceSealedBid() {
 function AuctioneerView(props) {
   const { itemDescription, minBid, endTime } = props;
   return (
-    <>
+    <div className="grey-container">
       <Typography variant="h2">Item : {itemDescription}</Typography>
       <br />
       <br />
@@ -105,14 +106,14 @@ function AuctioneerView(props) {
       <Typography variant="h5">Minimum Bid: {minBid} eth</Typography>
       <br style={{ padding: '50px' }}></br>
       <Typography variant="h5">End Time: {endTime.toLocaleString()}</Typography>
-    </>
+    </div>
   )
 }
 
 function BidderView(props) {
   const { itemDescription, minBid, endTime, handleBidChange, submitSealedBid } = props;
   return (
-    <>
+    <div className="grey-container">
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
       <br />
       <br />
@@ -126,7 +127,7 @@ function BidderView(props) {
       <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>
       <Button onClick={submitSealedBid}>Place Bid</Button>
       <br style={{ padding: '50px' }}></br>
-    </>
+    </div>
   )
 
 }

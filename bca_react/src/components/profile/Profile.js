@@ -46,10 +46,10 @@ export default function Profile(props) {
 
       <div className="grey-container">
         <div className="profile-text">
-          <p>
+          
             Welcome to BlockChain Auctions! An easy way to immerse yourself in the
             fast-changing world of blockchain transactions.
-          </p>
+          
         </div>
       </div>
 

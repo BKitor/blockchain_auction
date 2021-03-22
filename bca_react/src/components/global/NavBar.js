@@ -146,7 +146,7 @@ export default function NavBar() {
                     onClose={handleCloseAuctions}
                     TransitionComponent={Fade}
                   >
-                    <MenuItem onClick={handleViewAuctions}><a>All Auctions</a></MenuItem>
+                    {/*<MenuItem onClick={handleViewAuctions}><a>All Auctions</a></MenuItem>*/}
                     <MenuItem onClick={handleSealed}><a>Sealed Bid</a></MenuItem>
                     <MenuItem onClick={handleEnglish}><a>English Bid</a></MenuItem>
                     <MenuItem onClick={handleDutch}><a>Dutch Bid</a></MenuItem>

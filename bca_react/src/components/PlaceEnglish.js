@@ -7,6 +7,7 @@ import Web3 from "web3"
 import contract_artifact from "../contracts/EnglishAuction.json"
 import NotFound from './global/NotFound.js'
 import Util from '../util.js';
+import '../styles/global.css';
 
 export default function PlaceEnglish() {
   let { auction_pk } = useParams();
@@ -169,7 +170,7 @@ export default function PlaceEnglish() {
 function AuctioneerView(props) {
   const { itemDescription, minBid, endTime, currentBid } = props;
   return (
-    <>
+    <div className="grey-container">
       <Typography variant="h2">Item : {itemDescription}</Typography>
       <br />
       <br />
@@ -179,14 +180,14 @@ function AuctioneerView(props) {
       <Typography variant="h5">Highest Bid: {currentBid / 1e18} eth</Typography>
       <br />
       <Typography variant="h5">End Time: {endTime.toLocaleString()}</Typography>
-    </>
+    </div>
   )
 }
 
 function BidderView(props) {
   const { itemDescription, minBid, currentBid, endTime, handleBidChange, submitEnglishBid, userBid } = props;
   return (
-    <>
+    <div className="grey-container">
       <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
       <br />
       <br />
@@ -194,7 +195,13 @@ function BidderView(props) {
       <br style={{ padding: '50px' }}></br>
       <Typography variant="h5">Minimum Bid: {minBid} eth</Typography>
       <br />
-      <Typography variant="h5">Current Highest Bid: {currentBid / 1e18} eth</Typography>
+      <Typography variant="h5">
+        { typeof currentBid == "number" ?
+        <>Current Highest Bid: {currentBid / 1e18} eth</>
+        :
+        <>Current Highest Bid: loading..</>
+        }
+        </Typography>
       <br />
       <Typography variant="h5">Your Bid: {userBid / 1e18} eth {(userBid===currentBid)}</Typography>
       <br />
@@ -203,7 +210,7 @@ function BidderView(props) {
       <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>
       <Button onClick={submitEnglishBid}>Place Bid</Button>
       <br style={{ padding: '50px' }}></br>
-    </>
+    </div>
   )
 
 }

@@ -11,7 +11,10 @@ export default {
     getByUname: (username, token) =>
       axios.get(`${djangoUrl}/profile/uname/${username}/`, {
         headers: { 'Authorization': `Token ${token}` }
-      }).then(res => res),
+      }).then(res => {
+        console.log(res);
+        return res
+      }),
 
     createNewUser: (user) =>
       axios.post(`${djangoUrl}/newuser/`, user, {})
