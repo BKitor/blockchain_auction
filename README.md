@@ -1,5 +1,5 @@
 # Blockchain Auction
-Capstone project
+Capstone project. An Ethereum based solution providing multiple types of auctions. Built with React and DjagnoRestFramework. 
 
 # Setup
 ### This setup assumes you've got WSL/Ubuntu or some other type of Linux set up, if you don't you can follow Microsoft's docs to set up WSL: https://docs.microsoft.com/en-us/windows/wsl/install-win10
