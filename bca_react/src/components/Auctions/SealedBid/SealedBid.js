@@ -2,8 +2,9 @@ import { Button, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
-import Api from '../Api';
-import Util from '../util.js';
+import Api from '../../../Api';
+import Util from '../../../util.js';
+import '../../../styles/react-datepicker.css'
 
 export default function SealedBid() {
   const [token, user] = Util.checkSignedIn();

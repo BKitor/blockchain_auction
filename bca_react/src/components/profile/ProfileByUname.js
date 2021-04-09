@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min'
-import Api from '../Api.js';
-import Util from '../util.js'
+import Api from '../../Api.js';
+import Util from '../../util.js'
 import Typography from '@material-ui/core/Typography';
-import Error404 from '../components/Error404.js'
+import NotFound from '../global/NotFound.js'
 
 export default function ProfileByUname(props) {
   let { uname } = useParams();
@@ -41,7 +41,7 @@ export default function ProfileByUname(props) {
     <div className="home">
       {(!token) ?
         < Redirect to='/signin' /> : (userNotFound) ?
-          <Error404 type={"User"} identifier={uname}></Error404>
+          <NotFound type={"User"} identifier={uname}></NotFound>
           :
           <>
             <Typography variant="h4" align='center'>{uname}</Typography>

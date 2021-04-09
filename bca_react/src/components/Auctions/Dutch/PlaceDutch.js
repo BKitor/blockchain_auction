@@ -1,12 +1,12 @@
 import { Button } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import Api from '../Api';
+import Api from '../../../Api';
 import Web3 from "web3"
-import contract_artifact from "../contracts/DutchAuction.json"
+import contract_artifact from "../../../contracts/DutchAuction.json"
 import Typography from '@material-ui/core/Typography';
-import Error404 from './Error404.js'
-import Util from '../util.js';
+import NotFound from '../../global/NotFound.js';
+import Util from '../../../util.js';
 
 
 export default function PlaceDutch() {
@@ -85,7 +85,10 @@ export default function PlaceDutch() {
 
   const submitDutchBid = () => {
     // TODO: Needs Modal
-    contract.methods.bid().send({ from: user.wallet, value: currentPrice * Math.pow(10, 18), gas: 500000 })
+    console.log(contract)
+    console.log("current Price:", currentPrice)
+    contract.methods.current_price().call().then(console.log)
+    contract.methods.bid().send({ from: user.wallet, value: currentPrice * 1e18, gas: 500000 })
       .then(res => console.log(res))
       .catch(err => console.error(err))
   }
@@ -107,12 +110,17 @@ export default function PlaceDutch() {
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {isSignedIn()}
       {redirectIfOver()}
-      {(auctionNotFound) ? <Error404 type={"Auction"} identifier={auction_pk}></Error404> : null}
+      {(auctionNotFound) ? <NotFound type={"Auction"} identifier={auction_pk}></NotFound> : null}
       <Typography variant="h4">Place Bid on: {itemDescription}</Typography>
+      <br />
+      <br />
+      <br />
       <Typography>Start Price: {startPrice}</Typography>
-      <Typography variant="h4">Current Price: {(currentPrice.toFixed) ? currentPrice.toFixed(4) : currentPrice} eth</Typography>
+      <Typography variant="h5">Current Price: {(currentPrice.toFixed) ? currentPrice.toFixed(4) : currentPrice} eth</Typography>
+      <br />
       <Typography>Rate: {rate}</Typography>
-      <Typography variant="h6">End Time: {(endTime) ? endTime.toLocaleString() : "Loading..."} </Typography>
+      <Typography variant="h5">End Time: {(endTime) ? endTime.toLocaleString() : "Loading..."} </Typography>
+      <br />
       {(user && user.user_id !== auctionOwner) ?
         <BidderView itemDescription={itemDescription}
           currentPrice={currentPrice}

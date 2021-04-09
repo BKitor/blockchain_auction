@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Button } from '@material-ui/core'
+import { Button, Typography } from '@material-ui/core'
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
-import '../styles/auctions.css';
+import '../../styles/auctions.css';
+import '../../styles/global.css';
 
 
 
@@ -25,13 +26,15 @@ export default function Auctions() {
 
     return (
         <div className='home'>
-            <h1>Auction Page</h1>
+            <div className="title page-title">
+                <Typography variant="h4">Auctions</Typography>
+            </div>
             {
                 sessionCode == null ?
                     <div>
                         <h2>
                             You are not currently in an auction!
-                </h2>
+                        </h2>
 
                         <Button onClick={handleNewAuction}>Create your own Auction</Button>
                         <Button onClick={handleExistingAuction}>Join an Existing Auction</Button>

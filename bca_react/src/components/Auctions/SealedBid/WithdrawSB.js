@@ -1,12 +1,12 @@
 import { Button } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import Api from '../Api';
+import Api from '../../../Api';
 import Web3 from "web3"
-import contract_artifact from "../contracts/SealedBid.json"
+import contract_artifact from "../../../contracts/SealedBid.json"
 import Typography from '@material-ui/core/Typography';
-import Error404 from './Error404.js'
-import Util from '../util.js';
+import NotFound from '../../global/NotFound.js'
+import Util from '../../../util.js';
 
 export default function WithdrawSealedBid() {
   let { auction_pk } = useParams();
@@ -42,6 +42,7 @@ export default function WithdrawSealedBid() {
   const withdrawFunds = () => {
     const noBidStr = "revert You have no bid to withdraw";
     const winnerStr = "revert You won, you cannot withdraw funds";
+    const stillOpenStr = "Auction still open. Cannot withdraw";
     contract.methods.withdraw().send({ from: user.wallet, gas: 500000 })
       .then(res => {
         alert("Eth successfuly withdrawn, sorry you din't win")
@@ -53,6 +54,9 @@ export default function WithdrawSealedBid() {
         }
         else if (err.stack.includes(winnerStr)) {
           alert("Congradulation! you won! we'll figure out shipping details later...")
+        }
+        else if(err.stack.includes(stillOpenStr)){
+          alert("You're probably seeing this cause Ganache is dumb, I swear this won't happen in prod")
         }
       })
 
@@ -78,7 +82,7 @@ export default function WithdrawSealedBid() {
       {userIsSignedIn()}
       {auctionIsLive()}
       {(auctionNotFound) ?
-        <Error404 type={"Auction"} identifier={auction_pk}></Error404>
+        <NotFound type={"Auction"} identifier={auction_pk}></NotFound>
         :
         (user && user.user_id !== auctionOwner) ?
           <BidderView itemDescription={itemDescription}
