@@ -1,15 +1,16 @@
+
 import { Button, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
-import Api from '../Api';
-import Util from '../util.js';
+import Api from '../../../Api';
+import Util from '../../../util.js';
 
-export default function SealedBid() {
+export default function English() {
   const [token, user] = Util.checkSignedIn();
   const [minBid, setMinBid] = useState(0);
   const [itemDescription, setItemDescription] = useState('');
-  const [value, onChange] = useState(new Date());
+  const [endTime, onChange] = useState(new Date());
 
   const handleBidChange = e => {
     setMinBid(e.target.value);
@@ -19,22 +20,26 @@ export default function SealedBid() {
     setItemDescription(e.target.value);
   }
 
-  const submitSealedBid = () => {
+  const submitEnglish = () => {
     if (itemDescription === '' || minBid === 0) {
       window.alert("Invalid Inputs")
     } else {
       const body = {
         owner: parseInt(user.user_id),
-        end_time: value.toISOString(),
+        end_time: endTime.toISOString(),
         auction_id: "",
         min_bid: parseInt(minBid),
         item_description: itemDescription,
       }
-      Api.auctions.newSealedBid(body, token).then(res => {
-        Api.auctions.launchSealedBid(res.data.id, token)
-        window.location = `/place/sealed-bid/${res.data.id}`
-      }).then(res => {
-        console.log(res)
+      const EnglishPromise = Api.auctions.newEnglish(body, token)
+
+      EnglishPromise.then(res => {
+        return Promise.all([
+          Api.auctions.launchEnglish(res.data.id, token), 
+          Promise.resolve(res)
+        ])
+      }).then(([lres, cres]) => {
+        window.location = `/place/english/${cres.data.id}`
       })
         .catch(err => {
           console.error(err)
@@ -53,17 +58,17 @@ export default function SealedBid() {
 
     <div style={{ textAlign: 'center', padding: '20px' }}>
       {isLoggedIn()}
-      <h1>Create a new Sealed Bid</h1>
+      <h1>Create a new English</h1>
       <TextField onChange={handleBidChange} placeholder='Minimum Bid'></TextField>
       <br style={{ padding: '50px' }}></br>
       <TextField onChange={handleItemDescription} placeholder='Item Description'></TextField>
       <br style={{ padding: '50px' }}></br>
       <DateTimePicker
         onChange={onChange}
-        value={value}
+        value={endTime}
       />
       <br style={{ padding: '50px' }}></br>
-      <Button onClick={submitSealedBid}>Create new Sealed Bid!</Button>
+      <Button onClick={submitEnglish}>Create new English</Button>
 
     </div>
   )

@@ -1,37 +1,40 @@
-import { Button } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import Api from '../Api';
+import Api from '../../../Api';
 import Web3 from "web3"
-import contract_artifact from "../contracts/SealedBid.json"
+import contract_artifact from "../../../contracts/SealedBid.json"
 import Typography from '@material-ui/core/Typography';
-import Error404 from './Error404.js'
-import Util from '../util.js';
+import Error404 from '../../Error404.js'
+import Util from '../../../util.js';
 
-export default function WithdrawSealedBid() {
+export default function PlaceSealedBid() {
   let { auction_pk } = useParams();
-  const [token, user] = Util.checkSignedIn();
   const [loadTime,] = useState(new Date());
+  const [token, user] = Util.checkSignedIn();
 
+  const [minBid, setMinBid] = useState('loading...');
   const [itemDescription, setItemDiscription] = useState('loading...');
   const [endTime, setEndTime] = useState(new Date());
+  const [userBid, setUserBid] = useState(0);
   const [contract, setContract] = useState(null);
   const [auctionNotFound, setNotFound] = useState(false);
   const [auctionOwner, setAuctionOwner] = useState(null);
-  const [auctionIsOver, setAuctionIsOver] = useState(true);
+  const [auctionIsOver, setAuctionIsOver] = useState(false);
+
 
   useEffect(() => {
     const web3 = new Web3(Util.bcURL)
     Api.auctions.getSealedBidByPK(auction_pk, token)
       .then(res => {
         const d = new Date(res.data.end_time)
+        setMinBid(`${res.data.min_bid}`);
         setItemDiscription(`${res.data.item_description}`);
         setEndTime(d);
         setContract(new web3.eth.Contract(contract_artifact.abi, res.data.auction_id))
-        setAuctionIsOver((d.getTime() < loadTime.getTime()))
         setAuctionOwner(res.data.owner);
-      })
-      .catch(e => {
+        setAuctionIsOver((d.getTime() < loadTime.getTime()))
+      }).catch(e => {
         if (e.response && e.response.status === 404) {
           setNotFound(true);
         }
@@ -39,38 +42,34 @@ export default function WithdrawSealedBid() {
       })
   }, [auction_pk, token, loadTime]);
 
-  const withdrawFunds = () => {
-    const noBidStr = "revert You have no bid to withdraw";
-    const winnerStr = "revert You won, you cannot withdraw funds";
-    contract.methods.withdraw().send({ from: user.wallet, gas: 500000 })
-      .then(res => {
-        alert("Eth successfuly withdrawn, sorry you din't win")
-        console.log(res)
-      })
-      .catch(err => {
-        if (err.stack.includes(noBidStr)) {
-          alert("no bid withdrawn, either you didn't participate or you've already withdrawn your funds")
-        }
-        else if (err.stack.includes(winnerStr)) {
-          alert("Congradulation! you won! we'll figure out shipping details later...")
-        }
-      })
-
+  const handleBidChange = (e) => {
+    console.log(e)
+    if (isNaN(e.target.value)) {
+      setUserBid(0);
+    }
+    else {
+      setUserBid(e.target.value)
+    }
   }
-
+  const submitSealedBid = () => {
+    if (userBid === 0 || parseInt(userBid)<parseInt(minBid)) {
+      window.alert("Your bid's to low")
+    } else {
+      contract.methods.bid().send({ from: user.wallet, value: userBid * Math.pow(10, 18), gas: 500000 })
+        .then(res => {
+          console.log(res)
+          alert(`Bid for ${userBid} successfuly submitted`)
+        })
+        .catch(err => console.error(err))
+    }
+  }
   function userIsSignedIn() {
     return (!token && !user) ? < Redirect to='/signin' /> : null;
   }
-
   function auctionIsLive() {
-    return (auctionIsOver) ? null : (
-      <Redirect to={`/place/sealed-bid/${auction_pk}`} />
-    )
-  }
-
-  function withdrawWinnings(){
-    alert("TODO:THIS NEEDS TO BE IMPLIMENTED")
-    return
+    return (auctionIsOver) ?
+      <Redirect to={`/withdraw/sealed-bid/${auction_pk}`} />
+      : null;
   }
 
   return (
@@ -82,38 +81,41 @@ export default function WithdrawSealedBid() {
         :
         (user && user.user_id !== auctionOwner) ?
           <BidderView itemDescription={itemDescription}
+            minBid={minBid}
             endTime={endTime}
-            withdrawFunds={withdrawFunds}></BidderView>
+            handleBidChange={handleBidChange}
+            submitSealedBid={submitSealedBid}></BidderView>
           :
           <AuctioneerView itemDescription={itemDescription}
-            endTime={endTime}
-            withdrawWinnings={withdrawWinnings}>
-            </AuctioneerView>
+            minBid={minBid}
+            endTime={endTime}></AuctioneerView>
       }
     </div>
   )
 }
 
 function AuctioneerView(props) {
-  const { itemDescription, withdrawWinnings, endTime } = props;
+  const { itemDescription, minBid, endTime } = props;
   return (
     <>
       <Typography>Item : {itemDescription}</Typography>
+      <Typography>Minimum Bid: {minBid} eth</Typography>
       <Typography>End Time: {endTime.toLocaleString()}</Typography>
-      <Button onClick={withdrawWinnings}>Withdraw Winnings</Button>
     </>
   )
 }
 
 function BidderView(props) {
-  const { itemDescription, endTime, withdrawFunds } = props;
+  const { itemDescription, minBid, endTime, handleBidChange, submitSealedBid } = props;
   return (
     <>
-      <Typography variant="h2">Sealed Bid ended for: {itemDescription}</Typography>
+      <Typography variant="h2">Place Bid on: {itemDescription}</Typography>
       <br style={{ padding: '50px' }}></br>
+      <Typography variant="h4">Minimum Bid: {minBid} eth</Typography>
       <Typography variant="h4">End Time: {endTime.toLocaleString()} </Typography>
       <br style={{ padding: '50px' }}></br>
-      <Button onClick={withdrawFunds}>Withdraw Funds</Button>
+      <TextField onChange={handleBidChange} placeholder='Bid ammount'></TextField>
+      <Button onClick={submitSealedBid}>Place Bid</Button>
       <br style={{ padding: '50px' }}></br>
     </>
   )

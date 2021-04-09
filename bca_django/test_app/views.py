@@ -4,11 +4,11 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
 from rest_framework.decorators import api_view, permission_classes
-from test_app.models import Profile, User, SealedBid, English, Dutch
+from test_app.models import Profile, User, SealedBid, English, Dutch, Channel, Squeeze
 from django.contrib.auth.models import Group
 from rest_framework import generics, permissions, viewsets, status
 from rest_framework.response import Response
-from test_app.serializer import UserSerializer, GroupSerializer, ProfileSerializer, SealedBidSerializer, EnglishSerializer, DutchSerializer
+from test_app.serializer import UserSerializer, GroupSerializer, ProfileSerializer, SealedBidSerializer, EnglishSerializer, DutchSerializer, ChannelSerializer, SqueezeSerializer
 from rest_framework.decorators import action
 from test_app.blockchain import BChain
 
@@ -198,7 +198,9 @@ class DutchViewSet(viewsets.ModelViewSet):
         time_d = auction.end_time - now
         # time_limit = int(time_d.total_seconds())
         time_limit = int(time_d.total_seconds() / 60)
-        min_bid = auction.min_bid
+        min_bid = auction.min_bid * 1e18
+        start_price = auction.start_price * 1e18
+        rate = auction.rate * 1e18
 
         try:
             owner = Profile.objects.get(user=auction.owner)
@@ -206,9 +208,109 @@ class DutchViewSet(viewsets.ModelViewSet):
             return Response({"error": "owner of contract does not exist, the auction needs an owner"}, status=status.HTTP_404_NOT_FOUND)
 
         contract_id = bchain.launch_dutch(
-            time_limit, owner.wallet, min_bid, auction.start_price, auction.rate)
+            time_limit, owner.wallet, min_bid, start_price, rate)
 
         auction.auction_id = contract_id
         auction.save()
 
         return Response(DutchSerializer(auction, context={'request': request}).data, status=status.HTTP_200_OK)
+
+
+class ChannelViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Channel Auctions to be viewed or edited.
+    """
+    queryset = Channel.objects.all()
+    serializer_class = ChannelSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(methods=['PUT'], detail=True, url_path='start')
+    def start_auction(self, request, **kwargs):
+        auction = self.get_object()
+
+        if auction.auction_id != "":
+            return Response({"error": "auction_id is not None, Can't start an auction that's already started", "value": auction.auction_id}, status=status.HTTP_400_BAD_REQUEST)
+
+        if auction.min_bid is None:
+            return Response({"error": "min_bid is None, Can't start an auction that doesn't have a mininum bid"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if auction.buy_now_price is None:
+            return Response({"error": "buy_now_price is None, Can't start an that without an initial price"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if auction.end_time is None:
+            return Response({"error": "end_time is None, Can't start an that'll never end"}, status=status.HTTP_400_BAD_REQUEST)
+
+        now = datetime.datetime.now(
+            datetime.timezone.utc) + datetime.timedelta(seconds=5)
+        if(auction.end_time < now):
+            return Response({"error": "end time has passed, the auction has to start before it ends"}, status=status.HTTP_400_BAD_REQUEST)
+
+        time_d = auction.end_time - now
+        # time_limit = int(time_d.total_seconds())
+        time_limit = int(time_d.total_seconds() / 60)
+        min_bid = auction.min_bid
+
+        try:
+            owner = Profile.objects.get(user=auction.owner)
+        except Profile.DoesNotExist:
+            return Response({"error": "owner of contract does not exist, the auction needs an owner"}, status=status.HTTP_404_NOT_FOUND)
+
+        contract_id = bchain.launch_channel(
+            time_limit, owner.wallet, min_bid, auction.buy_now_price)
+
+        auction.auction_id = contract_id
+        auction.save()
+
+        return Response(ChannelSerializer(auction, context={'request': request}).data, status=status.HTTP_200_OK)
+
+
+class SqueezeViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Channel Auctions to be viewed or edited.
+    """
+    queryset = Squeeze.objects.all()
+    serializer_class = SqueezeSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(methods=['PUT'], detail=True, url_path='start')
+    def start_auction(self, request, **kwargs):
+        auction = self.get_object()
+
+        if auction.auction_id != "":
+            return Response({"error": "auction_id is not None, Can't start an auction that's already started", "value": auction.auction_id}, status=status.HTTP_400_BAD_REQUEST)
+
+        if auction.start_low is None:
+            return Response({"error": "min_bid is None, Can't start an auction that doesn't have a mininum bid"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if auction.start_high is None:
+            return Response({"error": "buy_now_price is None, Can't start an that without an initial price"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if auction.rate is None:
+            return Response({"error": "buy_now_price is None, Can't start an that without an initial price"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if auction.end_time is None:
+            return Response({"error": "end_time is None, Can't start an that'll never end"}, status=status.HTTP_400_BAD_REQUEST)
+
+        now = datetime.datetime.now(
+            datetime.timezone.utc) + datetime.timedelta(seconds=5)
+        if(auction.end_time < now):
+            return Response({"error": "end time has passed, the auction has to start before it ends"}, status=status.HTTP_400_BAD_REQUEST)
+
+        time_d = auction.end_time - now
+        time_limit = int(time_d.total_seconds() / 60)
+        start_low = int(auction.start_low * 1e18)
+        start_high = int(auction.start_high * 1e18)
+        rate = int(auction.rate * 1e18)
+
+        try:
+            owner = Profile.objects.get(user=auction.owner)
+        except Profile.DoesNotExist:
+            return Response({"error": "owner of contract does not exist, the auction needs an owner"}, status=status.HTTP_404_NOT_FOUND)
+
+        contract_id = bchain.launch_squeeze(
+            time_limit, owner.wallet, start_low, start_high, rate)
+
+        auction.auction_id = contract_id
+        auction.save()
+
+        return Response(SqueezeSerializer(auction, context={'request': request}).data, status=status.HTTP_200_OK)

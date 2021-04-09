@@ -20,8 +20,9 @@ contract DutchAuction is Auction{
 	}
 
 	function bid() external payable ongoing_auction override returns (bool) {
-		require(msg.value >= startPrice - (rate * (block.timestamp - auctionStart)*1 minutes) || minPrice >= startPrice - (rate * (block.timestamp - auctionStart)*1 minutes));
-		require(msg.value >= minPrice);
+		// $ - $/m * s * m/s = start_price - rate * Δt * min/sec
+		require(msg.value >= startPrice - (rate * (block.timestamp - auctionStart)/1 minutes) || minPrice >= startPrice - (rate * (block.timestamp - auctionStart)/1 minutes), "Bid to low, wait a bit longer");
+		require(msg.value >= minPrice, "Price need to be below min price");
 
 		highestBid = msg.value;
 		highestBidder = msg.sender;
@@ -35,5 +36,4 @@ contract DutchAuction is Auction{
 		emit BidEvent(highestBidder, highestBid);
 		return true;
 	}
-
 }
